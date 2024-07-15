@@ -9,11 +9,12 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
+import Avatar from '@mui/material/Avatar'; // Importamos Avatar para mostrar la imagen del logo
+import logoEpema from '../resources/images/logoEpema-Photoroom.png'; // Ruta de la imagen del logo
 
 const pages = ['Bodegas', 'Puestos', 'Históricos'];
 
-function ResponsiveAppBar() {
+function Bar_Header() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -25,10 +26,10 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#FF0000' }}>
+    <AppBar position="static" sx={{ backgroundColor: '#337533' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, color: '#FFFFFF' }} />
+          <Avatar alt="EP-EMA Logo" src={logoEpema} sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
             variant="h6"
             noWrap
@@ -83,7 +84,7 @@ function ResponsiveAppBar() {
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1, color: '#FFFFFF' }} />
+          <Avatar alt="EP-EMA Logo" src={logoEpema} sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
           <Typography
             variant="h5"
             noWrap
@@ -102,7 +103,8 @@ function ResponsiveAppBar() {
           >
             EP-EMA
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Box sx={{ flexGrow: 1 }} />
+          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Button
                 key={page}
@@ -119,4 +121,4 @@ function ResponsiveAppBar() {
   );
 }
 
-export default ResponsiveAppBar;
+export default Bar_Header;
