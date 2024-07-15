@@ -9,8 +9,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
-import Avatar from '@mui/material/Avatar'; // Importamos Avatar para mostrar la imagen del logo
-import logoEpema from '../resources/images/logoEpema-Photoroom.png'; // Ruta de la imagen del logo
+import Avatar from '@mui/material/Avatar'; 
+import logoEpema from '../resources/images/logoFill.png'; 
 
 const pages = ['Bodegas', 'Puestos', 'Históricos'];
 
@@ -29,14 +29,23 @@ function Bar_Header() {
     <AppBar position="static" sx={{ backgroundColor: '#337533' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Avatar alt="EP-EMA Logo" src={logoEpema} sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <Avatar
+            alt="EP-EMA Logo"
+            src={logoEpema}
+            sx={{
+              display: { xs: 'none', md: 'flex' },
+              width: 60,
+              height: 60,
+              marginRight: 1,
+            }}
+          />
           <Typography
             variant="h6"
             noWrap
             component="a"
             href="#app-bar-with-responsive-menu"
             sx={{
-              mr: 2,
+              fontSize: '1.8rem',
               display: { xs: 'none', md: 'flex' },
               fontFamily: 'monospace',
               fontWeight: 700,
@@ -84,13 +93,23 @@ function Bar_Header() {
               ))}
             </Menu>
           </Box>
-          <Avatar alt="EP-EMA Logo" src={logoEpema} sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          <Avatar
+            alt="EP-EMA Logo"
+            src={logoEpema}
+            sx={{
+              display: { xs: 'flex', md: 'none' },
+              width: 40,
+              height: 40,
+              marginRight: 1,
+            }}
+          />
           <Typography
             variant="h5"
             noWrap
             component="a"
             href="#app-bar-with-responsive-menu"
             sx={{
+              fontSize: '1.6rem',
               mr: 2,
               display: { xs: 'flex', md: 'none' },
               flexGrow: 1,
