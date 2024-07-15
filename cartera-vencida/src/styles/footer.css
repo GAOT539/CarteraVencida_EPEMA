@@ -1,0 +1,20 @@
+.footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #FFF5E1; /* Beige claro */
+    border-top: 1px solid #CCCCCC; /* Gris claro */
+  }
+  
+  .footer-icon {
+    width: 50px;
+    height: 50px;
+    vertical-align: middle;
+  }
+  
+  .footer-text {
+    margin-left: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #008000; /* Verde */
+  }
+  
