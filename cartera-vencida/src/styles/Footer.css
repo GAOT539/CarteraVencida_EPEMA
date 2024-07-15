@@ -1,0 +1,35 @@
+.footer {
+  background-color: #337533;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #ffffff;
+}
+
+.footer-logo img {
+  width: 100px;
+  height: auto;
+}
+
+.footer-center {
+  text-align: center;
+  flex-grow: 1;
+}
+
+.footer-center h4 {
+  margin: 0;
+  padding: 0;
+  font-size: 1.2em;
+}
+
+.footer-center p {
+  margin: 5px 0;
+}
+
+.footer-center hr {
+  border: 0;
+  border-top: 1px solid #ffffff;
+  margin: 10px auto; /* Center the <hr> */
+  width: 75%; /* Reduce width by 25% */
+}

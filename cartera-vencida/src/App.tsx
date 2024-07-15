@@ -1,7 +1,6 @@
 import React from 'react';
 import Bar_Header from './components/bar_Header'; // ajusta la ruta según tu estructura de archivos
-import Footer from './components/Footer';
-import DataTable from './components/Table';
+import Bar_Footer from './components/bar_Footer';
 
 function App() {
   return (
@@ -16,7 +15,7 @@ function App() {
   </div> 
         {/* Otros componentes y contenido de tu aplicación */}
       </main>
-      <Footer/>
+      <Bar_Footer/>
     </div>
     
   );
