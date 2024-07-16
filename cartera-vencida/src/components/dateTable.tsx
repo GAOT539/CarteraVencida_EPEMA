@@ -36,7 +36,10 @@ const rows = [
   { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
   { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
   { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-  { id: 10, lastName: 'Roxie', firstName: 'Harvey', age: 65 }
+  { id: 10, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+  { id: 11, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+  { id: 12, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+  { id: 13, lastName: 'Roxie', firstName: 'Harvey', age: 65 }
 ];
 
 export default function DataTable() {
@@ -71,10 +74,15 @@ export default function DataTable() {
       <Grid container spacing={2}>
         <Grid item xs={12} style={{ textAlign: 'center' }}>
           <Button
-            variant="contained"
-            startIcon={<CloudUploadIcon />}
-            sx={{ marginLeft: 2, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}
-            onClick={handleLoadData}>
+            variant="contained" sx={{ marginLeft: 2, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }} onClick={handleLoadData}>
+            Bodegas
+          </Button>
+          <Button
+            variant="contained" sx={{ marginLeft: 2, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }} onClick={handleLoadData}>
+            Puestos
+          </Button>
+          <Button
+            variant="contained" startIcon={<CloudUploadIcon />} sx={{ marginLeft: 2, backgroundColor: colors.orangeSalmon, '&:hover': { backgroundColor: colors.orangeSalmonGradient } }} onClick={handleLoadData}>
             Cargar datos
           </Button>
         </Grid>
