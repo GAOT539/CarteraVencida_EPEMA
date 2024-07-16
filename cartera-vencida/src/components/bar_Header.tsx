@@ -13,7 +13,7 @@ import Avatar from '@mui/material/Avatar';
 import logoEpema from '../resources/images/logoFill.png';
 import colors from '../resources/colors';
 
-const pages = ['Bodegas', 'Puestos', 'Históricos'];
+const pages = ['Cartera Vencida', 'Históricos'];
 
 function Bar_Header() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
