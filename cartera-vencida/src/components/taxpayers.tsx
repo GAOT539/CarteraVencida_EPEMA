@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, TextField, Typography } from '@mui/material';
 
 const Taxpayers: React.FC = () => {
+  
   const [contributor, setContributor] = React.useState('AGUAGUIÑA FREDDY PATRICIO');
   const [activity, setActivity] = React.useState('FRUTA IMPORTADA');
   const [warehouse, setWarehouse] = React.useState('N-A-08');
