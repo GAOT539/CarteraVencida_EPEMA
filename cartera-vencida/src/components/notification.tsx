@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import colors from '../resources/colors';
 
 
 const Notification: React.FC = () => {
@@ -23,9 +25,9 @@ const Notification: React.FC = () => {
 
         <Box display="flex" justifyContent="center" alignItems="center" mb={2}>
           <Typography variant="h5">Crear Notificación</Typography>
-          <FormControl style={{marginLeft:"1em"}}>
+          <FormControl style={{ marginLeft: "1em" }}>
             <InputLabel>Notificación</InputLabel>
-            <Select value={notificationType} style={{width: "12em"}}>{/* onChange={handleNotificationChange}*/}
+            <Select value={notificationType} style={{ width: "12em" }}>{/* onChange={handleNotificationChange}*/}
               <MenuItem value="Primera">Primera Notificación</MenuItem>
               <MenuItem value="Segunda">Segunda Notificación</MenuItem>
               <MenuItem value="Tercera">Tercera Notificación</MenuItem>
@@ -34,10 +36,17 @@ const Notification: React.FC = () => {
           </FormControl>
         </Box>
         <Box display="flex" justifyContent="center" alignItems="center" mb={2}>
-          <Button variant="contained" sx={{ marginLeft: 2 }} onClick={handleConfirmClick}>
-            Confirmar
+        <Button
+            variant="contained"
+            sx={{ marginLeft: 2, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}
+            onClick={handleDownloadClick}>
+            Actualizar Contribuyente
           </Button>
-          <Button variant="contained" sx={{ marginLeft: 2 }} onClick={handleDownloadClick}>
+          <Button
+            variant="contained"
+            startIcon={<CloudDownloadIcon />}
+            sx={{ marginLeft: 2, backgroundColor: colors.orangeSalmon, '&:hover': { backgroundColor: colors.orangeSalmonGradient } }}
+            onClick={handleDownloadClick}>
             DESCARGAR PDF
           </Button>
         </Box>
