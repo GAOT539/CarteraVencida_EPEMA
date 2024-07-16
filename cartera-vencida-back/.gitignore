@@ -40,6 +40,5 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
-
-cartera-vencida-back\dist\db\connection.db.js
-cartera-vencida-back\src\db\connection.db.ts
+cartera-vencida-back/src/db/connection.db.ts
+cartera-vencida-back/dist/db/connection.db.js
