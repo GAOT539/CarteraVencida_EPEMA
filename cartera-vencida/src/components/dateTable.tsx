@@ -7,21 +7,21 @@ import SearchIcon from '@mui/icons-material/Search';
 import colors from '../resources/colors';
 
 const columnsPuesto: GridColDef[] = [
-  { field: 'id', headerName: 'ID', width: 70 },
-  { field: 'firstName', headerName: 'First name', width: 130 },
-  { field: 'lastName', headerName: 'Last name', width: 130 },
+  { field: 'id', headerName: 'ID', flex: 0.5 },
+  { field: 'firstName', headerName: 'First name', flex: 1 },
+  { field: 'lastName', headerName: 'Last name', flex: 1 },
   {
     field: 'age',
     headerName: 'Age',
     type: 'number',
-    width: 90,
+    flex: 0.5,
   },
   {
     field: 'fullName',
     headerName: 'Full name',
     description: 'This column has a value getter and is not sortable.',
     sortable: false,
-    width: 160,
+    flex: 1,
     //valueGetter: (params) => `${params.row.firstName || ''} ${params.row.lastName || ''}`,
   },
 ];
@@ -95,18 +95,20 @@ export default function DataTable() {
           />
         </Grid>
         <Grid item xs={12}>
-          <DataGrid
-            rows={filteredRows}
-            columns={columnsPuesto}
-            initialState={{
-              pagination: {
-                paginationModel: { page: 0, pageSize: 11 },
-              },
-            }}
-            pageSizeOptions={[5, 10]}
-            checkboxSelection
-            autoHeight
-          />
+          <Box style={{ width: '100%' }}>
+            <DataGrid
+              rows={filteredRows}
+              columns={columnsPuesto}
+              initialState={{
+                pagination: {
+                  paginationModel: { page: 0, pageSize: 11 },
+                },
+              }}
+              pageSizeOptions={[5, 10]}
+              checkboxSelection
+              autoHeight
+            />
+          </Box>
         </Grid>
         <Grid item xs={12} style={{ textAlign: 'center' }}>
           <Box display="flex" justifyContent="space-between">
