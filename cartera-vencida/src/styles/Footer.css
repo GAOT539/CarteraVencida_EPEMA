@@ -30,6 +30,6 @@
 .footer-center hr {
   border: 0;
   border-top: 1px solid #ffffff;
-  margin: 10px auto; /* Center the <hr> */
-  width: 75%; /* Reduce width by 25% */
+  margin: 10px auto; 
+  width: 75%;
 }
