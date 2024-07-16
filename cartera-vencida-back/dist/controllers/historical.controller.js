@@ -9,9 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateHistorico = exports.deleteHistorico = exports.getHistoricosByCIU = exports.getHistoricoById = exports.getHistoricos = exports.newHistorico = void 0;
+exports.updateHistorico = exports.deleteHistorico = exports.getHistoricosByCIU = exports.getHistoricoById = exports.getHistoricosPuestos = exports.getHistoricosBodegas = exports.getHistoricos = exports.newHistorico = void 0;
 const historical_models_1 = require("../models/historical.models");
 const manage_error_1 = require("../error/manage.error");
+const sequelize_1 = require("sequelize");
 // Crear un nuevo registro histórico
 const newHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { ciu, contribuyente, bodega, puesto, fecha, cantNotificaciones, archivo } = req.body;
@@ -52,6 +53,60 @@ const getHistoricos = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.getHistoricos = getHistoricos;
+// Obtener todos los registros históricos donde bodega no es null
+const getHistoricosBodegas = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const historicosList = yield historical_models_1.Historicos.findAll({
+            where: {
+                bodega: {
+                    [sequelize_1.Op.ne]: null,
+                },
+            },
+        });
+        if (historicosList.length === 0) {
+            return res.status(404).json({
+                msg: 'No se encontraron historicos asociados a bodegas',
+            });
+        }
+        res.json({
+            historicosList,
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            msg: manage_error_1.ErrorMessages.SERVER_ERROR,
+            error,
+        });
+    }
+});
+exports.getHistoricosBodegas = getHistoricosBodegas;
+// Obtener todos los registros históricos donde puesto no es null
+const getHistoricosPuestos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const historicosList = yield historical_models_1.Historicos.findAll({
+            where: {
+                puesto: {
+                    [sequelize_1.Op.ne]: null,
+                },
+            },
+        });
+        if (historicosList.length === 0) {
+            return res.status(404).json({
+                msg: 'No se encontraron historicos asociados a puestos',
+            });
+        }
+        res.json({
+            historicosList,
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            msg: manage_error_1.ErrorMessages.SERVER_ERROR,
+            error,
+        });
+    }
+});
+exports.getHistoricosPuestos = getHistoricosPuestos;
 //Obtener historico por el id
 const getHistoricoById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;

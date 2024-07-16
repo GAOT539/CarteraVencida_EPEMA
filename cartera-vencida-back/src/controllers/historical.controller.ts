@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Historicos } from '../models/historical.models';
 import { ErrorMessages } from '../error/manage.error';
+import { Op } from 'sequelize';
 
 // Crear un nuevo registro histórico
 export const newHistorico = async (req: Request, res: Response) => {
@@ -43,6 +44,62 @@ export const getHistoricos = async (req: Request, res: Response) => {
     });
   }
 }
+// Obtener todos los registros históricos donde bodega no es null
+export const getHistoricosBodegas = async (req: Request, res: Response) => {
+  try {
+    const historicosList = await Historicos.findAll({
+      where: {
+        bodega: {
+          [Op.ne]: null,  
+        },
+      },
+    });
+
+    if (historicosList.length === 0) {
+      return res.status(404).json({
+        msg: 'No se encontraron historicos asociados a bodegas',
+      });
+    }
+
+    res.json({
+      historicosList,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: ErrorMessages.SERVER_ERROR,
+      error,
+    });
+  }
+};
+// Obtener todos los registros históricos donde puesto no es null
+export const getHistoricosPuestos = async (req: Request, res: Response) => {
+  try {
+    const historicosList = await Historicos.findAll({
+      where: {
+        puesto: {
+          [Op.ne]: null,  
+        },
+      },
+    });
+
+    if (historicosList.length === 0) {
+      return res.status(404).json({
+        msg: 'No se encontraron historicos asociados a puestos',
+      });
+    }
+
+    res.json({
+      historicosList,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: ErrorMessages.SERVER_ERROR,
+      error,
+    });
+  }
+};
+
+
 //Obtener historico por el id
 export const getHistoricoById = async (req: Request, res: Response) => {
   const { id } = req.params;

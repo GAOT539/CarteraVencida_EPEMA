@@ -12,6 +12,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Avatar from '@mui/material/Avatar'; 
 import logoEpema from '../resources/images/logoFill.png';
 import colors from '../resources/colors';
+import { Divider } from '@mui/material';
+
 
 const pages = ['Cartera Vencida', 'Históricos'];
 
@@ -124,15 +126,20 @@ function Bar_Header() {
             EP-EMA
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: colors.white, display: 'block' }}
-              >
-                {page}
-              </Button>
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+            {pages.map((page, index) => (
+              <React.Fragment key={page}>
+                <Button
+                  key={page}
+                  onClick={handleCloseNavMenu}
+                  sx={{ my: 2, color: colors.white, display: 'block', '&:hover': {
+                      backgroundColor: colors.oliveGreenDarker,
+                      color: colors.white,
+                    }, }}
+                >
+                  {page}
+                </Button>
+              </React.Fragment>
             ))}
           </Box>
         </Toolbar>
