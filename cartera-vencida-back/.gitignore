@@ -4,6 +4,8 @@ node_modules/
 # Logs
 *.log
 npm-debug.log*
+*.db.js
+*.db.ts
 
 # Dependency directories
 pids
@@ -40,5 +42,6 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
+# Connection
 src/db/connection.db.ts
 dist/db/connection.db.js
