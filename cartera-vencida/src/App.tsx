@@ -15,6 +15,7 @@ function App() {
       <main>
         <Taxpayers_Wineries />
         <Notification/>
+        <hr />
       </main>
       <Bar_Footer />
     </div>
