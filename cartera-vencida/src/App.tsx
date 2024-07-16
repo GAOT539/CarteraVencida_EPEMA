@@ -1,5 +1,6 @@
 import Bar_Header from './components/bar_Header';
 import Bar_Footer from './components/bar_Footer';
+import Bodega from './components/body_Historical';
 import Body_Information from './components/body_Information';
 
 function App() {
@@ -7,7 +8,7 @@ function App() {
     <div>
       <Bar_Header />
       <main>
-        <Body_Information />
+        <Bodega />
       </main>
       <Bar_Footer />
     </div>
