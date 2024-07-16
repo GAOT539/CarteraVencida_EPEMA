@@ -4,6 +4,12 @@ const colors = {
 
     white: '#FFFFFF',
     black: '#000000',
+
+    orangeSalmon: '#c95d52',
+    orangeSalmonGradient: '#a54e45',
+    
+    oliveGreen: '#45743b',
+    oliveGreenGradient: '#3a6032',
     //white: '#FFFFFF',
 };
 
