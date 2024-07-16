@@ -21,13 +21,13 @@ const Taxpayers: React.FC = () => {
           label="Contribuyente"
           value={contributor}
           onChange={(e) => setContributor(e.target.value)}
-          sx={{ width: '48%' }}
+          sx={{ width: '65%' }}
         />
         <TextField
           label="CIU"
           value={ciu}
           onChange={(e) => setCiu(Number(e.target.value))}
-          sx={{ width: '20%' }}
+          sx={{ width: '30%' }}
         />
       </Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -35,14 +35,14 @@ const Taxpayers: React.FC = () => {
           label="Actividad"
           value={activity}
           onChange={(e) => setActivity(e.target.value)}
-          sx={{ width: '48%' }}
+          sx={{ width: '65%' }}
         />
         <TextField
           label="Meses"
           type="number"
           value={months}
           onChange={(e) => setMonths(Number(e.target.value))}
-          sx={{ width: '20%' }}
+          sx={{ width: '30%' }}
         />
       </Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -50,14 +50,14 @@ const Taxpayers: React.FC = () => {
           label="Puesto"
           value={warehouse}
           onChange={(e) => setWarehouse(e.target.value)}
-          sx={{ width: '48%' }}
+          sx={{ width: '65%' }}
         />
         <TextField
           label="Valor a Pagar"
           type="number"
           value={amount}
           onChange={(e) => setAmount(Number(e.target.value))}
-          sx={{ width: '20%' }}
+          sx={{ width: '30%' }}
         />
       </Box>
       <hr />

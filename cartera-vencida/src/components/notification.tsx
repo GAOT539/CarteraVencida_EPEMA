@@ -18,14 +18,15 @@ const Notification: React.FC = () => {
   };
 
   return (
-    <Box mb={2}>
+    <Box sx={{ padding: 4 }}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
       <Typography variant="h5">Crear Notificación</Typography>
       <FormControl>
         <InputLabel>Notificación</InputLabel>
         <Select value={notificationType}>{/* onChange={handleNotificationChange}*/}
-          <MenuItem value="Primera">Primera</MenuItem>
-          <MenuItem value="Segunda">Segunda</MenuItem>
-          <MenuItem value="Tercera">Tercera</MenuItem>
+          <MenuItem value="Primera">Primera Notificación</MenuItem>
+          <MenuItem value="Segunda">Segunda Notificación</MenuItem>
+          <MenuItem value="Tercera">Tercera Notificación</MenuItem>
           <MenuItem value="PAGADO">PAGADO</MenuItem>
         </Select>
       </FormControl>
@@ -35,6 +36,8 @@ const Notification: React.FC = () => {
       <Button variant="contained" sx={{ marginLeft: 2 }} onClick={handleDownloadClick}>
         DESCARGAR PDF
       </Button>
+      </Box>
+      <hr />
     </Box>
   );
 };

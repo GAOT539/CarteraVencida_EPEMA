@@ -1,5 +1,5 @@
 import React from 'react';
-import Bar_Header from './components/bar_Header'; // ajusta la ruta según tu estructura de archivos
+import Bar_Header from './components/bar_Header';
 import Bar_Footer from './components/bar_Footer';
 import DataTable from './components/Table';
 import Taxpayers from './components/taxpayers';
