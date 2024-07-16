@@ -10,7 +10,8 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Avatar from '@mui/material/Avatar'; 
-import logoEpema from '../resources/images/logoFill.png'; 
+import logoEpema from '../resources/images/logoFill.png';
+import colors from '../resources/colors';
 
 const pages = ['Bodegas', 'Puestos', 'Históricos'];
 
@@ -26,7 +27,7 @@ function Bar_Header() {
   };
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#337533' }}>
+    <AppBar position="static" sx={{ backgroundColor: colors.background_Green }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Avatar
@@ -50,7 +51,7 @@ function Bar_Header() {
               fontFamily: 'monospace',
               fontWeight: 700,
               letterSpacing: '.3rem',
-              color: '#FFFFFF',
+              color: colors.white,
               textDecoration: 'none',
             }}
           >
@@ -64,7 +65,7 @@ function Bar_Header() {
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
-              sx={{ color: '#FFFFFF' }}
+              sx={{ color: colors.white }}
             >
               <MenuIcon />
             </IconButton>
@@ -107,7 +108,7 @@ function Bar_Header() {
             variant="h5"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="#app-bar-with-responsive-menu"///redirección Home
             sx={{
               fontSize: '1.6rem',
               mr: 2,
@@ -116,7 +117,7 @@ function Bar_Header() {
               fontFamily: 'monospace',
               fontWeight: 700,
               letterSpacing: '.3rem',
-              color: '#FFFFFF',
+              color: colors.white,
               textDecoration: 'none',
             }}
           >
@@ -128,7 +129,7 @@ function Bar_Header() {
               <Button
                 key={page}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
+                sx={{ my: 2, color: colors.white, display: 'block' }}
               >
                 {page}
               </Button>

@@ -1,4 +1,13 @@
 # GAMACOLORES
+Verde:
+HEX #337533
+
+Blanco HUMO:
+HEX #F0F0F0 
+
+
+
+
 Rojo:
 
 Primario: #FF0000 (Rojo brillante)
@@ -9,7 +18,7 @@ Blanco:
 Primario: #FFFFFF (Blanco puro)
 Gris Claro: #F0F0F0 (Blanco humo)
 Gris Oscuro: #CCCCCC (Gris claro)
-Verde:
+
 
 Primario: #008000 (Verde estándar)
 Oscuro: #004d00 (Verde oscuro)
