@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, TextField, Typography } from '@mui/material';
 
-const Taxpayers_Wineries: React.FC = () => {
+const Taxpayers: React.FC = () => {
   const [contributor, setContributor] = React.useState('AGUAGUIÑA FREDDY PATRICIO');
   const [activity, setActivity] = React.useState('FRUTA IMPORTADA');
   const [warehouse, setWarehouse] = React.useState('N-A-08');
@@ -65,4 +65,4 @@ const Taxpayers_Wineries: React.FC = () => {
   );
 };
 
-export default Taxpayers_Wineries;
+export default Taxpayers;
