@@ -24,4 +24,5 @@ yarn-error.log*
 
 # APP
 cartera-vencida/src/App.tsx
-
+cartera-vencida-back/src/db/connection.db.ts
+cartera-vencida-back/dist/db/connection.db.js
