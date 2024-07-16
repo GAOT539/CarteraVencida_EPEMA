@@ -1,6 +1,7 @@
 const colors = {
     background_Green: '#337533',
     background_WhiteSmoke: '#F0F0F0',
+    background_WhiteSmokeBlack: '#c4c4c4',
 
     white: '#FFFFFF',
     black: '#000000',

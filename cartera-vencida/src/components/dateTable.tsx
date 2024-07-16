@@ -107,6 +107,14 @@ export default function DataTable() {
               pageSizeOptions={[5, 10]}
               checkboxSelection
               autoHeight
+              sx={{
+                '& .MuiDataGrid-columnHeaderTitleContainer': {
+                  backgroundColor: colors.background_WhiteSmokeBlack,
+                },
+                '& .MuiDataGrid-columnHeader': {
+                  backgroundColor: colors.background_WhiteSmokeBlack,
+                }
+              }}
             />
           </Box>
         </Grid>
