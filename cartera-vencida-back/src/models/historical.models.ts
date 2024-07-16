@@ -1,0 +1,42 @@
+import { DataTypes } from 'sequelize';
+import connection from '../db/connection.db';
+
+export const Historicos = connection.define('historicos', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  ciu: {
+    type: DataTypes.STRING(10),
+    allowNull: false,
+  },
+  contribuyente: {
+    type: DataTypes.STRING(80),
+    allowNull: true,
+  },
+  bodega: {
+    type: DataTypes.STRING(30),
+    allowNull: true,
+  },
+  puesto: {
+    type: DataTypes.STRING(30),
+    allowNull: true,
+  },
+  fecha: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
+  },
+  cantNotificaciones: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  archivo: {
+    type: DataTypes.BLOB,
+    allowNull: true,
+  },
+}, {
+  timestamps: false,
+});
+
+export default Historicos;
