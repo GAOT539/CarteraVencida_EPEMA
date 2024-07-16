@@ -12,31 +12,36 @@ const Taxpayers: React.FC = () => {
 
   return (
     
-    <Box sx={{ padding: 4 }} maxHeight={250}>
+    <Box sx={{ padding: 4 }} maxHeight={300}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Typography variant="h4" gutterBottom>Puestos</Typography>
         <Typography variant="h5" gutterBottom sx={{ textAlign: 'right' }}>Nave - AMBULANTES</Typography>
       </Box>
+      <Box justifyContent="space-between" alignItems="center" mb={2}>
       <hr />
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+      </Box>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} marginBottom={4}>
         <TextField
           label="Contribuyente"
           value={contributor}
           onChange={(e) => setContributor(e.target.value)}
+          disabled
           sx={{ width: '65%' }}
         />
         <TextField
           label="CIU"
           value={ciu}
           onChange={(e) => setCiu(Number(e.target.value))}
+          disabled
           sx={{ width: '30%' }}
         />
       </Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} marginBottom={4}>
         <TextField
           label="Actividad"
           value={activity}
           onChange={(e) => setActivity(e.target.value)}
+          disabled
           sx={{ width: '65%' }}
         />
         <TextField
@@ -44,14 +49,16 @@ const Taxpayers: React.FC = () => {
           type="number"
           value={months}
           onChange={(e) => setMonths(Number(e.target.value))}
+          disabled
           sx={{ width: '30%' }}
         />
       </Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} marginBottom={4}>
         <TextField
           label="Puesto"
           value={warehouse}
           onChange={(e) => setWarehouse(e.target.value)}
+          disabled
           sx={{ width: '65%' }}
         />
         <TextField
@@ -59,6 +66,7 @@ const Taxpayers: React.FC = () => {
           type="number"
           value={amount}
           onChange={(e) => setAmount(Number(e.target.value))}
+          disabled
           sx={{ width: '30%' }}
         />
       </Box>
