@@ -10,7 +10,8 @@ const Taxpayers: React.FC = () => {
   const [amount, setAmount] = React.useState(388.4);
 
   return (
-    <Box sx={{ padding: 4 }}>
+    
+    <Box sx={{ padding: 4 }} maxHeight={250}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Typography variant="h4" gutterBottom>Puestos</Typography>
         <Typography variant="h5" gutterBottom sx={{ textAlign: 'right' }}>Nave - AMBULANTES</Typography>
@@ -62,6 +63,7 @@ const Taxpayers: React.FC = () => {
       </Box>
       <hr />
     </Box>
+    
   );
 };
 
