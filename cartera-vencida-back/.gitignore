@@ -43,5 +43,5 @@ npm-debug.log
 yarn-error.log
 
 # Connection
-src/db/connection.db.ts
-dist/db/connection.db.js
+src/db/
+dist/db/
