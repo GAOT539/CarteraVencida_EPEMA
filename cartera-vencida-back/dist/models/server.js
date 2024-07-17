@@ -17,6 +17,7 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 //routes
 const historical_routes_1 = __importDefault(require("../routes/historical.routes"));
+const files_routes_1 = __importDefault(require("../routes/files.routes"));
 //creation of tables
 const historical_models_1 = require("./historical.models");
 class Server {
@@ -37,6 +38,7 @@ class Server {
     //@routes: configurate routes
     routes() {
         this.app.use('/api/', historical_routes_1.default);
+        this.app.use('/archivo/', files_routes_1.default);
     }
     /*@middlewares: check http request from server,
     if body is in json convert data to js object*/
