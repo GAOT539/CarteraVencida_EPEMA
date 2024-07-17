@@ -2,49 +2,45 @@ import { StyleSheet } from '@react-pdf/renderer';
 
 const styles = StyleSheet.create({
   page: {
-    padding: 30,
+    padding: 20
   },
   header: {
-    display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    justifyContent: 'center',
+    marginBottom: 10
   },
   logo: {
-    width: 100,
+    width: 50,
+    height: 50,
+    marginRight: 10
   },
   title: {
-    fontFamily: 'Arial',
+    fontFamily: 'Roboto',
     fontSize: 14,
     fontWeight: 'bold',
-    textAlign: 'center',
-    flexGrow: 1,
+    textAlign: 'center'
   },
   separator: {
-    width: '100%',
     borderBottomWidth: 1,
     borderBottomColor: 'black',
-    marginVertical: 10,
-  },
-  notification: {
-    fontFamily: 'Arial',
-    fontSize: 12,
-    fontWeight: 'bold',
-    textAlign: 'left',
-    marginTop: 10,
-  },
-  reportNumber: {
-    fontFamily: 'Microsoft JhengHei',
-    fontSize: 12,
-    color: 'red',
-    textAlign: 'right',
+    marginVertical: 10
   },
   row: {
-    display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center'
   },
+  notification: {
+    fontFamily: 'Roboto',
+    fontSize: 12,
+    fontWeight: 'bold'
+  },
+  reportNumber: {
+    fontFamily: 'Noto Sans TC',
+    fontSize: 12,
+    color: 'red'
+  }
 });
 
 export default styles;
