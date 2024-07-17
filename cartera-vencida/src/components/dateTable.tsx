@@ -4,7 +4,7 @@ import { TextField, Button, Container, Grid, Box, InputAdornment } from '@mui/ma
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import SearchIcon from '@mui/icons-material/Search';
-import colors from '../resources/colors';
+import colors from '../resources/style/colors';
 
 const columnsPuesto: GridColDef[] = [
   { field: 'id', headerName: 'ID', flex: 0.5 },

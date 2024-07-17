@@ -2,7 +2,7 @@ import React from 'react';
 import DataTable from './dateTable';
 import Taxpayers from './taxpayers';
 import Notification from './notification';
-import colors from '../resources/colors';
+import colors from '../resources/style/colors';
 import { Box, Grid, useTheme, useMediaQuery } from '@mui/material';
 
 const Body_Information: React.FC = () => {
