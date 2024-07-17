@@ -10,7 +10,7 @@ class Connection {
     public static getInstance(): Sequelize {
         if (!Connection.instance) {
             // Config DBConnection only once
-            Connection.instance = new Sequelize('cartera_vencida', 'root', '12345', {
+            Connection.instance = new Sequelize('cartera_vencida', 'root', '', {
                 host: 'localhost',
                 dialect: 'mysql'
             });
