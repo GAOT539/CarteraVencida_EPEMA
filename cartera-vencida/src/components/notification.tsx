@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
-import colors from '../resources/colors';
+import colors from '../resources/style/colors';
 
 
 const Notification: React.FC = () => {

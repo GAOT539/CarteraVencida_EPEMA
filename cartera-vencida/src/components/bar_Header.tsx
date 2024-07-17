@@ -11,7 +11,7 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Avatar from '@mui/material/Avatar'; 
 import logoEpema from '../resources/images/logoFill.png';
-import colors from '../resources/colors';
+import colors from '../resources/style/colors';
 import { Divider } from '@mui/material';
 
 
