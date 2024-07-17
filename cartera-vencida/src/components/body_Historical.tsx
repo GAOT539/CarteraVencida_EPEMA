@@ -4,8 +4,13 @@ import { TextField, Button, Container, Grid, Box, InputAdornment, Typography } f
 import colors from '../resources/colors';
 import { LocalizationProvider } from '@mui/x-date-pickers-pro/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
-import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker/DateRangePicker';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { DatePicker } from '@mui/x-date-pickers';
+import SearchIcon from '@mui/icons-material/Search';
+import dayjs from 'dayjs';
+import 'dayjs/locale/es';
+
+// Configura dayjs con el idioma español
+dayjs.locale('es');
 
 let titulo: string = 'BODEGA';
 
@@ -45,6 +50,8 @@ const rows = [
 export default function DataTable() {
     const [searchText, setSearchText] = useState('');
     const [filteredRows, setFilteredRows] = useState(rows);
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value.toLowerCase();
@@ -64,22 +71,45 @@ export default function DataTable() {
     return (
         <Container maxWidth="lg" style={{ padding: 20 }}>
             <Grid container spacing={2}>
-                {/* ... (rest of the code remains the same) */}
-
                 <Grid item xs={12} style={{ textAlign: 'center' }}>
-                    <Box display="flex" justifyContent="space-between">
-                        {/* ... (rest of the code remains the same) */}
-
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={['DateRangePicker']}>
-                                <DateRangePicker localeText={{ start: 'Check-in', end: 'Check-out' }} />
-                            </DemoContainer>
+                    <Box display="flex" justifyContent="space-between" alignItems="center">
+                        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+                            <Typography variant="body1" gutterBottom>
+                                Fecha Inicio:
+                            </Typography>
+                            <DatePicker
+                                value={startDate}
+                                onChange={(newValue: any) => {
+                                    setStartDate(newValue);
+                                }}
+                            // renderInput={(params) => <TextField {...params} />}
+                            />
+                            <Typography variant="body1" gutterBottom>
+                                Fecha Fin:
+                            </Typography>
+                            <DatePicker
+                                value={endDate}
+                                onChange={(newValue: any) => {
+                                    setEndDate(newValue);
+                                }}
+                            // renderInput={(params) => <TextField {...params} />}
+                            />
                         </LocalizationProvider>
+                        <TextField
+                            value={searchText}
+                            onChange={handleSearch}
+                            placeholder="Buscar..."
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <SearchIcon />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            sx={{ width: 200 }}
+                        />
                     </Box>
                 </Grid>
-
-
-
                 <Grid item xs={12}>
                     <Box style={{ width: '100%' }}>
                         <DataGrid
@@ -104,7 +134,6 @@ export default function DataTable() {
                         />
                     </Box>
                 </Grid>
-
             </Grid>
         </Container>
     );
