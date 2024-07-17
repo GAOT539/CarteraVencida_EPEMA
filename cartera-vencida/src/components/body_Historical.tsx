@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { TextField, Button, Container, Grid, Box, InputAdornment, Typography } from '@mui/material';
+import { TextField, Container, Grid, Box, InputAdornment, Typography, Button } from '@mui/material';
 import colors from '../resources/colors';
 import { LocalizationProvider } from '@mui/x-date-pickers-pro/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
@@ -12,7 +12,7 @@ import 'dayjs/locale/es';
 // Configura dayjs con el idioma español
 dayjs.locale('es');
 
-let titulo: string = 'BODEGA';
+let bodegaOrPuesto: string = 'Bodegas'; // Variable para mostrar "Bodegas" o "Puestos"
 
 const columnsPuesto: GridColDef[] = [
     { field: 'id', headerName: 'ID', flex: 0.5 },
@@ -64,76 +64,82 @@ export default function DataTable() {
         setFilteredRows(filteredData);
     };
 
-    const handleNotifyAll = () => {
-        console.log('Notificar a todos');
-    };
-
     return (
         <Container maxWidth="lg" style={{ padding: 20 }}>
             <Grid container spacing={2}>
                 <Grid item xs={12} style={{ textAlign: 'center' }}>
-                    <Box display="flex" justifyContent="space-between" alignItems="center">
-                        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-                            <Typography variant="body1" gutterBottom>
-                                Fecha Inicio:
-                            </Typography>
-                            <DatePicker
-                                value={startDate}
-                                onChange={(newValue: any) => {
-                                    setStartDate(newValue);
-                                }}
-                            // renderInput={(params) => <TextField {...params} />}
-                            />
-                            <Typography variant="body1" gutterBottom>
-                                Fecha Fin:
-                            </Typography>
-                            <DatePicker
-                                value={endDate}
-                                onChange={(newValue: any) => {
-                                    setEndDate(newValue);
-                                }}
-                            // renderInput={(params) => <TextField {...params} />}
-                            />
-                        </LocalizationProvider>
+                    <Box display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
+                        <Typography variant="h5" gutterBottom>
+                            Historicos - {bodegaOrPuesto}
+                        </Typography>
+                        <Box display="flex" alignItems="center">
+                            <Button variant="contained" sx={{ marginRight: 3, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}>
+                                BODEGAS
+                            </Button>
+                            <Button variant="contained" sx={{ marginRight: 3, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}>
+                                PUESTOS
+                            </Button>
+                        </Box>
+                    </Box>
+                    <hr />
+                </Grid>
+                <Grid item xs={12} style={{ textAlign: 'center' }}>
+                    <Box display="flex" alignItems="center" justifyContent="space-between">
+                        <Box display="flex" alignItems="center">
+                            <Box display="flex" alignItems="center" mr={2}>
+                                <Typography variant="body1" gutterBottom mr={1}>
+                                    FECHA INICIO:
+                                </Typography>
+                                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+                                    <DatePicker
+                                        value={startDate}
+                                        onChange={(newValue: any) => {
+                                            setStartDate(newValue);
+                                        }}
+                                        sx={{ width: 166 }}
+                                    />
+                                </LocalizationProvider>
+                            </Box>
+                            <Box display="flex" alignItems="center" mr={2}>
+                                <Typography variant="body1" gutterBottom mr={1}>
+                                    FECHA FIN:
+                                </Typography>
+                                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+                                    <DatePicker
+                                        value={endDate}
+                                        onChange={(newValue: any) => {
+                                            setEndDate(newValue);
+                                        }}
+                                        sx={{ width: 166 }}
+                                    />
+                                </LocalizationProvider>
+                            </Box>
+                            <Button variant="contained" sx={{ marginRight: 3, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}>
+                                FILTRO
+                            </Button>
+
+                        </Box>
                         <TextField
+                            variant="outlined"
+                            size="medium"
                             value={searchText}
                             onChange={handleSearch}
                             placeholder="Buscar..."
                             InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
+                                startAdornment: (
+                                    <InputAdornment position="start">
                                         <SearchIcon />
                                     </InputAdornment>
                                 ),
                             }}
-                            sx={{ width: 200 }}
+                            sx={{ width: 400 }}
                         />
                     </Box>
                 </Grid>
-                <Grid item xs={12}>
-                    <Box style={{ width: '100%' }}>
-                        <DataGrid
-                            rows={filteredRows}
-                            columns={columnsPuesto}
-                            initialState={{
-                                pagination: {
-                                    paginationModel: { page: 0, pageSize: 11 },
-                                },
-                            }}
-                            pageSizeOptions={[5, 10]}
-                            checkboxSelection
-                            autoHeight
-                            sx={{
-                                '& .MuiDataGrid-columnHeaderTitleContainer': {
-                                    backgroundColor: colors.background_WhiteSmokeBlack,
-                                },
-                                '& .MuiDataGrid-columnHeader': {
-                                    backgroundColor: colors.background_WhiteSmokeBlack,
-                                }
-                            }}
-                        />
-                    </Box>
+                <Grid item xs={12} style={{ height: 647, width: '100%' }}>
+                    <DataGrid rows={filteredRows} columns={columnsPuesto} />
                 </Grid>
+
             </Grid>
         </Container>
     );
