@@ -5,7 +5,7 @@ import { Op } from 'sequelize';
 
 // Crear un nuevo registro histórico
 export const newHistorico = async (req: Request, res: Response) => {
-  const { ciu, contribuyente, bodega, puesto, fecha, cantNotificaciones, archivo } = req.body;
+  const { ciu, contribuyente, bodega, puesto, fecha, cantNotificaciones, archivo, pagado } = req.body;
 
   try {
     await Historicos.create({
@@ -15,7 +15,8 @@ export const newHistorico = async (req: Request, res: Response) => {
       puesto,
       fecha,
       cantNotificaciones,
-      archivo
+      archivo,
+      pagado
     });
 
     res.json({
@@ -44,6 +45,7 @@ export const getHistoricos = async (req: Request, res: Response) => {
     });
   }
 }
+
 // Obtener todos los registros históricos donde bodega no es null
 export const getHistoricosBodegas = async (req: Request, res: Response) => {
   try {
@@ -71,6 +73,7 @@ export const getHistoricosBodegas = async (req: Request, res: Response) => {
     });
   }
 };
+
 // Obtener todos los registros históricos donde puesto no es null
 export const getHistoricosPuestos = async (req: Request, res: Response) => {
   try {
@@ -99,7 +102,6 @@ export const getHistoricosPuestos = async (req: Request, res: Response) => {
   }
 };
 
-
 //Obtener historico por el id
 export const getHistoricoById = async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -123,10 +125,10 @@ export const getHistoricoById = async (req: Request, res: Response) => {
     });
   }
 }
+
 //Obtener historicos por CIU
 export const getHistoricosByCIU = async (req: Request, res: Response) => {
   const { ciu } = req.params;
-  console.log(ciu)
 
   try {
     const historicos = await Historicos.findAll({ where: { ciu } });
@@ -177,7 +179,7 @@ export const deleteHistorico = async (req: Request, res: Response) => {
 // Actualizar un registro histórico por ID
 export const updateHistorico = async (req: Request, res: Response) => {
   const id = req.params.id;
-  const { ciu, contribuyente, bodega, puesto, fecha, cantNotificaciones, archivo } = req.body;
+  const { ciu, contribuyente, bodega, puesto, fecha, cantNotificaciones, archivo, pagado } = req.body;
 
   const existHistorico: any = await Historicos.findOne({ where: { id } });
 
@@ -196,7 +198,8 @@ export const updateHistorico = async (req: Request, res: Response) => {
         puesto,
         fecha,
         cantNotificaciones,
-        archivo
+        archivo,
+        pagado
       },
       { where: { id } }
     );
@@ -205,6 +208,37 @@ export const updateHistorico = async (req: Request, res: Response) => {
       msg: `El registro histórico con CIU ${existHistorico.ciu} ha sido editado satisfactoriamente`
     });
 
+  } catch (error) {
+    return res.status(500).json({
+      msg: ErrorMessages.SERVER_ERROR,
+      error
+    });
+  }
+}
+
+// Marcar un registro histórico como pagado (pagado = "SI")
+export const payHistorico = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const existHistorico: any = await Historicos.findOne({ where: { id } });
+    if (!existHistorico) {
+      return res.status(404).json({
+        msg: 'No se encontró un registro histórico con ese ID'
+      });
+    }
+    if (existHistorico.pagado === 'SI') {
+      return res.json({
+        msg: `El registro histórico con CIU ${existHistorico.ciu} ya está marcado como pagado`
+      });
+    }
+    await Historicos.update(
+      { pagado: 'SI' },
+      { where: { id } }
+    );
+    res.json({
+      msg: `El registro histórico con CIU ${existHistorico.ciu} ha sido marcado como pagado`
+    });
   } catch (error) {
     return res.status(500).json({
       msg: ErrorMessages.SERVER_ERROR,

@@ -3,6 +3,7 @@ import express, {Application} from 'express';
 import cors from 'cors';
 //routes
 import routesHistorical from '../routes/historical.routes';
+import routesFiles from '../routes/files.routes';
 //creation of tables
 import {Historicos} from './historical.models';
 
@@ -30,6 +31,7 @@ class Server{
     //@routes: configurate routes
     routes(){
         this.app.use('/api/', routesHistorical);
+        this.app.use('/archivo/', routesFiles);
     }
 
     /*@middlewares: check http request from server,

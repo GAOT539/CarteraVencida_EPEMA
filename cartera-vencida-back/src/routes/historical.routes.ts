@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { deleteHistorico, getHistoricoById, getHistoricos, getHistoricosBodegas, getHistoricosByCIU, getHistoricosPuestos, newHistorico, updateHistorico } from '../controllers/historical.controller';
+import { deleteHistorico, getHistoricoById, getHistoricos, getHistoricosBodegas, getHistoricosByCIU, getHistoricosPuestos, newHistorico, payHistorico, updateHistorico } from '../controllers/historical.controller';
 
 const router = Router();
 
@@ -11,5 +11,6 @@ router.get('/:id', getHistoricoById); // Obtener todos los registros históricos
 router.get('/ciu/:ciu', getHistoricosByCIU); // Obtener todos los registros históricos por CIU
 router.delete('/:id', deleteHistorico); // Eliminar un registro histórico por ID
 router.put('/:id', updateHistorico); // Actualizar un registro histórico por ID
+router.post('/pagado/:id', payHistorico); // Actualizar el campo Pagado del registro histórico por ID
 
 export default router;

@@ -40,6 +40,10 @@ exports.Historicos = connection_db_1.default.define('historicos', {
         type: sequelize_1.DataTypes.BLOB,
         allowNull: true,
     },
+    pagado: {
+        type: sequelize_1.DataTypes.STRING(2),
+        allowNull: false,
+    },
 }, {
     timestamps: false,
 });

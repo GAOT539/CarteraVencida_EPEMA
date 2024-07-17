@@ -35,6 +35,10 @@ export const Historicos = connection.define('historicos', {
     type: DataTypes.BLOB,
     allowNull: true,
   },
+  pagado: {
+    type: DataTypes.STRING(2),
+    allowNull: false,
+  },
 }, {
   timestamps: false,
 });

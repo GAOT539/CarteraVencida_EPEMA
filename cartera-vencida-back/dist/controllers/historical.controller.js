@@ -9,13 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateHistorico = exports.deleteHistorico = exports.getHistoricosByCIU = exports.getHistoricoById = exports.getHistoricosPuestos = exports.getHistoricosBodegas = exports.getHistoricos = exports.newHistorico = void 0;
+exports.payHistorico = exports.updateHistorico = exports.deleteHistorico = exports.getHistoricosByCIU = exports.getHistoricoById = exports.getHistoricosPuestos = exports.getHistoricosBodegas = exports.getHistoricos = exports.newHistorico = void 0;
 const historical_models_1 = require("../models/historical.models");
 const manage_error_1 = require("../error/manage.error");
 const sequelize_1 = require("sequelize");
 // Crear un nuevo registro histórico
 const newHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { ciu, contribuyente, bodega, puesto, fecha, cantNotificaciones, archivo } = req.body;
+    const { ciu, contribuyente, bodega, puesto, fecha, cantNotificaciones, archivo, pagado } = req.body;
     try {
         yield historical_models_1.Historicos.create({
             ciu,
@@ -24,7 +24,8 @@ const newHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             puesto,
             fecha,
             cantNotificaciones,
-            archivo
+            archivo,
+            pagado
         });
         res.json({
             msg: `Registro histórico con CIU ${ciu} ha sido creado satisfactoriamente!`
@@ -131,7 +132,6 @@ exports.getHistoricoById = getHistoricoById;
 //Obtener historicos por CIU
 const getHistoricosByCIU = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { ciu } = req.params;
-    console.log(ciu);
     try {
         const historicos = yield historical_models_1.Historicos.findAll({ where: { ciu } });
         if (historicos.length === 0) {
@@ -176,7 +176,7 @@ exports.deleteHistorico = deleteHistorico;
 // Actualizar un registro histórico por ID
 const updateHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
-    const { ciu, contribuyente, bodega, puesto, fecha, cantNotificaciones, archivo } = req.body;
+    const { ciu, contribuyente, bodega, puesto, fecha, cantNotificaciones, archivo, pagado } = req.body;
     const existHistorico = yield historical_models_1.Historicos.findOne({ where: { id } });
     if (!existHistorico) {
         return res.status(404).json({
@@ -191,7 +191,8 @@ const updateHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function
             puesto,
             fecha,
             cantNotificaciones,
-            archivo
+            archivo,
+            pagado
         }, { where: { id } });
         res.json({
             msg: `El registro histórico con CIU ${existHistorico.ciu} ha sido editado satisfactoriamente`
@@ -205,3 +206,31 @@ const updateHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.updateHistorico = updateHistorico;
+// Marcar un registro histórico como pagado (pagado = "SI")
+const payHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        const existHistorico = yield historical_models_1.Historicos.findOne({ where: { id } });
+        if (!existHistorico) {
+            return res.status(404).json({
+                msg: 'No se encontró un registro histórico con ese ID'
+            });
+        }
+        if (existHistorico.pagado === 'SI') {
+            return res.json({
+                msg: `El registro histórico con CIU ${existHistorico.ciu} ya está marcado como pagado`
+            });
+        }
+        yield historical_models_1.Historicos.update({ pagado: 'SI' }, { where: { id } });
+        res.json({
+            msg: `El registro histórico con CIU ${existHistorico.ciu} ha sido marcado como pagado`
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            msg: manage_error_1.ErrorMessages.SERVER_ERROR,
+            error
+        });
+    }
+});
+exports.payHistorico = payHistorico;

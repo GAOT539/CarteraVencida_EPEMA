@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import logoEpema from '../resources/images/logoFill.png';
-import colors from '../resources/colors';
+import colors from '../resources/style/colors';
 
 const Bar_Footer: React.FC = () => {
   return (

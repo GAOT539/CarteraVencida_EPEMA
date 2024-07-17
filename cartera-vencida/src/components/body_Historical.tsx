@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { TextField, Container, Grid, Box, InputAdornment, Typography, Button } from '@mui/material';
-import colors from '../resources/colors';
+import colors from '../resources/style/colors';
 import { LocalizationProvider } from '@mui/x-date-pickers-pro/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers';
