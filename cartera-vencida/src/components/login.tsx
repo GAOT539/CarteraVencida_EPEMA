@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Grid, Typography, TextField, Button, IconButton } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faUser } from '@fortawesome/free-solid-svg-icons';
-import colors from '../resources/colors';
+import colors from '../resources/style/colors';
 
 const Login: React.FC = () => {
     const [username, setUsername] = useState('');
