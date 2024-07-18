@@ -7,6 +7,10 @@ export const Historicos = connection.define('historicos', {
     autoIncrement: true,
     primaryKey: true,
   },
+  numero_reporte: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
   ciu: {
     type: DataTypes.STRING(10),
     allowNull: false,
@@ -33,6 +37,10 @@ export const Historicos = connection.define('historicos', {
   },
   archivo: {
     type: DataTypes.BLOB,
+    allowNull: true,
+  },
+  valor: {
+    type: DataTypes.DOUBLE,
     allowNull: true,
   },
   pagado: {

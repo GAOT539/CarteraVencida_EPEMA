@@ -63,7 +63,7 @@ const MyDocument = ({ numero_reporte }: { numero_reporte: string }) => (
             <View style={styles.header}>
                 <Image
                     style={styles.logo}
-                    src="https://i.ibb.co/vz18G4s/logoFill.png" //Error en la imagen 
+                    source={require("../resources/images/logoFill.png")}
                 />
                 <Text style={styles.title}>
                     EMPRESA PÚBLICA – EMPRESA MUNICIPAL{"\n"}

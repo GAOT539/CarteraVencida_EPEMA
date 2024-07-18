@@ -12,6 +12,10 @@ exports.Historicos = connection_db_1.default.define('historicos', {
         autoIncrement: true,
         primaryKey: true,
     },
+    numero_reporte: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false,
+    },
     ciu: {
         type: sequelize_1.DataTypes.STRING(10),
         allowNull: false,
@@ -38,6 +42,10 @@ exports.Historicos = connection_db_1.default.define('historicos', {
     },
     archivo: {
         type: sequelize_1.DataTypes.BLOB,
+        allowNull: true,
+    },
+    valor: {
+        type: sequelize_1.DataTypes.DOUBLE,
         allowNull: true,
     },
     pagado: {

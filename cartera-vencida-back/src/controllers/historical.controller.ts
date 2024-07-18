@@ -5,17 +5,19 @@ import { Op } from 'sequelize';
 
 // Crear un nuevo registro histórico
 export const newHistorico = async (req: Request, res: Response) => {
-  const { ciu, contribuyente, bodega, puesto, fecha, cantNotificaciones, archivo, pagado } = req.body;
+  const { ciu,numero_reporte, contribuyente, bodega, puesto, fecha, cantNotificaciones, archivo, valor, pagado } = req.body;
 
   try {
     await Historicos.create({
       ciu,
+      numero_reporte,
       contribuyente,
       bodega,
       puesto,
       fecha,
       cantNotificaciones,
       archivo,
+      valor,
       pagado
     });
 
@@ -179,7 +181,7 @@ export const deleteHistorico = async (req: Request, res: Response) => {
 // Actualizar un registro histórico por ID
 export const updateHistorico = async (req: Request, res: Response) => {
   const id = req.params.id;
-  const { ciu, contribuyente, bodega, puesto, fecha, cantNotificaciones, archivo, pagado } = req.body;
+  const { ciu, numero_reporte, contribuyente, bodega, puesto, fecha, cantNotificaciones, archivo,valor, pagado } = req.body;
 
   const existHistorico: any = await Historicos.findOne({ where: { id } });
 
@@ -193,12 +195,14 @@ export const updateHistorico = async (req: Request, res: Response) => {
     await Historicos.update(
       {
         ciu,
+        numero_reporte,
         contribuyente,
         bodega,
         puesto,
         fecha,
         cantNotificaciones,
         archivo,
+        valor,
         pagado
       },
       { where: { id } }
