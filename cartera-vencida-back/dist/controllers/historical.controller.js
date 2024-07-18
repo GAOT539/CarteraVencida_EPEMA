@@ -15,16 +15,18 @@ const manage_error_1 = require("../error/manage.error");
 const sequelize_1 = require("sequelize");
 // Crear un nuevo registro histórico
 const newHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { ciu, contribuyente, bodega, puesto, fecha, cantNotificaciones, archivo, pagado } = req.body;
+    const { ciu, numero_reporte, contribuyente, bodega, puesto, fecha, cantNotificaciones, archivo, valor, pagado } = req.body;
     try {
         yield historical_models_1.Historicos.create({
             ciu,
+            numero_reporte,
             contribuyente,
             bodega,
             puesto,
             fecha,
             cantNotificaciones,
             archivo,
+            valor,
             pagado
         });
         res.json({
@@ -176,7 +178,7 @@ exports.deleteHistorico = deleteHistorico;
 // Actualizar un registro histórico por ID
 const updateHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
-    const { ciu, contribuyente, bodega, puesto, fecha, cantNotificaciones, archivo, pagado } = req.body;
+    const { ciu, numero_reporte, contribuyente, bodega, puesto, fecha, cantNotificaciones, archivo, valor, pagado } = req.body;
     const existHistorico = yield historical_models_1.Historicos.findOne({ where: { id } });
     if (!existHistorico) {
         return res.status(404).json({
@@ -186,12 +188,14 @@ const updateHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function
     try {
         yield historical_models_1.Historicos.update({
             ciu,
+            numero_reporte,
             contribuyente,
             bodega,
             puesto,
             fecha,
             cantNotificaciones,
             archivo,
+            valor,
             pagado
         }, { where: { id } });
         res.json({
