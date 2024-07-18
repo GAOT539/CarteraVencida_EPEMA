@@ -4,14 +4,14 @@ import Bar_Header from './components/bar_Header';
 import Body_Information from './components/body_Information';
 import GeneradorPDF from './components/generator_PDF_v0.1';
 import GeneradorPDFv02 from './components/generator_PDF_v0.2';
-import User from './components/user';
+
 
 function App() {
   return (
     <div>
       <Bar_Header />
       <main>
-        <User/>
+     
       </main>
       <Bar_Footer />
     </div>

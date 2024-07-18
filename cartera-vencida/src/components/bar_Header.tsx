@@ -15,7 +15,7 @@ import colors from '../resources/style/colors';
 import { Divider } from '@mui/material';
 
 
-const pages = ['Cartera Vencida', 'Históricos'];
+const pages = ['Cartera Vencida', 'Históricos', 'Gestor Usuarios'];
 
 function Bar_Header() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
