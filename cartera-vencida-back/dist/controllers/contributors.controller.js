@@ -17,15 +17,12 @@ const manage_error_1 = require("../error/manage.error");
 const contributors_models_1 = __importDefault(require("../models/contributors.models"));
 // Crear un nuevo registro de contribuyente
 const newContribuyente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { ciu, cedula, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, estado } = req.body;
+    const { ciu, cedula, nombre, estado } = req.body;
     try {
         const contribuyente = yield contributors_models_1.default.create({
             ciu,
             cedula,
-            primer_nombre,
-            segundo_nombre,
-            primer_apellido,
-            segundo_apellido,
+            nombre,
             estado
         });
         res.json({
@@ -78,7 +75,7 @@ exports.getContribuyente = getContribuyente;
 // Actualizar un registro de contribuyente
 const updateContribuyente = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { ciu } = req.params;
-    const { cedula, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, estado } = req.body;
+    const { cedula, nombre, estado } = req.body;
     try {
         const contribuyente = yield contributors_models_1.default.findByPk(ciu);
         if (!contribuyente) {
@@ -88,10 +85,7 @@ const updateContribuyente = (req, res) => __awaiter(void 0, void 0, void 0, func
         }
         yield contribuyente.update({
             cedula,
-            primer_nombre,
-            segundo_nombre,
-            primer_apellido,
-            segundo_apellido,
+            nombre,
             estado
         });
         res.json({

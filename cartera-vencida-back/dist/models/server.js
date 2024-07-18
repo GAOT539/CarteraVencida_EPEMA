@@ -38,7 +38,7 @@ class Server {
     routes() {
         this.app.use('/api/', historical_routes_1.default);
         this.app.use('/archivo/', files_routes_1.default);
-        this.app.use('/usuario/', contributors_routes_1.default);
+        this.app.use('/contribuyentes/', contributors_routes_1.default);
     }
     middlewares() {
         this.app.use(express_1.default.json());
