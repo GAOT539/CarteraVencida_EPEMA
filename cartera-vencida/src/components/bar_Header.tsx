@@ -12,13 +12,17 @@ import MenuItem from '@mui/material/MenuItem';
 import Avatar from '@mui/material/Avatar'; 
 import logoEpema from '../resources/images/logoFill.png';
 import colors from '../resources/style/colors';
-import { Divider } from '@mui/material';
+import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 
-
-const pages = ['Cartera Vencida', 'Históricos', 'Gestor Usuarios'];
+const pages = [
+  { name: 'Cartera Vencida', path: '/' },
+  { name: 'Históricos', path: '/historicos' },
+  { name: 'Gestor Usuarios', path: '/login' }
+];
 
 function Bar_Header() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+  const navigate = useNavigate(); // Inicializa useNavigate
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -26,6 +30,11 @@ function Bar_Header() {
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
+  };
+
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    handleCloseNavMenu();
   };
 
   return (
@@ -46,7 +55,7 @@ function Bar_Header() {
             variant="h6"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            onClick={() => navigate('/')} // Redirige a la página principal
             sx={{
               fontSize: '1.8rem',
               display: { xs: 'none', md: 'flex' },
@@ -55,6 +64,7 @@ function Bar_Header() {
               letterSpacing: '.3rem',
               color: colors.white,
               textDecoration: 'none',
+              cursor: 'pointer', // Añade cursor pointer
             }}
           >
             EP-EMA
@@ -90,8 +100,8 @@ function Bar_Header() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem key={page.name} onClick={() => handleNavigate(page.path)}>
+                  <Typography textAlign="center">{page.name}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -110,7 +120,7 @@ function Bar_Header() {
             variant="h5"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"///redirección Home
+            onClick={() => navigate('/')} // Redirige a la página principal
             sx={{
               fontSize: '1.6rem',
               mr: 2,
@@ -121,25 +131,29 @@ function Bar_Header() {
               letterSpacing: '.3rem',
               color: colors.white,
               textDecoration: 'none',
+              cursor: 'pointer', // Añade cursor pointer
             }}
           >
             EP-EMA
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
-            {pages.map((page, index) => (
-              <React.Fragment key={page}>
-                <Button
-                  key={page}
-                  onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: colors.white, display: 'block', '&:hover': {
-                      backgroundColor: colors.oliveGreenDarker,
-                      color: colors.white,
-                    }, }}
-                >
-                  {page}
-                </Button>
-              </React.Fragment>
+            {pages.map((page) => (
+              <Button
+                key={page.name}
+                onClick={() => handleNavigate(page.path)} // Navega a la ruta correspondiente
+                sx={{
+                  my: 2,
+                  color: colors.white,
+                  display: 'block',
+                  '&:hover': {
+                    backgroundColor: colors.oliveGreenDarker,
+                    color: colors.white,
+                  },
+                }}
+              >
+                {page.name}
+              </Button>
             ))}
           </Box>
         </Toolbar>
