@@ -12,6 +12,9 @@ const colors = {
     oliveGreen: '#45743b',
     oliveGreenGradient: '#3a6032',
     oliveGreenDarker: '#263a21',
+
+    blue: '#2e78cc',
+    blueGradient: '#1f518b'
     //white: '#FFFFFF',
 };
 
