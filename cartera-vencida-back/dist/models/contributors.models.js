@@ -12,23 +12,11 @@ exports.Contribuyentes = connection_db_1.default.define('contribuyentes', {
         primaryKey: true,
     },
     cedula: {
-        type: sequelize_1.DataTypes.STRING(10),
+        type: sequelize_1.DataTypes.STRING(15),
         allowNull: true,
     },
-    primer_nombre: {
-        type: sequelize_1.DataTypes.STRING(30),
-        allowNull: true,
-    },
-    segundo_nombre: {
-        type: sequelize_1.DataTypes.STRING(30),
-        allowNull: true,
-    },
-    primer_apellido: {
-        type: sequelize_1.DataTypes.STRING(30),
-        allowNull: true,
-    },
-    segundo_apellido: {
-        type: sequelize_1.DataTypes.STRING(30),
+    nombre: {
+        type: sequelize_1.DataTypes.STRING(75),
         allowNull: true,
     },
     estado: {

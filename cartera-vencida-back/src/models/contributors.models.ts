@@ -7,23 +7,11 @@ export const Contribuyentes = connection.define('contribuyentes', {
     primaryKey: true,
   },
   cedula: {
-    type: DataTypes.STRING(10),
+    type: DataTypes.STRING(15),
     allowNull: true,
   },
-  primer_nombre: {
-    type: DataTypes.STRING(30),
-    allowNull: true,
-  },
-  segundo_nombre: {
-    type: DataTypes.STRING(30),
-    allowNull: true,
-  },
-  primer_apellido: {
-    type: DataTypes.STRING(30),
-    allowNull: true,
-  },
-  segundo_apellido: {
-    type: DataTypes.STRING(30),
+  nombre: {
+    type: DataTypes.STRING(75),
     allowNull: true,
   },
   estado: {

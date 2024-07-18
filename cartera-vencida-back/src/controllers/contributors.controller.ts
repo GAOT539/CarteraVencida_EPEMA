@@ -4,16 +4,13 @@ import Contribuyentes from '../models/contributors.models';
 
 // Crear un nuevo registro de contribuyente
 export const newContribuyente = async (req: Request, res: Response) => {
-  const { ciu, cedula, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, estado } = req.body;
+  const { ciu, cedula, nombre, estado } = req.body;
 
   try {
     const contribuyente = await Contribuyentes.create({
       ciu,
       cedula,
-      primer_nombre,
-      segundo_nombre,
-      primer_apellido,
-      segundo_apellido,
+      nombre,
       estado
     });
 
@@ -70,7 +67,7 @@ export const getContribuyente = async (req: Request, res: Response) => {
 // Actualizar un registro de contribuyente
 export const updateContribuyente = async (req: Request, res: Response) => {
   const { ciu } = req.params;
-  const { cedula, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, estado } = req.body;
+  const { cedula, nombre, estado } = req.body;
 
   try {
     const contribuyente = await Contribuyentes.findByPk(ciu);
@@ -83,10 +80,7 @@ export const updateContribuyente = async (req: Request, res: Response) => {
 
     await contribuyente.update({
       cedula,
-      primer_nombre,
-      segundo_nombre,
-      primer_apellido,
-      segundo_apellido,
+      nombre,
       estado
     });
 
