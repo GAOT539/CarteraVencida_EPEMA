@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.payHistorico = exports.updateHistorico = exports.deleteHistorico = exports.getHistoricosByCIU = exports.getHistoricoById = exports.getHistoricosPuestos = exports.getHistoricosBodegas = exports.getHistoricos = exports.newHistorico = void 0;
+exports.payHistorico = exports.updateHistorico = exports.deleteHistorico = exports.getHistoricosByCIU = exports.getHistoricoById = exports.getHistoricosPuestos = exports.getHistoricosPuestosNoPagado = exports.getHistoricosBodegasNoPagado = exports.getHistoricosBodegas = exports.getHistoricos = exports.newHistorico = void 0;
 const historical_models_1 = require("../models/historical.models");
 const manage_error_1 = require("../error/manage.error");
 const sequelize_1 = require("sequelize");
@@ -84,6 +84,94 @@ const getHistoricosBodegas = (req, res) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.getHistoricosBodegas = getHistoricosBodegas;
+// Obtener todos los registros históricos donde bodega no es null y pagado es NO
+const getHistoricosBodegasNoPagado = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const historicosList = yield historical_models_1.Historicos.findAll({
+            where: {
+                bodega: {
+                    [sequelize_1.Op.ne]: null,
+                },
+                pagado: {
+                    [sequelize_1.Op.eq]: 'NO',
+                },
+            }, attributes: [
+                'id',
+                'numero_reporte',
+                'ciu',
+                'contribuyente',
+                'bodega',
+                'nave',
+                'cantNotificaciones',
+                'archivo',
+                'valor',
+                'pagado',
+                [sequelize_1.Sequelize.fn('MAX', sequelize_1.Sequelize.col('fecha')), 'fecha'],
+            ],
+            group: ['ciu', 'bodega'],
+            raw: true,
+        });
+        if (historicosList.length === 0) {
+            return res.status(404).json({
+                msg: 'No se encontraron historicos asociados a bodegas que no hayan sido pagados',
+            });
+        }
+        res.json({
+            historicosList,
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            msg: manage_error_1.ErrorMessages.SERVER_ERROR,
+            error,
+        });
+    }
+});
+exports.getHistoricosBodegasNoPagado = getHistoricosBodegasNoPagado;
+// Obtener todos los registros históricos donde bodega no es null y pagado es NO
+const getHistoricosPuestosNoPagado = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const historicosList = yield historical_models_1.Historicos.findAll({
+            where: {
+                puesto: {
+                    [sequelize_1.Op.ne]: null,
+                },
+                pagado: {
+                    [sequelize_1.Op.eq]: 'NO',
+                },
+            }, attributes: [
+                'id',
+                'numero_reporte',
+                'ciu',
+                'contribuyente',
+                'puesto',
+                'nave',
+                'cantNotificaciones',
+                'archivo',
+                'valor',
+                'pagado',
+                [sequelize_1.Sequelize.fn('MAX', sequelize_1.Sequelize.col('fecha')), 'fecha'],
+            ],
+            group: ['ciu', 'puesto'],
+            raw: true,
+        });
+        if (historicosList.length === 0) {
+            return res.status(404).json({
+                msg: 'No se encontraron historicos asociados a bodegas que no hayan sido pagados',
+            });
+        }
+        res.json({
+            historicosList,
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            msg: manage_error_1.ErrorMessages.SERVER_ERROR,
+            error,
+        });
+    }
+});
+exports.getHistoricosPuestosNoPagado = getHistoricosPuestosNoPagado;
 // Obtener todos los registros históricos donde puesto no es null
 const getHistoricosPuestos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
