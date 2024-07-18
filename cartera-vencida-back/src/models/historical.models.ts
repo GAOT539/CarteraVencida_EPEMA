@@ -27,6 +27,10 @@ export const Historicos = connection.define('historicos', {
     type: DataTypes.STRING(30),
     allowNull: true,
   },
+  nave: {
+    type: DataTypes.STRING(40),
+    allowNull: true,
+  },
   fecha: {
     type: DataTypes.DATEONLY,
     allowNull: true,

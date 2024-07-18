@@ -18,6 +18,7 @@ const cors_1 = __importDefault(require("cors"));
 //routes
 const historical_routes_1 = __importDefault(require("../routes/historical.routes"));
 const files_routes_1 = __importDefault(require("../routes/files.routes"));
+const contributors_routes_1 = __importDefault(require("../routes/contributors.routes"));
 //creation of tables
 const historical_models_1 = require("./historical.models");
 class Server {
@@ -29,25 +30,20 @@ class Server {
         this.routes();
         this.dbConnect();
     }
-    //@app.listen(): initialize the web server on the specified port 
     listen() {
         this.app.listen(this.port, () => {
             console.log(`Application is running in port ${this.port}`);
         });
     }
-    //@routes: configurate routes
     routes() {
         this.app.use('/api/', historical_routes_1.default);
         this.app.use('/archivo/', files_routes_1.default);
+        this.app.use('/contribuyentes/', contributors_routes_1.default);
     }
-    /*@middlewares: check http request from server,
-    if body is in json convert data to js object*/
     middlewares() {
         this.app.use(express_1.default.json());
         this.app.use((0, cors_1.default)());
     }
-    /*@dbConnect: Asynchronous function that creates the database based on
-    sequel rules*/
     dbConnect() {
         return __awaiter(this, void 0, void 0, function* () {
             try {

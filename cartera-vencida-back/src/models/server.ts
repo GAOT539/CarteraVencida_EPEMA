@@ -4,6 +4,7 @@ import cors from 'cors';
 //routes
 import routesHistorical from '../routes/historical.routes';
 import routesFiles from '../routes/files.routes';
+import routesContributors from '../routes/contributors.routes';
 //creation of tables
 import {Historicos} from './historical.models';
 
@@ -21,28 +22,23 @@ class Server{
         this.dbConnect();
     }
 
-    //@app.listen(): initialize the web server on the specified port 
     listen(){
         this.app.listen(this.port, () =>{
             console.log(`Application is running in port ${this.port}`);
         })
     }
 
-    //@routes: configurate routes
     routes(){
         this.app.use('/api/', routesHistorical);
         this.app.use('/archivo/', routesFiles);
+        this.app.use('/contribuyentes/', routesContributors);
     }
 
-    /*@middlewares: check http request from server,
-    if body is in json convert data to js object*/
     middlewares(){
         this.app.use(express.json());
         this.app.use(cors());
     }
 
-    /*@dbConnect: Asynchronous function that creates the database based on
-    sequel rules*/
     async dbConnect(){
         try {
             //These lines of code the first time create my tables

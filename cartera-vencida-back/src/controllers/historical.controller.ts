@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import { Historicos } from '../models/historical.models';
 import { ErrorMessages } from '../error/manage.error';
-import { Op } from 'sequelize';
+import { Op, Sequelize } from 'sequelize';
 
 // Crear un nuevo registro histórico
 export const newHistorico = async (req: Request, res: Response) => {
-  const { ciu,numero_reporte, contribuyente, bodega, puesto, fecha, cantNotificaciones, archivo, valor, pagado } = req.body;
+  const { ciu,numero_reporte, contribuyente, bodega, puesto, nave, fecha, cantNotificaciones, archivo, valor, pagado } = req.body;
 
   try {
     await Historicos.create({
@@ -14,6 +14,7 @@ export const newHistorico = async (req: Request, res: Response) => {
       contribuyente,
       bodega,
       puesto,
+      nave,
       fecha,
       cantNotificaciones,
       archivo,
@@ -75,7 +76,94 @@ export const getHistoricosBodegas = async (req: Request, res: Response) => {
     });
   }
 };
+// Obtener todos los registros históricos donde bodega no es null y pagado es NO
+export const getHistoricosBodegasNoPagado = async (req: Request, res: Response) => {
+  try {
+    const historicosList = await Historicos.findAll({
+      where: {
+        bodega: {
+          [Op.ne]: null,  
+        },
+        pagado: {
+          [Op.eq]: 'NO',  
+        },
+      },attributes: [
+        'id',
+        'numero_reporte',
+        'ciu',
+        'contribuyente',
+        'bodega',
+        'nave',
+        'cantNotificaciones',
+        'archivo',
+        'valor',
+        'pagado',
+        [Sequelize.fn('MAX', Sequelize.col('fecha')), 'fecha'],
+      ],
+      group: ['ciu', 'bodega'],
+      raw: true,
+    });
 
+    if (historicosList.length === 0) {
+      return res.status(404).json({
+        msg: 'No se encontraron historicos asociados a bodegas que no hayan sido pagados',
+      });
+    }
+
+    res.json({
+      historicosList,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: ErrorMessages.SERVER_ERROR,
+      error,
+    });
+  }
+};
+// Obtener todos los registros históricos donde bodega no es null y pagado es NO
+export const getHistoricosPuestosNoPagado = async (req: Request, res: Response) => {
+  try {
+    const historicosList = await Historicos.findAll({
+      where: {
+        puesto: {
+          [Op.ne]: null,  
+        },
+        pagado: {
+          [Op.eq]: 'NO',  
+        },
+      },attributes: [
+        'id',
+        'numero_reporte',
+        'ciu',
+        'contribuyente',
+        'puesto',
+        'nave',
+        'cantNotificaciones',
+        'archivo',
+        'valor',
+        'pagado',
+        [Sequelize.fn('MAX', Sequelize.col('fecha')), 'fecha'],
+      ],
+      group: ['ciu', 'puesto'],
+      raw: true,
+    });
+
+    if (historicosList.length === 0) {
+      return res.status(404).json({
+        msg: 'No se encontraron historicos asociados a bodegas que no hayan sido pagados',
+      });
+    }
+
+    res.json({
+      historicosList,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: ErrorMessages.SERVER_ERROR,
+      error,
+    });
+  }
+};
 // Obtener todos los registros históricos donde puesto no es null
 export const getHistoricosPuestos = async (req: Request, res: Response) => {
   try {
@@ -181,7 +269,7 @@ export const deleteHistorico = async (req: Request, res: Response) => {
 // Actualizar un registro histórico por ID
 export const updateHistorico = async (req: Request, res: Response) => {
   const id = req.params.id;
-  const { ciu, numero_reporte, contribuyente, bodega, puesto, fecha, cantNotificaciones, archivo,valor, pagado } = req.body;
+  const { ciu, numero_reporte, contribuyente, bodega, puesto, nave, fecha, cantNotificaciones, archivo,valor, pagado } = req.body;
 
   const existHistorico: any = await Historicos.findOne({ where: { id } });
 
@@ -199,6 +287,7 @@ export const updateHistorico = async (req: Request, res: Response) => {
         contribuyente,
         bodega,
         puesto,
+        nave,
         fecha,
         cantNotificaciones,
         archivo,

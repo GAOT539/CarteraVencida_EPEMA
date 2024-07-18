@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const contributors_controller_1 = require("../controllers/contributors.controller");
+const router = (0, express_1.Router)();
+router.get('/', contributors_controller_1.getContribuyentes);
+router.get('/:ciu', contributors_controller_1.getContribuyente);
+router.post('/', contributors_controller_1.newContribuyente);
+router.put('/:ciu', contributors_controller_1.updateContribuyente);
+router.delete('/:ciu', contributors_controller_1.deleteContribuyente);
+exports.default = router;
