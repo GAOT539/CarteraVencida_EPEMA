@@ -31,7 +31,7 @@ class Server{
     routes(){
         this.app.use('/api/', routesHistorical);
         this.app.use('/archivo/', routesFiles);
-        this.app.use('/usuario/', routesContributors);
+        this.app.use('/contribuyentes/', routesContributors);
     }
 
     middlewares(){
