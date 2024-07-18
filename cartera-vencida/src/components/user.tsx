@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, TextField, Typography, Grid, InputAdornment } from '@mui/material';
+import { Box, TextField, Typography, Grid, InputAdornment, Button } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -39,90 +39,104 @@ const Taxpayers: React.FC = () => {
         <Box sx={{ padding: 4 }}>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
-                <Box  display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-        <Typography variant="h4" gutterBottom>Contribuyentes</Typography>
-        <TextField
-            label="Buscar Contribuyente"
-            variant="outlined"
-            sx={{ width: 500 }} // Agregué este prop
-            InputProps={{
-                endAdornment: (
-                    <InputAdornment position="end">
-                        <SearchIcon />
-                    </InputAdornment>
-                ),
-            }}
-        />
-    </Box>
-                       
-                   
-                </Grid>
-                <Grid item xs={4}>
-                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} marginBottom={4}>
+                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                        <Typography variant="h4" gutterBottom>Contribuyentes</Typography>
                         <TextField
-                            label="CIU"
+                            label="Buscar Contribuyente"
+                            variant="outlined"
+                            sx={{ width: 500 }} // Agregué este prop
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <SearchIcon />
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                    </Box>
+                </Grid>
+                <Grid item xs={6}>
+                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} >
+                        <Typography variant="body1" gutterBottom mr={1}>
+                            CIU:
+                        </Typography>
+                        <TextField
                             value={ciu}
                             onChange={(e) => setCiu(e.target.value)}
                             disabled
-                            sx={{ width: '30%' }}
+                            sx={{ width: '50%' }}
                         />
                     </Box>
-                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} marginBottom={4}>
+                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} >
+                        <Typography variant="body1" gutterBottom mr={1}>
+                            CEDULA:
+                        </Typography>
                         <TextField
-                            label="Cédula"
                             value={cedula}
                             onChange={(e) => setCedula(e.target.value)}
                             disabled
-                            sx={{ width: '30%' }}
+                            sx={{ width: '50%' }}
                         />
                     </Box>
-                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} marginBottom={4}>
+                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} >
+                        <Typography variant="body1" gutterBottom mr={1}>
+                            PRIMER NOMBRE:
+                        </Typography>
                         <TextField
-                            label="Primer nombre"
                             value={primerNombre}
                             onChange={(e) => setPrimerNombre(e.target.value)}
                             disabled
-                            sx={{ width: '30%' }}
-                        />
-                    </Box>
-                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} marginBottom={4}>
-                        <TextField
-                            label="Segundo nombre"
-                            value={segundoNombre}
-                            onChange={(e) => setSegundoNombre(e.target.value)}
-                            disabled
-                            sx={{ width: '30%' }}
-                        />
-                    </Box>
-                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} marginBottom={4}>
-                        <TextField
-                            label="Primer apellido"
-                            value={primerApellido}
-                            onChange={(e) => setPrimerApellido(e.target.value)}
-                            disabled
-                            sx={{ width: '30%' }}
-                        />
-                    </Box>
-                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} marginBottom={4}>
-                        <TextField
-                            label="Segundo apellido"
-                            value={segundoApellido}
-                            onChange={(e) => setSegundoApellido(e.target.value)}
-                            disabled
-                            sx={{ width: '30%' }}
-                        />
-                    </Box>
-                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} marginBottom={4}>
-                        <TextField
-                            label="Estado"
-                            value={estado}
-                            onChange={(e) => setEstado(e.target.value)}
-                            disabled
-                            sx={{ width: '30%' }}
+                            sx={{ width: '50%' }}
                         />
                     </Box>
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={6}>
+                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} >
+                        <Typography variant="body1" gutterBottom mr={1}>
+                            SEGUNDO NOMBRE:
+                        </Typography>
+                        <TextField
+                            value={segundoNombre}
+                            onChange={(e) => setSegundoNombre(e.target.value)}
+                            disabled
+                            sx={{ width: '50%' }}
+                        />
+                    </Box>
+                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} >
+                        <Typography variant="body1" gutterBottom mr={1}>
+                            PRIMER APELLIDO:
+                        </Typography>
+                        <TextField
+                            value={primerApellido}
+                            onChange={(e) => setPrimerApellido(e.target.value)}
+                            disabled
+                            sx={{ width: '50%' }}
+                        />
+                    </Box>
+                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} >
+                        <Typography variant="body1" gutterBottom mr={1}>
+                            SEGUNDO APELLIDO:
+                        </Typography>
+                        <TextField
+                            value={segundoApellido}
+                            onChange={(e) => setSegundoApellido(e.target.value)}
+                            disabled
+                            sx={{ width: '50%' }}
+                        />
+                    </Box>
+                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} >
+                        <Typography variant="body1" gutterBottom mr={1}>
+                            ESTADO:
+                        </Typography>
+                        <TextField
+                            value={estado}
+                            onChange={(e) => setEstado(e.target.value)}
+                            disabled
+                            sx={{ width: '50%' }}
+                        />
+                    </Box>
+                </Grid>
+                <Grid item xs={12}>
                     <hr />
                     <DataGrid
                         rows={rowsContribuyentes}
@@ -132,6 +146,13 @@ const Taxpayers: React.FC = () => {
                         sx={{ width: '100%', height: 'auto' }}
                     />
                 </Grid>
+                <Grid item xs={12}>
+    <Box display="flex" justifyContent="flex-start" mb={2}>
+        <Button variant="contained" color="primary">Crear</Button>
+        <Button variant="contained" color="secondary" sx={{ ml: 2 }}>Eliminar</Button>
+        <Button variant="contained" color="primary" sx={{ ml: 2 }}>Editar</Button>
+    </Box>
+</Grid>
             </Grid>
         </Box>
     );
