@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     color: 'green',
   },
 });
-
+const hyphenationCallback = (word: any) => [word];
 const MyDocument = ({ numero_reporte, fecha, hora, ciu, contribuyente, cedula, num_puesto_bodega, nave, seccion, cant_meses }:
   { numero_reporte: string, fecha: string, hora: string, ciu: string, contribuyente: string, cedula: string, num_puesto_bodega: string, nave: string, seccion: string, cant_meses: string }) => (
   <Document>
@@ -114,7 +114,7 @@ const MyDocument = ({ numero_reporte, fecha, hora, ciu, contribuyente, cedula, n
       </View>
       <View style={styles.section02}>
         <View style={styles.wrap}>
-          <Text style={styles.texts}>
+          <Text style={styles.texts} hyphenationCallback={hyphenationCallback}>
             Se notifica al Sr./Sra: <Text style={styles.texts_Black}>{contribuyente}</Text> CC/RUC: <Text style={styles.texts_Black}>{cedula}</Text> arrendatario/a del puesto/bodega/local/núcleo/cubículo Nº <Text style={styles.texts_Black}>{num_puesto_bodega}</Text> de la nave <Text style={styles.texts_Black}>{nave}</Text> sección <Text style={styles.texts_Black}>{seccion}</Text> que mantiene pendiente de pago de <Text style={styles.texts_Black}>{cant_meses}</Text> meses por la ocupación de espacio arrendado. {"\n"}{"\n"}
             Por lo que se le informa que tiene el plazo de cuarenta y ocho (48) horas, una vez recibida esta notificación, para cumplir con sus obligaciones.{"\n"}{"\n"}
             En caso de no dar cumplimiento con lo dispuesto, se procederá a declarar vacante de acuerdo al REGLAMENTO DE FUNCIONAMIENTO INTERNO DEL MERCADO MAYORISTA AMBATO, según la SECCIÓN SEGUNDA DE LA DECLARATORIA UNILATERAL DE VACANTE DE BODEGAS, LOCALES, CUBÍCULOS, NÚCLEOS Y PUESTOS, Art. 23 literal e) que dispone: "Por mora en el pago de tres mensualidades consecutivas".
