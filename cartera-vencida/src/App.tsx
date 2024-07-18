@@ -3,7 +3,7 @@ import Bar_Footer from './components/bar_Footer';
 import Bodega from './components/body_Historical';
 import Body_Information from './components/body_Information';
 import GeneradorPDF from './components/generator_PDF';
-import Body_User from './components/login';
+import Body_User from './components/body_Login';
 import { BrowserRouter, Route, Router, Routes } from 'react-router-dom';
 
 function App() {
