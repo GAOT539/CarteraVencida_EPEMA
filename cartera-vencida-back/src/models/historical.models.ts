@@ -15,10 +15,6 @@ export const Historicos = connection.define('historicos', {
     type: DataTypes.STRING(10),
     allowNull: false,
   },
-  contribuyente: {
-    type: DataTypes.STRING(80),
-    allowNull: true,
-  },
   bodega: {
     type: DataTypes.STRING(30),
     allowNull: true,
@@ -31,9 +27,17 @@ export const Historicos = connection.define('historicos', {
     type: DataTypes.STRING(40),
     allowNull: true,
   },
+  seccion: {
+    type: DataTypes.STRING(40),
+    allowNull: true,
+  },
   fecha: {
     type: DataTypes.DATEONLY,
     allowNull: true,
+  },
+  meses:{
+    type: DataTypes.INTEGER,
+    allowNull: false,
   },
   cantNotificaciones: {
     type: DataTypes.INTEGER,
