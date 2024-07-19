@@ -100,7 +100,12 @@ const Body_User: React.FC = () => {
                             columns={columnsContribuyentes}
                             checkboxSelection
                             getRowId={(row) => row.ciu}
-                            sx={{ width: '113%', height: 550 }} // Ajusta la altura según sea necesario
+                            sx={{ width: '113%', height: 550,'& .MuiDataGrid-columnHeaderTitleContainer': {
+                  backgroundColor: colors.background_WhiteSmokeBlack,
+                },
+                '& .MuiDataGrid-columnHeader': {
+                  backgroundColor: colors.background_WhiteSmokeBlack,
+                } }} // Ajusta la altura según sea necesario
                         />
                     </Box>
                 </Grid>
