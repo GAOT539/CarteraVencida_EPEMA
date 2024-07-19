@@ -6,18 +6,20 @@ import GeneradorPDF from './components/generator_PDF';
 import Body_Login from './components/body_Login';
 import Body_User from './components/body_User';
 import { BrowserRouter, Route, Router, Routes } from 'react-router-dom';
+import colors from './resources/style/colors';
 
 function App() {
   return (
     <BrowserRouter>
       <div>
         <Bar_Header />
-        <main>
+        <main style={{backgroundColor: colors.background_WhiteSmoke}}>
           <Routes>
             <Route path="/historicos" element={<Body_Historical />} />
             <Route path="/" element={<Body_Information />} />
             <Route path="/login" element={<Body_Login />} />
             <Route path="/usuarios" element={<Body_User />} />
+            <Route path="/pdf" element={<GeneradorPDF />} />
           </Routes>
         </main>
         <Bar_Footer />
