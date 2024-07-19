@@ -65,7 +65,7 @@ export default function DataTable() {
     };
 
     return (
-        <Container maxWidth="lg" style={{ padding: 20 }}>
+        <Container maxWidth="lg" style={{ padding: 20, backgroundColor: colors.background_WhiteSmoke }}>
             <Grid container spacing={2}>
                 <Grid item xs={12} style={{ textAlign: 'center' }}>
                     <Box display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
@@ -137,7 +137,14 @@ export default function DataTable() {
                     </Box>
                 </Grid>
                 <Grid item xs={12} style={{ height: 647, width: '100%' }}>
-                    <DataGrid rows={filteredRows} columns={columnsPuesto} />
+                    <DataGrid rows={filteredRows} columns={columnsPuesto} sx={{
+                '& .MuiDataGrid-columnHeaderTitleContainer': {
+                  backgroundColor: colors.background_WhiteSmokeBlack,
+                },
+                '& .MuiDataGrid-columnHeader': {
+                  backgroundColor: colors.background_WhiteSmokeBlack,
+                }
+              }}/>
                 </Grid>
 
             </Grid>
