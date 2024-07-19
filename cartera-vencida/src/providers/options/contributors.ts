@@ -10,7 +10,7 @@ export const getAllContribuyentes = async () => {
         return {
             success: true,
             contribuyentes: data,
-        };
+        }; 
     } catch (error:any) {
         return {
             success: false,
@@ -23,7 +23,7 @@ export const getAllContribuyentes = async () => {
 
 export const getContribuyenteByCIU = async (ciu: string) => {
     try {
-        const response = await axios.get(`${API_URL}/${ciu}`);
+        const response = await axios.get(`${API_CONTRIBUTORS}/${ciu}`);
         const data = response.data;
         return {
             success: true,
@@ -41,7 +41,7 @@ export const getContribuyenteByCIU = async (ciu: string) => {
 
 export const addContribuyente = async (contribuyenteData: any) => {
     try {
-        const response = await axios.post(API_URL, contribuyenteData);
+        const response = await axios.post(API_CONTRIBUTORS, contribuyenteData);
         const data = response.data;
         return {
             success: true,
@@ -59,7 +59,7 @@ export const addContribuyente = async (contribuyenteData: any) => {
 
 export const updateContribuyente = async (ciu: string, contribuyenteData: any) => {
     try {
-        const response = await axios.put(`${API_URL}/${ciu}`, contribuyenteData);
+        const response = await axios.put(`${API_CONTRIBUTORS}/${ciu}`, contribuyenteData);
         const data = response.data;
         return {
             success: true,
@@ -77,7 +77,7 @@ export const updateContribuyente = async (ciu: string, contribuyenteData: any) =
 
 export const deleteContribuyente = async (ciu: string) => {
     try {
-        const response = await axios.delete(`${API_URL}/${ciu}`);
+        const response = await axios.delete(`${API_CONTRIBUTORS}/${ciu}`);
         const data = response.data;
         return {
             success: true,
