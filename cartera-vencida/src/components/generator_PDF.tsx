@@ -1,89 +1,20 @@
 import React, { useState } from "react";
-import { Document, Page, Text, View, StyleSheet, PDFDownloadLink, Image, Font } from "@react-pdf/renderer";
+import { Document, Page, Text, View, PDFDownloadLink, Image, Font } from "@react-pdf/renderer";
+import styles from "../resources/style/style_Generator_PDF"; // Asegúrate de que la ruta es correcta
 
-const styles = StyleSheet.create({
-  page: {
-    paddingTop: 28.35,
-    paddingRight: 30,
-    paddingBottom: 28.35,
-    paddingLeft: 30
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 10
-  },
-  logo: {
-    width: 75,
-    height: 75,
-    marginRight: 10
-  },
-  separator: {
-    borderBottomWidth: 1,
-    borderBottomColor: 'black',
-    marginVertical: 10
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  wrap: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-  },
-  title: {
-    fontFamily: 'Helvetica',
-    fontWeight: 700,
-    fontSize: 18,
-    textAlign: 'center',
-    flex: 1
-  },
-  notification: {
-    fontFamily: 'Helvetica',
-    fontWeight: 'bold',
-    fontSize: 14,
-    color: 'white',
-    backgroundColor: '#181818',
-    padding: 4,
-    borderRadius: 2
-  },
-  reportNumber: {
-    fontFamily: 'Helvetica',
-    fontSize: 14,
-    fontWeight: 'bold'
-  },
-  reportNumber_N: {
-    fontFamily: 'Helvetica',
-    color: 'red'
-  },
-  section01: {
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    paddingHorizontal: 30,
-    marginBottom: 10,
-  },
-  section02: {
-    alignItems: 'center',
-    paddingHorizontal: 30,
-    marginBottom: 10,
-  },
-  texts: {
-    fontFamily: 'Helvetica',
-    fontSize: 10,
-    flexGrow: 1,
-    textAlign: 'justify',
-  },
-  texts_Black: {
-    color: 'green',
-  },
+// Registrar las fuentes
+Font.register({
+  family: "Roboto",
+  fonts: [
+    { src: require("../resources/fonts/Roboto/Roboto-Regular.ttf") }, // Ruta relativa a este archivo
+    { src: require("../resources/fonts/Roboto/Roboto-Black.ttf"), fontWeight: "bold" } // Ruta relativa a este archivo
+  ]
 });
+
 const hyphenationCallback = (word: any) => [word];
-const MyDocument = ({ numero_reporte, fecha, hora, ciu, contribuyente, cedula, num_puesto_bodega, nave, seccion, cant_meses }:
-  { numero_reporte: string, fecha: string, hora: string, ciu: string, contribuyente: string, cedula: string, num_puesto_bodega: string, nave: string, seccion: string, cant_meses: string }) => (
+
+const MyDocument = ({ numero_reporte, fecha, ciu, contribuyente, cedula, num_puesto_bodega, nave, seccion, cant_meses }:
+  { numero_reporte: string, fecha: string, ciu: string, contribuyente: string, cedula: string, num_puesto_bodega: string, nave: string, seccion: string, cant_meses: string }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <View style={styles.header}>
@@ -92,7 +23,7 @@ const MyDocument = ({ numero_reporte, fecha, hora, ciu, contribuyente, cedula, n
           src={require("../resources/images/logoEpema.jpg")}
         />
         <Text style={styles.title}>
-          EMPRESA PÚBLICA – EMPRESA MUNICIPAL{"\n"}
+          EMPRESA PUBLICA – EMPRESA MUNICIPAL{"\n"}
           MERCADO MAYORISTA AMBATO
         </Text>
       </View>
@@ -125,11 +56,10 @@ const MyDocument = ({ numero_reporte, fecha, hora, ciu, contribuyente, cedula, n
   </Document>
 );
 
-const GeneradorPDFv02 = () => {
+const GeneradorPDF = () => {
   const [formData, setFormData] = useState({
     numero_reporte: "",
     fecha: "",
-    hora: "",
     ciu: "",
     contribuyente: "",
     cedula: "",
@@ -187,4 +117,4 @@ const GeneradorPDFv02 = () => {
   );
 };
 
-export default GeneradorPDFv02;
+export default GeneradorPDF;

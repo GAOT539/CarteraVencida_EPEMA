@@ -6,6 +6,11 @@ const colors = {
     white: '#FFFFFF',
     black: '#000000',
 
+    text_White: '#FFFFFF',
+    text_Black: '#000000',
+    text_Red: '#FF0000',
+    text_EerieBlack: '#181818',
+
     orangeSalmon: '#c95d52',
     orangeSalmonGradient: '#a54e45',
     
@@ -15,7 +20,7 @@ const colors = {
 
     blue: '#2e78cc',
     blueGradient: '#1f518b'
-    //white: '#FFFFFF',
+    
 };
 
 export default colors;
