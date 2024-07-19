@@ -142,29 +142,20 @@ const carteraVencidaBodegas = (req, res) => __awaiter(void 0, void 0, void 0, fu
             const numeroReporteResponse = yield axios_1.default.get('http://localhost:3001/api/numeroreporte');
             const siguienteNumeroReporte = numeroReporteResponse.data.siguienteNumeroReporte;
             contador = siguienteNumeroReporte;
-            // Obtener el listado de historicos pagados
-            const historicosPagadosResponse = yield axios_1.default.get('http://localhost:3001/api/bodega/pagados');
-            const historicosPagados = historicosPagadosResponse.data.historicosList;
-            // Crear un mapa para fácil acceso por ciu, puesto y nave
-            const historicosMap = new Map();
-            historicosPagados.forEach((historico) => {
-                const key = `${historico.ciu}-${historico.puesto}-${historico.nave}`;
-                historicosMap.set(key, historico.cantNotificaciones);
-            });
             // Recorrer los contribuyentes transformados y hacer la solicitud POST
             for (const contribuyente of contribuyentesTransformados) {
                 const key = `${contribuyente.ciu}-${contribuyente.puesto}-${contribuyente.nave}`;
-                const cantNotificaciones = historicosMap.has(key) ? historicosMap.get(key) : 0;
+                const actividadTransformada = contribuyente.seccion.includes('�') ? contribuyente.seccion.replace(/�/g, 'Ñ') : contribuyente.seccion;
                 const nuevoHistorico = {
                     ciu: contribuyente.ciu,
                     numero_reporte: contador,
                     bodega: contribuyente.bodega,
                     puesto: null,
                     nave: contribuyente.nave,
-                    seccion: contribuyente.seccion,
+                    seccion: actividadTransformada,
                     fecha: transformarFecha(contribuyente.fecha),
                     meses: parseInt(contribuyente.meses),
-                    cantNotificaciones: cantNotificaciones,
+                    cantNotificaciones: 0,
                     archivo: null,
                     valor: parseFloat(contribuyente.valor),
                     pagado: 'NO'
@@ -274,29 +265,20 @@ const carteraVencidaPuestos = (req, res) => __awaiter(void 0, void 0, void 0, fu
             const numeroReporteResponse = yield axios_1.default.get('http://localhost:3001/api/numeroreporte');
             const siguienteNumeroReporte = numeroReporteResponse.data.siguienteNumeroReporte;
             contador = siguienteNumeroReporte;
-            // Obtener el listado de historicos pagados
-            const historicosPagadosResponse = yield axios_1.default.get('http://localhost:3001/api/puesto/pagados');
-            const historicosPagados = historicosPagadosResponse.data.historicosList;
-            // Crear un mapa para fácil acceso por ciu, puesto y nave
-            const historicosMap = new Map();
-            historicosPagados.forEach((historico) => {
-                const key = `${historico.ciu}-${historico.puesto}-${historico.nave}`;
-                historicosMap.set(key, historico.cantNotificaciones);
-            });
             // Recorrer los contribuyentes transformados y hacer la solicitud POST
             for (const contribuyente of contribuyentesTransformados) {
                 const key = `${contribuyente.ciu}-${contribuyente.puesto}-${contribuyente.nave}`;
-                const cantNotificaciones = historicosMap.has(key) ? historicosMap.get(key) : 0;
+                const actividadTransformada = contribuyente.seccion.includes('�') ? contribuyente.seccion.replace(/�/g, 'Ñ') : contribuyente.seccion;
                 const nuevoHistorico = {
                     ciu: contribuyente.ciu,
                     numero_reporte: contador,
                     bodega: null,
                     puesto: contribuyente.puesto,
                     nave: contribuyente.nave,
-                    seccion: contribuyente.seccion,
+                    seccion: actividadTransformada,
                     fecha: transformarFecha(contribuyente.fecha),
                     meses: parseInt(contribuyente.meses),
-                    cantNotificaciones: cantNotificaciones,
+                    cantNotificaciones: 0,
                     archivo: null,
                     valor: parseFloat(contribuyente.valor),
                     pagado: 'NO'
