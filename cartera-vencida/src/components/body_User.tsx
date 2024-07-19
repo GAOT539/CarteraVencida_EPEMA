@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, TextField, Typography, Grid, InputAdornment, Button, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
+import { Box, TextField, Typography, Grid, InputAdornment, Button, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent, Snackbar, Alert } from '@mui/material';
 import { DataGrid, GridColDef, GridRowParams } from '@mui/x-data-grid';
 import SearchIcon from '@mui/icons-material/Search';
 import colors from '../resources/style/colors';
@@ -12,7 +12,7 @@ const columnsContribuyentes: GridColDef[] = [
     { field: 'estado', headerName: 'Estado', flex: 1 },
 ];
 
-const Body_User: React.FC = () => {
+const Body_Usuario: React.FC = () => {
     const [ciu, setCiu] = useState('');
     const [cedula, setCedula] = useState('');
     const [nombre, setNombre] = useState('');
@@ -20,6 +20,8 @@ const Body_User: React.FC = () => {
     const [rows, setRows] = useState<any[]>([]);
     const [selectedRow, setSelectedRow] = useState<any>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const [openSnackbar, setOpenSnackbar] = useState(false);
 
     useEffect(() => {
         fetchContribuyentes();
@@ -38,13 +40,14 @@ const Body_User: React.FC = () => {
             return;
         }
 
-        if (window.confirm('¿Estás seguro de crear este contribuyente?')) {
-            const result = await addContribuyente({ ciu, cedula, nombre, estado });
-            if (result.success) {
-                alert('Contribuyente creado exitosamente');
-                fetchContribuyentes();
-            }
+
+        const result = await addContribuyente({ ciu, cedula, nombre, estado });
+        if (result.success) {
+            setSuccessMessage('Contribuyente creado exitosamente');
+            setOpenSnackbar(true);
+            fetchContribuyentes();
         }
+
     };
 
     const handleEdit = async () => {
@@ -53,15 +56,35 @@ const Body_User: React.FC = () => {
             return;
         }
 
-        if (window.confirm('¿Estás seguro de actualizar este contribuyente?')) {
-            const result = await updateContribuyente(ciu, { cedula, nombre, estado });
+
+        const result = await updateContribuyente(ciu, { cedula, nombre, estado });
+        if (result.success) {
+            setSuccessMessage('Contribuyente actualizado exitosamente');
+            setOpenSnackbar(true);
+            fetchContribuyentes();
+        }
+
+    };
+
+    const handleDelete = async () => {
+        if (!selectedRow) {
+            alert('Seleccione una fila para eliminar');
+            return;
+        }
+
+        if (window.confirm('¿Estás seguro de eliminar este contribuyente permanentemente de la base de datos?')) {
+            const result = await deleteContribuyente(selectedRow.ciu);
             if (result.success) {
-                alert('Contribuyente actualizado exitosamente');
+                setSuccessMessage('Contribuyente eliminado exitosamente');
+                setOpenSnackbar(true);
                 fetchContribuyentes();
             }
         }
     };
 
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false);
+    };
 
     const handleRowClick = (params: GridRowParams) => {
         setSelectedRow(params.row);
@@ -164,11 +187,24 @@ const Body_User: React.FC = () => {
                     <Box display="flex" justifyContent="flex-start" mt={2}>
                         <Button variant="contained" onClick={handleCreate} sx={{ mr: 2, bgcolor: colors.oliveGreen, '&:hover': { bgcolor: colors.oliveGreenGradient } }}>Crear</Button>
                         <Button variant="contained" onClick={handleEdit} sx={{ mr: 2, bgcolor: colors.blue, '&:hover': { bgcolor: colors.blueGradient } }}>Actualizar</Button>
+                        <Button variant="contained" onClick={handleDelete} sx={{ mr: 2, bgcolor: colors.orangeSalmon, '&:hover': { bgcolor: colors.orangeSalmonGradient } }}>Eliminar</Button>
                     </Box>
                 </Grid>
             </Grid>
+            {successMessage && (
+                <Snackbar
+                    open={openSnackbar}
+                    autoHideDuration={3000}
+                    onClose={handleCloseSnackbar}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                >
+                    <Alert severity="success" onClose={handleCloseSnackbar}>
+                        {successMessage}
+                    </Alert>
+                </Snackbar>
+            )}
         </Box>
     );
 };
 
-export default Body_User;
+export default Body_Usuario;
