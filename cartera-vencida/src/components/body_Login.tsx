@@ -1,16 +1,26 @@
 import React, { useState } from 'react';
-import { Grid, Typography, TextField, Button, IconButton } from '@mui/material';
+import { Grid, Typography, TextField, Button, IconButton, Snackbar, Alert } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faUser } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
 import colors from '../resources/style/colors';
 
 const Body_Login: React.FC = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState(false);
+    const navigate = useNavigate();
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log('Iniciar sesión:', username, password);
+        if (username === 'admin' && password === '12345') {
+            console.log('Iniciar sesión:', username, password);
+            localStorage.setItem('isAuthenticated', 'true'); // Guardar estado de autenticación
+            setError(false);
+            navigate('/usuarios'); // Redirigir a body_Users.tsx
+        } else {
+            setError(true);
+        }
     };
 
     return (
@@ -73,6 +83,11 @@ const Body_Login: React.FC = () => {
                     </Grid>
                 </form>
             </Grid>
+            <Snackbar open={error} autoHideDuration={6000} onClose={() => setError(false)}>
+                <Alert onClose={() => setError(false)} severity="error" sx={{ width: '100%' }}>
+                    Usuario o contraseña incorrectos. Por favor, inténtelo de nuevo.
+                </Alert>
+            </Snackbar>
         </Grid>
     );
 };

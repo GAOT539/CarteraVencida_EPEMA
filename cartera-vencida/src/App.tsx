@@ -1,29 +1,33 @@
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Bar_Header from './components/bar_Header';
 import Bar_Footer from './components/bar_Footer';
 import Body_Historical from './components/body_Historical';
 import Body_Information from './components/body_Information';
-import GeneradorPDF from './components/generator_PDF';
 import Body_Login from './components/body_Login';
 import Body_User from './components/body_User';
-import { BrowserRouter, Route, Router, Routes } from 'react-router-dom';
+import Body_Error from './components/body_Error';
 
 function App() {
-  return (
-    <BrowserRouter>
-      <div>
-        <Bar_Header />
-        <main>
-          <Routes>
-            <Route path="/historicos" element={<Body_Historical />} />
-            <Route path="/" element={<Body_Information />} />
-            <Route path="/login" element={<Body_Login />} />
-            <Route path="/usuarios" element={<Body_User />} />
-          </Routes>
-        </main>
-        <Bar_Footer />
-      </div>
-    </BrowserRouter>
-  );
+    return (
+        <BrowserRouter>
+            <div>
+                <Bar_Header />
+                <main>
+                    <Routes>
+                        <Route path="/" element={<Body_Information />} />
+                        <Route path="/historicos" element={<Body_Historical />} />
+                        <Route path="/login" element={<Body_Login />} />
+                        <Route element={<Body_Error isProtected />}>
+                            <Route path="/usuarios" element={<Body_User />} />
+                        </Route>
+                        <Route path="*" element={<Body_Error />} />
+                    </Routes>
+                </main>
+                <Bar_Footer />
+            </div>
+        </BrowserRouter>
+    );
 }
 
 export default App;
