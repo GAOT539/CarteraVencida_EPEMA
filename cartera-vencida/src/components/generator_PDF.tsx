@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: 'Helvetica',
-    fontWeight: 'bold',
+    fontWeight: 700,
     fontSize: 18,
     textAlign: 'center',
     flex: 1
@@ -106,7 +106,7 @@ const MyDocument = ({ numero_reporte, fecha, hora, ciu, contribuyente, cedula, n
           <Text style={styles.texts}>FECHA: <Text style={styles.texts_Black}>{fecha}</Text></Text>
         </View>
         <View style={styles.row}>
-          <Text style={styles.texts}>HORA: <Text style={styles.texts_Black}>{hora}</Text></Text>
+          <Text style={styles.texts}>HORA: ________</Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.texts}>CIU: <Text style={styles.texts_Black}>{ciu}</Text></Text>
