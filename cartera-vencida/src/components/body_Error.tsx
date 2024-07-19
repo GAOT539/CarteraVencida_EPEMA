@@ -20,7 +20,7 @@ const Body_Error: React.FC<{ isProtected?: boolean }> = ({ isProtected }) => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     height: '100vh',
-                    backgroundColor: '#F8D7DA',
+                    backgroundColor: colors.background_WhiteSmoke,
                     textAlign: 'center'
                 }}
             >
