@@ -1,67 +1,120 @@
-import React, { useState } from 'react';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { TextField, Container, Grid, Box, InputAdornment, Typography, Button } from '@mui/material';
-import colors from '../resources/style/colors';
+import React, { useState, useEffect } from 'react';
+import { DataGrid, GridColDef, GridRowParams } from '@mui/x-data-grid';
+import { TextField, Container, Grid, Box, InputAdornment, Typography, Button, Snackbar, Alert } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers-pro/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers';
 import SearchIcon from '@mui/icons-material/Search';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
+import colors from '../resources/style/colors';
+import { getAllHistoricos, getHistoricosBodegas, getHistoricosPuestos } from '../providers/options/historical';
 
 // Configura dayjs con el idioma español
 dayjs.locale('es');
 
-let bodegaOrPuesto: string = 'Bodegas'; // Variable para mostrar "Bodegas" o "Puestos"
-
-const columnsPuesto: GridColDef[] = [
-    { field: 'id', headerName: 'ID', flex: 0.5 },
-    { field: 'firstName', headerName: 'First name', flex: 1 },
-    { field: 'lastName', headerName: 'Last name', flex: 1 },
-    {
-        field: 'age',
-        headerName: 'Age',
-        type: 'number',
-        flex: 0.5,
-    },
-    {
-        field: 'fullName',
-        headerName: 'Full name',
-        description: 'This column has a value getter and is not sortable.',
-        sortable: false,
-        flex: 1,
-        //valueGetter: (params) => `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-    },
+const columnsHistoricos: GridColDef[] = [
+    { field: 'id', headerName: 'ID', flex: 1 },
+    { field: 'numero_reporte', headerName: 'Número de Reporte', flex: 1 },
+    { field: 'ciu', headerName: 'CIU', flex: 1 },
+    { field: 'nombre', headerName: 'Nombre', flex: 2 },
+    { field: 'ubicacion', headerName: 'Ubicación', flex: 2 },
+    { field: 'fecha', headerName: 'Fecha', flex: 1 },
+    { field: 'meses', headerName: 'Meses', flex: 1 },
+    { field: 'cantNotificaciones', headerName: 'Cantidad de Notificaciones', flex: 1 },
+    { field: 'archivo', headerName: 'Archivo', flex: 1 },
+    { field: 'valor', headerName: 'Valor', flex: 1 },
+    { field: 'pagado', headerName: 'Pagado', flex: 1 }
 ];
 
-const rows = [
-    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-    { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-    { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: 25 },
-    { id: 6, lastName: 'Melisandre', firstName: 'Gabriel', age: 15 },
-    { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-    { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-    { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-    { id: 10, lastName: 'Roxie', firstName: 'Harvey', age: 65 }
-];
+const Body_Historical: React.FC = () => {
+    const [rows, setRows] = useState<any[]>([]);
+    const [filteredRows, setFilteredRows] = useState<any[]>([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
+    const [endDate, setEndDate] = useState<dayjs.Dayjs | null>(null);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [openSnackbar, setOpenSnackbar] = useState(false);
 
-export default function DataTable() {
-    const [searchText, setSearchText] = useState('');
-    const [filteredRows, setFilteredRows] = useState(rows);
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
+    useEffect(() => {
+        fetchHistoricos();
+    }, []);
+
+    const transformData = (data: any[]) => {
+        return data.map(row => ({
+            ...row,
+            ubicacion: `${row.bodega || ''} ${row.puesto || ''} ${row.nave || ''} ${row.seccion || ''}`.trim(),
+        }));
+    };
+
+    const fetchHistoricos = async () => {
+        const result = await getAllHistoricos();
+        if (result.success) {
+            const transformedData = transformData(result.historicosList);
+            setRows(transformedData);
+            setFilteredRows(transformedData);
+        }
+    };
+
+    const fetchBodegas = async () => {
+        const result = await getHistoricosBodegas();
+        if (result.success) {
+            const transformedData = transformData(result.historicosWithContribuyentes);
+            setRows(transformedData);
+            setFilteredRows(transformedData);
+        }
+    };
+
+    const fetchPuestos = async () => {
+        const result = await getHistoricosPuestos();
+        if (result.success) {
+            const transformedData = transformData(result.historicosWithContribuyentes);
+            setRows(transformedData);
+            setFilteredRows(transformedData);
+        }
+    };
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value.toLowerCase();
-        setSearchText(value);
-        const filteredData = rows.filter((row) =>
-            row.firstName?.toLowerCase().includes(value) ||
-            row.lastName?.toLowerCase().includes(value) ||
-            String(row.age).includes(value)
-        );
-        setFilteredRows(filteredData);
+        setSearchTerm(event.target.value);
+        filterData(event.target.value, startDate, endDate);
+    };
+
+    const handleDateChange = (type: 'start' | 'end') => (date: dayjs.Dayjs | null) => {
+        if (type === 'start') {
+            setStartDate(date);
+        } else {
+            setEndDate(date);
+        }
+        filterData(searchTerm, type === 'start' ? date : startDate, type === 'end' ? date : endDate);
+    };
+
+    const filterData = (search: string, start: dayjs.Dayjs | null, end: dayjs.Dayjs | null) => {
+        let filtered = rows;
+        if (search) {
+            filtered = filtered.filter(row =>
+                row.numero_reporte?.toString().includes(search.toLowerCase()) ||
+                row.ciu?.toLowerCase().includes(search.toLowerCase()) ||
+                row.ubicacion?.toLowerCase().includes(search.toLowerCase()) ||
+                row.fecha?.toLowerCase().includes(search.toLowerCase()) ||
+                row.meses?.toString().includes(search.toLowerCase()) ||
+                row.cantNotificaciones?.toString().includes(search.toLowerCase()) ||
+                row.archivo?.toString().includes(search.toLowerCase()) ||
+                row.valor?.toString().includes(search.toLowerCase()) ||
+                row.pagado?.toLowerCase().includes(search.toLowerCase()) ||
+                row.nombre?.toLowerCase().includes(search.toLowerCase())
+            );
+        }
+        if (start && end) {
+            filtered = filtered.filter(row => {
+                const date = dayjs(row.fecha);
+                return date.isAfter(start) && date.isBefore(end);
+            });
+        }
+        setFilteredRows(filtered);
+    };
+
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false);
     };
 
     return (
@@ -70,13 +123,21 @@ export default function DataTable() {
                 <Grid item xs={12} style={{ textAlign: 'center' }}>
                     <Box display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
                         <Typography variant="h5" gutterBottom>
-                            Historicos - {bodegaOrPuesto}
+                            Historicos
                         </Typography>
                         <Box display="flex" alignItems="center">
-                            <Button variant="contained" sx={{ marginRight: 3, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}>
+                            <Button
+                                variant="contained"
+                                onClick={fetchBodegas}
+                                sx={{ marginRight: 3, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}
+                            >
                                 BODEGAS
                             </Button>
-                            <Button variant="contained" sx={{ marginRight: 3, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}>
+                            <Button
+                                variant="contained"
+                                onClick={fetchPuestos}
+                                sx={{ marginRight: 3, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}
+                            >
                                 PUESTOS
                             </Button>
                         </Box>
@@ -93,9 +154,7 @@ export default function DataTable() {
                                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
                                     <DatePicker
                                         value={startDate}
-                                        onChange={(newValue: any) => {
-                                            setStartDate(newValue);
-                                        }}
+                                        onChange={handleDateChange('start')}
                                         sx={{ width: 166 }}
                                     />
                                 </LocalizationProvider>
@@ -107,22 +166,23 @@ export default function DataTable() {
                                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
                                     <DatePicker
                                         value={endDate}
-                                        onChange={(newValue: any) => {
-                                            setEndDate(newValue);
-                                        }}
+                                        onChange={handleDateChange('end')}
                                         sx={{ width: 166 }}
                                     />
                                 </LocalizationProvider>
                             </Box>
-                            <Button variant="contained" sx={{ marginRight: 3, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}>
+                            <Button
+                                variant="contained"
+                                onClick={() => filterData(searchTerm, startDate, endDate)}
+                                sx={{ marginRight: 3, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}
+                            >
                                 FILTRO
                             </Button>
-
                         </Box>
                         <TextField
                             variant="outlined"
                             size="medium"
-                            value={searchText}
+                            value={searchTerm}
                             onChange={handleSearch}
                             placeholder="Buscar..."
                             InputProps={{
@@ -137,17 +197,27 @@ export default function DataTable() {
                     </Box>
                 </Grid>
                 <Grid item xs={12} style={{ height: 647, width: '100%' }}>
-                    <DataGrid rows={filteredRows} columns={columnsPuesto} sx={{
-                '& .MuiDataGrid-columnHeaderTitleContainer': {
-                  backgroundColor: colors.background_WhiteSmokeBlack,
-                },
-                '& .MuiDataGrid-columnHeader': {
-                  backgroundColor: colors.background_WhiteSmokeBlack,
-                }
-              }}/>
+                    <DataGrid
+                        rows={filteredRows}
+                        columns={columnsHistoricos}
+                        sx={{
+                            boxShadow: 2,
+                            border: 2,
+                            borderColor: colors.oliveGreen,
+                            '& .MuiDataGrid-cell:hover': {
+                                color: colors.orangeSalmon,
+                            },
+                        }}
+                    />
                 </Grid>
-
             </Grid>
+            <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+                <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+                    {successMessage}
+                </Alert>
+            </Snackbar>
         </Container>
     );
-}
+};
+
+export default Body_Historical;
