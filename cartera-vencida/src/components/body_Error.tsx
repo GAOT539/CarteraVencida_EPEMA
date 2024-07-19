@@ -20,11 +20,11 @@ const Body_Error: React.FC<{ isProtected?: boolean }> = ({ isProtected }) => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     height: '100vh',
-                    backgroundColor: colors.background_WhiteSmoke,
+                    backgroundColor: '#F8D7DA',
                     textAlign: 'center'
                 }}
             >
-
+                
                 <Typography variant="h1" sx={{ fontSize: '4rem', marginTop: 2, color: '#721C24' }}>
                     404 Error
                 </Typography>
@@ -34,7 +34,14 @@ const Body_Error: React.FC<{ isProtected?: boolean }> = ({ isProtected }) => {
                 <Typography variant="body1" sx={{ fontSize: '1rem', marginBottom: 4, color: '#721C24' }}>
                     La página que estás buscando no existe.
                 </Typography>
-                <Button variant="contained" sx={{ bgcolor: colors.oliveGreen, color: colors.white, '&:hover': { bgcolor: colors.oliveGreen } }} onClick={() => (window.location.href = '/')}>
+                <Button  variant="contained" 
+                    sx={{ 
+                        bgcolor: colors.oliveGreen, 
+                        color: '#FFFFFF', 
+                        '&:hover': { bgcolor: colors.oliveGreen } 
+                    }} 
+                    onClick={() => (window.location.href = '/')}
+                >
                     Ir al inicio
                 </Button>
             </Box>

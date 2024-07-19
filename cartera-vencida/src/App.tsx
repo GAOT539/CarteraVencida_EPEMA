@@ -7,6 +7,7 @@ import Body_Information from './components/body_Information';
 import Body_Login from './components/body_Login';
 import Body_User from './components/body_User';
 import Body_Error from './components/body_Error';
+import GeneradorPDF from './components/generator_PDF';
 
 function App() {
     return (
@@ -18,6 +19,7 @@ function App() {
                         <Route path="/" element={<Body_Information />} />
                         <Route path="/historicos" element={<Body_Historical />} />
                         <Route path="/login" element={<Body_Login />} />
+                        <Route path="/pdf" element={<GeneradorPDF />} />
                         <Route element={<Body_Error isProtected />}>
                             <Route path="/usuarios" element={<Body_User />} />
                         </Route>
