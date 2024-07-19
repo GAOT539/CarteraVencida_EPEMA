@@ -20,10 +20,6 @@ exports.Historicos = connection_db_1.default.define('historicos', {
         type: sequelize_1.DataTypes.STRING(10),
         allowNull: false,
     },
-    contribuyente: {
-        type: sequelize_1.DataTypes.STRING(80),
-        allowNull: true,
-    },
     bodega: {
         type: sequelize_1.DataTypes.STRING(30),
         allowNull: true,
@@ -36,9 +32,17 @@ exports.Historicos = connection_db_1.default.define('historicos', {
         type: sequelize_1.DataTypes.STRING(40),
         allowNull: true,
     },
+    seccion: {
+        type: sequelize_1.DataTypes.STRING(40),
+        allowNull: true,
+    },
     fecha: {
         type: sequelize_1.DataTypes.DATEONLY,
         allowNull: true,
+    },
+    meses: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false,
     },
     cantNotificaciones: {
         type: sequelize_1.DataTypes.INTEGER,

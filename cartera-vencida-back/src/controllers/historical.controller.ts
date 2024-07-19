@@ -2,20 +2,22 @@ import { Request, Response } from 'express';
 import { Historicos } from '../models/historical.models';
 import { ErrorMessages } from '../error/manage.error';
 import { Op, Sequelize } from 'sequelize';
+import Contribuyentes from '../models/contributors.models';
 
 // Crear un nuevo registro histórico
 export const newHistorico = async (req: Request, res: Response) => {
-  const { ciu,numero_reporte, contribuyente, bodega, puesto, nave, fecha, cantNotificaciones, archivo, valor, pagado } = req.body;
+  const { ciu,numero_reporte, bodega, puesto, nave, seccion, fecha, meses, cantNotificaciones, archivo, valor, pagado } = req.body;
 
   try {
     await Historicos.create({
       ciu,
       numero_reporte,
-      contribuyente,
       bodega,
       puesto,
       nave,
+      seccion,
       fecha,
+      meses,
       cantNotificaciones,
       archivo,
       valor,
@@ -55,7 +57,7 @@ export const getHistoricosBodegas = async (req: Request, res: Response) => {
     const historicosList = await Historicos.findAll({
       where: {
         bodega: {
-          [Op.ne]: null,  
+          [Op.ne]: null,
         },
       },
     });
@@ -66,9 +68,23 @@ export const getHistoricosBodegas = async (req: Request, res: Response) => {
       });
     }
 
-    res.json({
-      historicosList,
-    });
+    // Obtener datos de contribuyentes
+    const historicosWithContribuyentes = await Promise.all(
+      historicosList.map(async (historico) => {
+        const historicoData = historico.get({ plain: true });
+        const contribuyente = await Contribuyentes.findOne({
+          where: { ciu: historicoData.ciu },
+        });
+
+        return {
+          ...historicoData,
+          nombre: contribuyente ? contribuyente.get('nombre') : 'Desconocido',
+          cedula: contribuyente ? contribuyente.get('cedula') : 'Desconocido',
+        };
+      })
+    );
+
+    res.json(historicosWithContribuyentes);
   } catch (error) {
     return res.status(500).json({
       msg: ErrorMessages.SERVER_ERROR,
@@ -91,10 +107,11 @@ export const getHistoricosBodegasNoPagado = async (req: Request, res: Response) 
         'id',
         'numero_reporte',
         'ciu',
-        'contribuyente',
         'bodega',
         'nave',
         'cantNotificaciones',
+        'seccion',
+        'meses',
         'archivo',
         'valor',
         'pagado',
@@ -135,10 +152,11 @@ export const getHistoricosPuestosNoPagado = async (req: Request, res: Response) 
         'id',
         'numero_reporte',
         'ciu',
-        'contribuyente',
         'puesto',
         'nave',
         'cantNotificaciones',
+        'seccion',
+        'meses',
         'archivo',
         'valor',
         'pagado',
@@ -180,10 +198,23 @@ export const getHistoricosPuestos = async (req: Request, res: Response) => {
         msg: 'No se encontraron historicos asociados a puestos',
       });
     }
+    // Obtener datos de contribuyentes
+    const historicosWithContribuyentes = await Promise.all(
+      historicosList.map(async (historico) => {
+        const historicoData = historico.get({ plain: true });
+        const contribuyente = await Contribuyentes.findOne({
+          where: { ciu: historicoData.ciu },
+        });
 
-    res.json({
-      historicosList,
-    });
+        return {
+          ...historicoData,
+          nombre: contribuyente ? contribuyente.get('nombre') : 'Desconocido',
+          cedula: contribuyente ? contribuyente.get('cedula') : 'Desconocido',
+        };
+      })
+    );
+
+    res.json(historicosWithContribuyentes);
   } catch (error) {
     return res.status(500).json({
       msg: ErrorMessages.SERVER_ERROR,
@@ -269,7 +300,7 @@ export const deleteHistorico = async (req: Request, res: Response) => {
 // Actualizar un registro histórico por ID
 export const updateHistorico = async (req: Request, res: Response) => {
   const id = req.params.id;
-  const { ciu, numero_reporte, contribuyente, bodega, puesto, nave, fecha, cantNotificaciones, archivo,valor, pagado } = req.body;
+  const { ciu, numero_reporte, bodega, puesto, nave, fecha, seccion,meses, cantNotificaciones, archivo,valor, pagado } = req.body;
 
   const existHistorico: any = await Historicos.findOne({ where: { id } });
 
@@ -284,11 +315,12 @@ export const updateHistorico = async (req: Request, res: Response) => {
       {
         ciu,
         numero_reporte,
-        contribuyente,
         bodega,
         puesto,
         nave,
+        seccion,
         fecha,
+        meses,
         cantNotificaciones,
         archivo,
         valor,
@@ -338,4 +370,16 @@ export const payHistorico = async (req: Request, res: Response) => {
       error
     });
   }
-}
+}// Obtener el siguiente número de reporte
+export const obtenerNumeroReporte = async (req: Request, res: Response) => {
+  try {
+    const maxNumeroReporte = await Historicos.max('numero_reporte');
+    const siguienteNumeroReporte = maxNumeroReporte !== null ? (maxNumeroReporte as number) + 1 : 1;
+    res.json({ siguienteNumeroReporte });
+  } catch (error) {
+    res.status(500).json({
+      msg: ErrorMessages.SERVER_ERROR,
+      error,
+    });
+  }
+};

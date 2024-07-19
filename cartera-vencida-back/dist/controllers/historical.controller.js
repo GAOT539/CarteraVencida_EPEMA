@@ -8,23 +8,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.payHistorico = exports.updateHistorico = exports.deleteHistorico = exports.getHistoricosByCIU = exports.getHistoricoById = exports.getHistoricosPuestos = exports.getHistoricosPuestosNoPagado = exports.getHistoricosBodegasNoPagado = exports.getHistoricosBodegas = exports.getHistoricos = exports.newHistorico = void 0;
+exports.obtenerNumeroReporte = exports.payHistorico = exports.updateHistorico = exports.deleteHistorico = exports.getHistoricosByCIU = exports.getHistoricoById = exports.getHistoricosPuestos = exports.getHistoricosPuestosNoPagado = exports.getHistoricosBodegasNoPagado = exports.getHistoricosBodegas = exports.getHistoricos = exports.newHistorico = void 0;
 const historical_models_1 = require("../models/historical.models");
 const manage_error_1 = require("../error/manage.error");
 const sequelize_1 = require("sequelize");
+const contributors_models_1 = __importDefault(require("../models/contributors.models"));
 // Crear un nuevo registro histórico
 const newHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { ciu, numero_reporte, contribuyente, bodega, puesto, nave, fecha, cantNotificaciones, archivo, valor, pagado } = req.body;
+    const { ciu, numero_reporte, bodega, puesto, nave, seccion, fecha, meses, cantNotificaciones, archivo, valor, pagado } = req.body;
     try {
         yield historical_models_1.Historicos.create({
             ciu,
             numero_reporte,
-            contribuyente,
             bodega,
             puesto,
             nave,
+            seccion,
             fecha,
+            meses,
             cantNotificaciones,
             archivo,
             valor,
@@ -72,9 +77,15 @@ const getHistoricosBodegas = (req, res) => __awaiter(void 0, void 0, void 0, fun
                 msg: 'No se encontraron historicos asociados a bodegas',
             });
         }
-        res.json({
-            historicosList,
-        });
+        // Obtener datos de contribuyentes
+        const historicosWithContribuyentes = yield Promise.all(historicosList.map((historico) => __awaiter(void 0, void 0, void 0, function* () {
+            const historicoData = historico.get({ plain: true });
+            const contribuyente = yield contributors_models_1.default.findOne({
+                where: { ciu: historicoData.ciu },
+            });
+            return Object.assign(Object.assign({}, historicoData), { nombre: contribuyente ? contribuyente.get('nombre') : 'Desconocido', cedula: contribuyente ? contribuyente.get('cedula') : 'Desconocido' });
+        })));
+        res.json(historicosWithContribuyentes);
     }
     catch (error) {
         return res.status(500).json({
@@ -99,10 +110,11 @@ const getHistoricosBodegasNoPagado = (req, res) => __awaiter(void 0, void 0, voi
                 'id',
                 'numero_reporte',
                 'ciu',
-                'contribuyente',
                 'bodega',
                 'nave',
                 'cantNotificaciones',
+                'seccion',
+                'meses',
                 'archivo',
                 'valor',
                 'pagado',
@@ -143,10 +155,11 @@ const getHistoricosPuestosNoPagado = (req, res) => __awaiter(void 0, void 0, voi
                 'id',
                 'numero_reporte',
                 'ciu',
-                'contribuyente',
                 'puesto',
                 'nave',
                 'cantNotificaciones',
+                'seccion',
+                'meses',
                 'archivo',
                 'valor',
                 'pagado',
@@ -187,9 +200,15 @@ const getHistoricosPuestos = (req, res) => __awaiter(void 0, void 0, void 0, fun
                 msg: 'No se encontraron historicos asociados a puestos',
             });
         }
-        res.json({
-            historicosList,
-        });
+        // Obtener datos de contribuyentes
+        const historicosWithContribuyentes = yield Promise.all(historicosList.map((historico) => __awaiter(void 0, void 0, void 0, function* () {
+            const historicoData = historico.get({ plain: true });
+            const contribuyente = yield contributors_models_1.default.findOne({
+                where: { ciu: historicoData.ciu },
+            });
+            return Object.assign(Object.assign({}, historicoData), { nombre: contribuyente ? contribuyente.get('nombre') : 'Desconocido', cedula: contribuyente ? contribuyente.get('cedula') : 'Desconocido' });
+        })));
+        res.json(historicosWithContribuyentes);
     }
     catch (error) {
         return res.status(500).json({
@@ -267,7 +286,7 @@ exports.deleteHistorico = deleteHistorico;
 // Actualizar un registro histórico por ID
 const updateHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
-    const { ciu, numero_reporte, contribuyente, bodega, puesto, nave, fecha, cantNotificaciones, archivo, valor, pagado } = req.body;
+    const { ciu, numero_reporte, bodega, puesto, nave, fecha, seccion, meses, cantNotificaciones, archivo, valor, pagado } = req.body;
     const existHistorico = yield historical_models_1.Historicos.findOne({ where: { id } });
     if (!existHistorico) {
         return res.status(404).json({
@@ -278,11 +297,12 @@ const updateHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function
         yield historical_models_1.Historicos.update({
             ciu,
             numero_reporte,
-            contribuyente,
             bodega,
             puesto,
             nave,
+            seccion,
             fecha,
+            meses,
             cantNotificaciones,
             archivo,
             valor,
@@ -326,5 +346,19 @@ const payHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             error
         });
     }
-});
+}); // Obtener el siguiente número de reporte
 exports.payHistorico = payHistorico;
+const obtenerNumeroReporte = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const maxNumeroReporte = yield historical_models_1.Historicos.max('numero_reporte');
+        const siguienteNumeroReporte = maxNumeroReporte !== null ? maxNumeroReporte + 1 : 1;
+        res.json({ siguienteNumeroReporte });
+    }
+    catch (error) {
+        res.status(500).json({
+            msg: manage_error_1.ErrorMessages.SERVER_ERROR,
+            error,
+        });
+    }
+});
+exports.obtenerNumeroReporte = obtenerNumeroReporte;
