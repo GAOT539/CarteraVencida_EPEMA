@@ -16,12 +16,12 @@ const rowsContribuyentes = [
     { id: 2, ciu: '9876543210', cedula: '9876543210', nombre: 'María', estado: 'Inactivo' },
     { id: 3, ciu: '1111111111', cedula: '1111111111', nombre: 'Pedro', estado: 'Activo' },
     { id: 4, ciu: '2222222222', cedula: '2222222222', nombre: 'Ana', estado: 'Inactivo' },
-    { id: 2, ciu: '9876543210', cedula: '9876543210', nombre: 'María', estado: 'Inactivo' },
-    { id: 3, ciu: '1111111111', cedula: '1111111111', nombre: 'Pedro', estado: 'Activo' },
-    { id: 4, ciu: '2222222222', cedula: '2222222222', nombre: 'Ana', estado: 'Inactivo' },
-    { id: 2, ciu: '9876543210', cedula: '9876543210', nombre: 'María', estado: 'Inactivo' },
-    { id: 3, ciu: '1111111111', cedula: '1111111111', nombre: 'Pedro', estado: 'Activo' },
-    { id: 4, ciu: '2222222222', cedula: '2222222222', nombre: 'Ana', estado: 'Inactivo' },
+    { id: 5, ciu: '3333333333', cedula: '3333333333', nombre: 'María', estado: 'Inactivo' },
+    { id: 6, ciu: '4444', cedula: '4444', nombre: 'Pedro', estado: 'Activo' },
+    { id: 7, ciu: '5555', cedula: '5555', nombre: 'Ana', estado: 'Inactivo' },
+    { id: 8, ciu: '6666', cedula: '6666', nombre: 'María', estado: 'Inactivo' },
+    { id: 9, ciu: '7777', cedula: '7777', nombre: 'Pedro', estado: 'Activo' },
+    { id: 10, ciu: '8888', cedula: '8888', nombre: 'Ana', estado: 'Inactivo' },
     // Repetí algunas filas para llenar datos
 ];
 
@@ -30,10 +30,23 @@ const Body_User: React.FC = () => {
     const [cedula, setCedula] = React.useState('1234567890');
     const [nombre, setPrimerNombre] = React.useState('Juan');
     const [estado, setEstado] = React.useState('ACTIVO');
+    const [searchText, setSearchText] = useState('');
+    const [filteredRows, setFilteredRows] = useState(rowsContribuyentes);
 
     function handleChange(event: SelectChangeEvent<any>, child: ReactNode): void {
         console.log('change');
     }
+    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+        const value = event.target.value.toLowerCase();
+        setSearchText(value);
+        const filteredData = rowsContribuyentes.filter((row) =>
+          row.nombre?.toLowerCase().includes(value) ||
+          String(row.ciu).includes(value)
+        );
+        console.log(filteredData)
+        setFilteredRows(filteredData);
+      };
 
     return (
         <Box sx={{ padding: 4 }}>
@@ -44,6 +57,7 @@ const Body_User: React.FC = () => {
                         <TextField
                             label="Buscar Contribuyente"
                             variant="outlined"
+                            onChange={handleSearch}
                             sx={{ minWidth: 200 }} // Ajuste el tamaño mínimo
                             InputProps={{
                                 endAdornment: (
@@ -96,7 +110,7 @@ const Body_User: React.FC = () => {
                 <Grid item xs={12} sm={8}>
                     <Box>
                         <DataGrid
-                            rows={rowsContribuyentes}
+                            rows={filteredRows}
                             columns={columnsContribuyentes}
                             checkboxSelection
                             getRowId={(row) => row.ciu}
