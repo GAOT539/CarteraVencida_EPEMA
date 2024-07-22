@@ -1,67 +1,101 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { TextField, Button, Container, Grid, Box, InputAdornment } from '@mui/material';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import SearchIcon from '@mui/icons-material/Search';
 import colors from '../resources/style/colors';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { getAllHistoricos, getHistoricosBodegas, getHistoricosPuestos } from '../providers/options/historical';
 import UploadDialog from './upload_Dialog';
+import { useAppContext } from '../AppContext';
 
-const columnsPuesto: GridColDef[] = [
-  { field: 'id', headerName: 'ID', flex: 0.5 },
-  { field: 'firstName', headerName: 'First name', flex: 1 },
-  { field: 'lastName', headerName: 'Last name', flex: 1 },
-  {
-    field: 'age',
-    headerName: 'Age',
-    type: 'number',
-    flex: 0.5,
-  },
-  {
-    field: 'fullName',
-    headerName: 'Full name',
-    description: 'This column has a value getter and is not sortable.',
-    sortable: false,
-    flex: 1,
-    //valueGetter: (params) => `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-  },
-];
-
-const rows = [
-  { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-  { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-  { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-  { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-  { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: 25 },
-  { id: 6, lastName: 'Melisandre', firstName: 'Gabriel', age: 15 },
-  { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-  { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-  { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-  { id: 10, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-  { id: 11, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-  { id: 12, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-  { id: 13, lastName: 'Roxie', firstName: 'Harvey', age: 65 }
+// Columnas actualizadas para coincidir con las de Body_Historical.tsx
+const columnsHistoricos: GridColDef[] = [
+  { field: 'id', headerName: 'ID', flex: 1 }, // Muestra la columna ID
+  { field: 'numero_reporte', headerName: 'Número de Reporte', flex: 1 },
+  { field: 'ciu', headerName: 'CIU', flex: 1 },
+  { field: 'ubicacion', headerName: 'Ubicación', flex: 2 },
+  { field: 'fecha', headerName: 'Fecha', flex: 1 },
+  { field: 'meses', headerName: 'Meses', flex: 1 },
+  { field: 'cantNotificaciones', headerName: 'Cantidad de Notificaciones', flex: 1 },
+  { field: 'archivo', headerName: 'Archivo', flex: 1 },
+  { field: 'valor', headerName: 'Valor', flex: 1 },
+  { field: 'pagado', headerName: 'Pagado', flex: 1 }
 ];
 
 export default function DataTable() {
   const [searchText, setSearchText] = useState('');
-  const [filteredRows, setFilteredRows] = useState(rows);
-  const [tituloRow, setTitulo] = useState('');
+  const [filteredRows, setFilteredRows] = useState<any[]>([]);
+  const [rows, setRows] = useState<any[]>([]);
   const [dialogOpen, setDialogOpen] = React.useState(false);
+  const { setOpcion_Titulo, opcion_Titulo } = useAppContext();
 
-  const handleCloseDialog = () => {
-    setDialogOpen(false);
+  useEffect(() => {
+    // Cargar los datos iniciales
+    fetchHistoricos();
+  }, []);
+
+  const fetchHistoricos = async () => {
+    try {
+      const result = await getAllHistoricos();
+      if (result.success) {
+        const transformedData = transformData(result.historicosList);
+        setRows(transformedData);
+        filterData(searchText, transformedData); // Filtrar datos después de cargar
+      }
+    } catch (error) {
+      console.error('Error fetching historicos:', error);
+    }
+  };
+
+  const fetchBodegas = async () => {
+    try {
+      const result = await getHistoricosBodegas();
+      if (result.success) {
+        const transformedData = transformData(result.historicosWithContribuyentes);
+        setRows(transformedData);
+        filterData(searchText, transformedData); // Filtrar datos después de cargar
+      }
+    } catch (error) {
+      console.error('Error fetching bodegas:', error);
+    }
+  };
+
+  const fetchPuestos = async () => {
+    try {
+      const result = await getHistoricosPuestos();
+      if (result.success) {
+        const transformedData = transformData(result.historicosWithContribuyentes);
+        setRows(transformedData);
+        filterData(searchText, transformedData); // Filtrar datos después de cargar
+      }
+    } catch (error) {
+      console.error('Error fetching puestos:', error);
+    }
+  };
+
+  const transformData = (data: any[]) => {
+    return data.map(row => ({
+      ...row,
+      ubicacion: `${row.bodega || ''} ${row.puesto || ''} ${row.nave || ''} ${row.seccion || ''}`.trim(),
+    }));
+  };
+
+  const filterData = (search: string, data: any[]) => {
+    let filtered = data;
+    if (search) {
+      filtered = filtered.filter(row =>
+        row.numero_reporte?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        row.ciu?.toLowerCase().includes(search.toLowerCase()) ||
+        row.cantNotificaciones?.toString().toLowerCase().includes(search.toLowerCase())
+      );
+    }
+    setFilteredRows(filtered);
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value.toLowerCase();
+    const value = event.target.value;
     setSearchText(value);
-    const filteredData = rows.filter((row) =>
-      row.firstName?.toLowerCase().includes(value) ||
-      row.lastName?.toLowerCase().includes(value) ||
-      String(row.age).includes(value)
-    );
-    setFilteredRows(filteredData);
+    filterData(value, rows);
   };
 
   const handleLoadData = () => {
@@ -77,11 +111,17 @@ export default function DataTable() {
   };
 
   const handleChangeBodegas = () => {
-    setTitulo('Bodegas');
+    setOpcion_Titulo('Bodegas');
+    fetchBodegas(); // Cargar datos de bodegas
   };
-  
+
   const handleChangePuestos = () => {
-    setTitulo('Puestos');
+    setOpcion_Titulo('Puestos');
+    fetchPuestos(); // Cargar datos de puestos
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
   };
 
   return (
@@ -89,11 +129,15 @@ export default function DataTable() {
       <Grid container spacing={2}>
         <Grid item xs={12} style={{ textAlign: 'center' }}>
           <Button
-            variant="contained" sx={{ marginLeft: 2, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }} onClick={handleChangeBodegas}>
+            variant="contained" sx={{ marginLeft: 2, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}
+            onClick={handleChangeBodegas}
+          >
             Bodegas
           </Button>
           <Button
-            variant="contained" sx={{ marginLeft: 2, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }} onClick={handleChangePuestos}>
+            variant="contained" sx={{ marginLeft: 2, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}
+            onClick={handleChangePuestos}
+          >
             Puestos
           </Button>
           <Button
@@ -101,19 +145,20 @@ export default function DataTable() {
             startIcon={<CloudUploadIcon />}
             sx={{ marginLeft: 2, backgroundColor: colors.orangeSalmon, '&:hover': { backgroundColor: colors.orangeSalmonGradient } }}
             onClick={handleLoadData}
-            disabled={!tituloRow}
+            disabled={!opcion_Titulo}
           >
             Cargar datos
           </Button>
           <UploadDialog
             open={dialogOpen}
             onClose={handleCloseDialog}
-            titulo= {tituloRow}
+            titulo={opcion_Titulo}
           />
         </Grid>
+
         <Grid item xs={12}>
           <TextField
-            label="Buscar Contribuyente"
+            label="Buscar"
             variant="outlined"
             value={searchText}
             onChange={handleSearch}
@@ -131,16 +176,23 @@ export default function DataTable() {
           <Box style={{ width: '100%' }}>
             <DataGrid
               rows={filteredRows}
-              columns={columnsPuesto}
+              columns={columnsHistoricos}
+              columnVisibilityModel={{
+                id: false
+              }}
               initialState={{
                 pagination: {
                   paginationModel: { page: 0, pageSize: 11 },
                 },
               }}
               pageSizeOptions={[5, 10]}
-              checkboxSelection
-              autoHeight
               sx={{
+                boxShadow: 2,
+                border: 2,
+                borderColor: colors.oliveGreen,
+                '& .MuiDataGrid-cell:hover': {
+                  color: colors.orangeSalmon,
+                },
                 '& .MuiDataGrid-columnHeaderTitleContainer': {
                   backgroundColor: colors.background_WhiteSmokeBlack,
                 },
@@ -149,19 +201,6 @@ export default function DataTable() {
                 }
               }}
             />
-          </Box>
-        </Grid>
-        <Grid item xs={12} style={{ textAlign: 'center' }}>
-          <Box display="flex" justifyContent="space-between">
-            <Button variant="contained" sx={{ marginLeft: 2, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }} onClick={handleNotifyAll}>
-              Notificar todos
-            </Button>
-            <Button
-              variant="contained"
-              startIcon={<CloudDownloadIcon />}
-              sx={{ marginLeft: 2, backgroundColor: colors.orangeSalmon, '&:hover': { backgroundColor: colors.orangeSalmonGradient } }}>
-              DESCARGAR PDF
-            </Button>
           </Box>
         </Grid>
       </Grid>

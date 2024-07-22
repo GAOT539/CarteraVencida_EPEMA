@@ -10,6 +10,7 @@ import Body_Error from './components/body_Error';
 import GeneradorPDF from './components/generator_PDF';
 import colors from './resources/style/colors';
 import Body_Home from './components/body_Home';
+import { AppProvider } from './AppContext';
 
 const AppRoutes: React.FC = () => {
     const location = useLocation();
@@ -35,15 +36,17 @@ const AppRoutes: React.FC = () => {
 
 function App() {
     return (
-        <BrowserRouter>
-            <div>
-                <Bar_Header />
-                <main style={{ backgroundColor: colors.background_WhiteSmoke }}>
-                    <AppRoutes />
-                </main>
-                <Bar_Footer />
-            </div>
-        </BrowserRouter>
+        <AppProvider>
+            <BrowserRouter>
+                <div>
+                    <Bar_Header />
+                    <main style={{ backgroundColor: colors.background_WhiteSmoke }}>
+                        <AppRoutes />
+                    </main>
+                    <Bar_Footer />
+                </div>
+            </BrowserRouter>
+        </AppProvider>
     );
 }
 

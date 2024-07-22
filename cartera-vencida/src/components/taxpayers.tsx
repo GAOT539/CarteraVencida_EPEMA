@@ -1,24 +1,29 @@
 import React from 'react';
 import { Box, TextField, Typography } from '@mui/material';
+import { useAppContext } from '../AppContext';
+
+
 
 const Taxpayers: React.FC = () => {
-  
   const [contributor, setContributor] = React.useState('AGUAGUIÑA FREDDY PATRICIO');
   const [activity, setActivity] = React.useState('FRUTA IMPORTADA');
   const [warehouse, setWarehouse] = React.useState('N-A-08');
   const [months, setMonths] = React.useState(3);
   const [ciu, setCiu] = React.useState(392215);
   const [amount, setAmount] = React.useState(388.4);
+  const { opcion_Titulo } = useAppContext();
+
 
   return (
-    
-    <Box sx={{ padding: 4 }} maxHeight={300}>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h4" gutterBottom>Puestos</Typography>
-        <Typography variant="h5" gutterBottom sx={{ textAlign: 'right' }}>Nave - AMBULANTES</Typography>
+    <Box sx={{ padding: 4 }}>
+      <Box mb={2}>
+        <Typography variant="h4" gutterBottom>{opcion_Titulo}</Typography> {/* Mostrar el título dinámicamente */}
       </Box>
-      <Box justifyContent="space-between" alignItems="center" mb={2}>
-      <hr />
+      <Box mb={2}>
+        <Typography variant="h5" sx={{ textAlign: 'right' }}>Nave - AMBULANTES</Typography>
+      </Box>
+      <Box mb={2}>
+        <hr />
       </Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} marginBottom={4}>
         <TextField
@@ -70,9 +75,10 @@ const Taxpayers: React.FC = () => {
           sx={{ width: '30%' }}
         />
       </Box>
-      <hr />
+      <Box mb={2}>
+        <hr />
+      </Box>
     </Box>
-    
   );
 };
 
