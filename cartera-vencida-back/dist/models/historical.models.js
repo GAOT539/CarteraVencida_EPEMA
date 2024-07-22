@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Historicos = void 0;
 const sequelize_1 = require("sequelize");
 const connection_db_1 = __importDefault(require("../db/connection.db"));
+const contributors_models_1 = __importDefault(require("./contributors.models"));
 exports.Historicos = connection_db_1.default.define('historicos', {
     id: {
         type: sequelize_1.DataTypes.INTEGER,
@@ -62,5 +63,10 @@ exports.Historicos = connection_db_1.default.define('historicos', {
     },
 }, {
     timestamps: false,
+});
+// Definición de la asociación
+exports.Historicos.belongsTo(contributors_models_1.default, {
+    foreignKey: 'ciu',
+    as: 'contribuyente',
 });
 exports.default = exports.Historicos;

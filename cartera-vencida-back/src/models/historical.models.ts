@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize';
 import connection from '../db/connection.db';
+import Contribuyentes from './contributors.models';
 
 export const Historicos = connection.define('historicos', {
   id: {
@@ -57,6 +58,12 @@ export const Historicos = connection.define('historicos', {
   },
 }, {
   timestamps: false,
+});
+
+// Definición de la asociación
+Historicos.belongsTo(Contribuyentes, {
+  foreignKey: 'ciu',
+  as: 'contribuyente',
 });
 
 export default Historicos;

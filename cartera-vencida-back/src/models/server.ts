@@ -7,6 +7,7 @@ import routesFiles from '../routes/files.routes';
 import routesContributors from '../routes/contributors.routes';
 //creation of tables
 import {Historicos} from './historical.models';
+import Contribuyentes from './contributors.models';
 
 class Server{
 
@@ -42,6 +43,7 @@ class Server{
     async dbConnect(){
         try {
             //These lines of code the first time create my tables
+            await Contribuyentes.sync();
             await Historicos.sync();
 
         } catch (error) {

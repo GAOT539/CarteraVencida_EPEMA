@@ -106,7 +106,8 @@ const getHistoricosBodegasNoPagado = (req, res) => __awaiter(void 0, void 0, voi
                 pagado: {
                     [sequelize_1.Op.eq]: 'NO',
                 },
-            }, attributes: [
+            },
+            attributes: [
                 'id',
                 'numero_reporte',
                 'ciu',
@@ -122,6 +123,11 @@ const getHistoricosBodegasNoPagado = (req, res) => __awaiter(void 0, void 0, voi
                 [sequelize_1.Sequelize.fn('MAX', sequelize_1.Sequelize.col('fecha')), 'fecha'],
             ],
             group: ['ciu', 'bodega'],
+            include: [{
+                    model: contributors_models_1.default,
+                    as: 'contribuyente',
+                    attributes: ['nombre', 'cedula'],
+                }],
             raw: true,
         });
         if (historicosList.length === 0) {
@@ -129,9 +135,7 @@ const getHistoricosBodegasNoPagado = (req, res) => __awaiter(void 0, void 0, voi
                 msg: 'No se encontraron historicos asociados a bodegas que no hayan sido pagados',
             });
         }
-        res.json({
-            historicosList,
-        });
+        res.json(historicosList);
     }
     catch (error) {
         return res.status(500).json({
@@ -185,7 +189,8 @@ const getHistoricosPuestosNoPagado = (req, res) => __awaiter(void 0, void 0, voi
                 pagado: {
                     [sequelize_1.Op.eq]: 'NO',
                 },
-            }, attributes: [
+            },
+            attributes: [
                 'id',
                 'numero_reporte',
                 'ciu',
@@ -201,16 +206,19 @@ const getHistoricosPuestosNoPagado = (req, res) => __awaiter(void 0, void 0, voi
                 [sequelize_1.Sequelize.fn('MAX', sequelize_1.Sequelize.col('fecha')), 'fecha'],
             ],
             group: ['ciu', 'puesto'],
+            include: [{
+                    model: contributors_models_1.default,
+                    as: 'contribuyente',
+                    attributes: ['nombre', 'cedula'],
+                }],
             raw: true,
         });
         if (historicosList.length === 0) {
             return res.status(404).json({
-                msg: 'No se encontraron historicos asociados a bodegas que no hayan sido pagados',
+                msg: 'No se encontraron historicos asociados a puestos que no hayan sido pagados',
             });
         }
-        res.json({
-            historicosList,
-        });
+        res.json(historicosList);
     }
     catch (error) {
         return res.status(500).json({

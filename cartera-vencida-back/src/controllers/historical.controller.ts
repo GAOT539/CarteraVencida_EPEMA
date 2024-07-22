@@ -103,7 +103,8 @@ export const getHistoricosBodegasNoPagado = async (req: Request, res: Response) 
         pagado: {
           [Op.eq]: 'NO',  
         },
-      },attributes: [
+      },
+      attributes: [
         'id',
         'numero_reporte',
         'ciu',
@@ -119,6 +120,11 @@ export const getHistoricosBodegasNoPagado = async (req: Request, res: Response) 
         [Sequelize.fn('MAX', Sequelize.col('fecha')), 'fecha'],
       ],
       group: ['ciu', 'bodega'],
+      include: [{
+        model: Contribuyentes,
+        as: 'contribuyente',
+        attributes: ['nombre', 'cedula'],
+      }],
       raw: true,
     });
 
@@ -128,9 +134,7 @@ export const getHistoricosBodegasNoPagado = async (req: Request, res: Response) 
       });
     }
 
-    res.json({
-      historicosList,
-    });
+    res.json(historicosList);
   } catch (error) {
     return res.status(500).json({
       msg: ErrorMessages.SERVER_ERROR,
@@ -138,6 +142,7 @@ export const getHistoricosBodegasNoPagado = async (req: Request, res: Response) 
     });
   }
 };
+
 export const getHistoricosBodegasCero = async (req: Request, res: Response) => {
   try {
     const historicosList = await Historicos.findAll({
@@ -190,7 +195,8 @@ export const getHistoricosPuestosNoPagado = async (req: Request, res: Response) 
         pagado: {
           [Op.eq]: 'NO',  
         },
-      },attributes: [
+      },
+      attributes: [
         'id',
         'numero_reporte',
         'ciu',
@@ -206,18 +212,21 @@ export const getHistoricosPuestosNoPagado = async (req: Request, res: Response) 
         [Sequelize.fn('MAX', Sequelize.col('fecha')), 'fecha'],
       ],
       group: ['ciu', 'puesto'],
+      include: [{
+        model: Contribuyentes,
+        as: 'contribuyente',
+        attributes: ['nombre', 'cedula'],
+      }],
       raw: true,
     });
 
     if (historicosList.length === 0) {
       return res.status(404).json({
-        msg: 'No se encontraron historicos asociados a bodegas que no hayan sido pagados',
+        msg: 'No se encontraron historicos asociados a puestos que no hayan sido pagados',
       });
     }
 
-    res.json({
-      historicosList,
-    });
+    res.json(historicosList);
   } catch (error) {
     return res.status(500).json({
       msg: ErrorMessages.SERVER_ERROR,
@@ -225,6 +234,7 @@ export const getHistoricosPuestosNoPagado = async (req: Request, res: Response) 
     });
   }
 };
+
 // Obtener todos los registros históricos donde puesto no es null
 export const getHistoricosPuestos = async (req: Request, res: Response) => {
   try {

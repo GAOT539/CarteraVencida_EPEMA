@@ -21,6 +21,7 @@ const files_routes_1 = __importDefault(require("../routes/files.routes"));
 const contributors_routes_1 = __importDefault(require("../routes/contributors.routes"));
 //creation of tables
 const historical_models_1 = require("./historical.models");
+const contributors_models_1 = __importDefault(require("./contributors.models"));
 class Server {
     constructor() {
         this.app = (0, express_1.default)();
@@ -48,6 +49,7 @@ class Server {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 //These lines of code the first time create my tables
+                yield contributors_models_1.default.sync();
                 yield historical_models_1.Historicos.sync();
             }
             catch (error) {

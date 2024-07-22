@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize';
 import connection from '../db/connection.db';
+import Historicos from './historical.models';
 
 export const Contribuyentes = connection.define('contribuyentes', {
   ciu: {
