@@ -230,3 +230,48 @@ export const obtenerNumeroReporte = async () => {
         };
     }
 };
+
+export const getHistoricosBodegasNuevos = async () => {
+    try {
+      // Realizar la solicitud GET a la API para obtener los datos
+      const response = await axios.get(`${API_HISTORICAL}/bodega/nuevos`);
+      
+      // Extraer los datos de la respuesta
+      const data = response.data;
+  
+      return {
+        success: true,
+        historicosWithContribuyentes: data,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        error: {
+          message: error.response ? error.response.data.error : 'Sin respuesta desde el servidor Back-end.',
+        },
+      };
+    }
+  };
+
+
+export const getHistoricosPuestosNuevos = async () => {
+    try {
+      // Realizar la solicitud GET a la API para obtener los datos
+      const response = await axios.get(`${API_HISTORICAL}/puesto/nuevos`);
+      
+      // Extraer los datos de la respuesta
+      const data = response.data;
+  
+      return {
+        success: true,
+        historicosWithContribuyentes: data,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        error: {
+          message: error.response ? error.response.data.error : 'Sin respuesta desde el servidor Back-end.',
+        },
+      };
+    }
+  };

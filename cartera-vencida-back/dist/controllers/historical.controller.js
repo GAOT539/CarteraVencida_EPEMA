@@ -47,17 +47,30 @@ const newHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.newHistorico = newHistorico;
-// Obtener todos los registros históricos
+// Obtener todos los registros históricos con nombre y cédula de contribuyentes
 const getHistoricos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        // Obtener todos los registros históricos
         const historicosList = yield historical_models_1.Historicos.findAll();
+        // Obtener los datos de contribuyentes asociados a los históricos
+        const historicosWithContribuyentes = yield Promise.all(historicosList.map((historico) => __awaiter(void 0, void 0, void 0, function* () {
+            const historicoData = historico.get({ plain: true });
+            // Buscar el contribuyente asociado al histórico
+            const contribuyente = yield contributors_models_1.default.findOne({
+                where: { ciu: historicoData.ciu },
+            });
+            // Devolver el histórico con los datos del contribuyente
+            return Object.assign(Object.assign({}, historicoData), { nombre: contribuyente ? contribuyente.get('nombre') : 'Desconocido', cedula: contribuyente ? contribuyente.get('cedula') : 'Desconocido' });
+        })));
+        // Enviar la respuesta con los históricos y los datos del contribuyente
         res.json({
-            historicosList
+            historicosList: historicosWithContribuyentes
         });
     }
     catch (error) {
         return res.status(500).json({
-            msg: manage_error_1.ErrorMessages.SERVER_ERROR
+            msg: manage_error_1.ErrorMessages.SERVER_ERROR,
+            error
         });
     }
 });

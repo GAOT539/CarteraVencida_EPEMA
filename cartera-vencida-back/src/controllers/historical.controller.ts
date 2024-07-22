@@ -36,20 +36,44 @@ export const newHistorico = async (req: Request, res: Response) => {
   }
 }
 
-// Obtener todos los registros históricos
+// Obtener todos los registros históricos con nombre y cédula de contribuyentes
 export const getHistoricos = async (req: Request, res: Response) => {
   try {
+    // Obtener todos los registros históricos
     const historicosList = await Historicos.findAll();
+
+    // Obtener los datos de contribuyentes asociados a los históricos
+    const historicosWithContribuyentes = await Promise.all(
+      historicosList.map(async (historico) => {
+        const historicoData = historico.get({ plain: true });
+
+        // Buscar el contribuyente asociado al histórico
+        const contribuyente = await Contribuyentes.findOne({
+          where: { ciu: historicoData.ciu },
+        });
+
+        // Devolver el histórico con los datos del contribuyente
+        return {
+          ...historicoData,
+          nombre: contribuyente ? contribuyente.get('nombre') : 'Desconocido',
+          cedula: contribuyente ? contribuyente.get('cedula') : 'Desconocido',
+        };
+      })
+    );
+
+    // Enviar la respuesta con los históricos y los datos del contribuyente
     res.json({
-      historicosList
+      historicosList: historicosWithContribuyentes
     });
 
   } catch (error) {
     return res.status(500).json({
-      msg: ErrorMessages.SERVER_ERROR
+      msg: ErrorMessages.SERVER_ERROR,
+      error
     });
   }
-}
+};
+
 
 // Obtener todos los registros históricos donde bodega no es null
 export const getHistoricosBodegas = async (req: Request, res: Response) => {
