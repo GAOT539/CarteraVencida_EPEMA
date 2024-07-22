@@ -48,7 +48,7 @@ export const getHistoricosBodegasNoPagado = async () => {
         const data = response.data;
         return {
             success: true,
-            historicosList: data.historicosList,
+            historicosList: data,
         };
     } catch (error: any) {
         return {
@@ -67,7 +67,7 @@ export const getHistoricosPuestosNoPagado = async () => {
         const data = response.data;
         return {
             success: true,
-            historicosList: data.historicosList,
+            historicosList: data,
         };
     } catch (error: any) {
         return {

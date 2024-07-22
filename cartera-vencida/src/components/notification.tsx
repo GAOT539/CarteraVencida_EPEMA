@@ -44,7 +44,7 @@ const Notification: React.FC = () => {
           sx={{ marginRight: 2, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}
           onClick={handleConfirmClick}
         >
-          Actualizar Contribuyente
+          Actualizar Cartera
         </Button>
         <Button
           variant="contained"

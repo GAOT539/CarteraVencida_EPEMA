@@ -31,7 +31,8 @@ export default function DataTable() {
 
   useEffect(() => {
     // Cargar los datos iniciales
-    fetchHistoricos();
+    fetchBodegas() ;
+    setOpcion_Titulo('Bodegas');
   }, []);
 
   const fetchHistoricos = async () => {
