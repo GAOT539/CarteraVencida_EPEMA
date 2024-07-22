@@ -52,6 +52,7 @@ export default function DataTable() {
       const result = await getHistoricosBodegasNoPagado();
       if (result.success) {
         const transformedData = transformData(result.historicosList);
+        console.log(result)
         setRows(transformedData);
         filterData(searchText, transformedData); // Filtrar datos después de cargar
       }
@@ -63,6 +64,7 @@ export default function DataTable() {
   const fetchPuestos = async () => {
     try {
       const result = await getHistoricosPuestosNoPagado();
+      console.log(result)
       if (result.success) {
         const transformedData = transformData(result.historicosList);
         setRows(transformedData);
