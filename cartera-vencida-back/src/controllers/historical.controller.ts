@@ -137,6 +137,47 @@ export const getHistoricosBodegasNoPagado = async (req: Request, res: Response) 
     });
   }
 };
+export const getHistoricosBodegasCero = async (req: Request, res: Response) => {
+  try {
+    const historicosList = await Historicos.findAll({
+      where: {
+        bodega: {
+          [Op.ne]: null,
+        },
+        cantNotificaciones: 0,
+      },
+    });
+
+    if (historicosList.length === 0) {
+      return res.status(404).json({
+        msg: 'No se encontraron historicos asociados a bodegas con cantNotificaciones igual a 0',
+      });
+    }
+
+    // Obtener datos de contribuyentes
+    const historicosWithContribuyentes = await Promise.all(
+      historicosList.map(async (historico) => {
+        const historicoData = historico.get({ plain: true });
+        const contribuyente = await Contribuyentes.findOne({
+          where: { ciu: historicoData.ciu },
+        });
+
+        return {
+          ...historicoData,
+          nombre: contribuyente ? contribuyente.get('nombre') : 'Desconocido',
+          cedula: contribuyente ? contribuyente.get('cedula') : 'Desconocido',
+        };
+      })
+    );
+
+    res.json(historicosWithContribuyentes);
+  } catch (error) {
+    return res.status(500).json({
+      msg: ErrorMessages.SERVER_ERROR,
+      error,
+    });
+  }
+};
 // Obtener todos los registros históricos donde bodega no es null y pagado es NO
 export const getHistoricosPuestosNoPagado = async (req: Request, res: Response) => {
   try {
@@ -198,6 +239,47 @@ export const getHistoricosPuestos = async (req: Request, res: Response) => {
         msg: 'No se encontraron historicos asociados a puestos',
       });
     }
+    // Obtener datos de contribuyentes
+    const historicosWithContribuyentes = await Promise.all(
+      historicosList.map(async (historico) => {
+        const historicoData = historico.get({ plain: true });
+        const contribuyente = await Contribuyentes.findOne({
+          where: { ciu: historicoData.ciu },
+        });
+
+        return {
+          ...historicoData,
+          nombre: contribuyente ? contribuyente.get('nombre') : 'Desconocido',
+          cedula: contribuyente ? contribuyente.get('cedula') : 'Desconocido',
+        };
+      })
+    );
+
+    res.json(historicosWithContribuyentes);
+  } catch (error) {
+    return res.status(500).json({
+      msg: ErrorMessages.SERVER_ERROR,
+      error,
+    });
+  }
+};
+export const getHistoricosPuestosCero = async (req: Request, res: Response) => {
+  try {
+    const historicosList = await Historicos.findAll({
+      where: {
+        puesto: {
+          [Op.ne]: null,
+        },
+        cantNotificaciones: 0,
+      },
+    });
+
+    if (historicosList.length === 0) {
+      return res.status(404).json({
+        msg: 'No se encontraron historicos asociados a puestos con cantNotificaciones igual a 0',
+      });
+    }
+
     // Obtener datos de contribuyentes
     const historicosWithContribuyentes = await Promise.all(
       historicosList.map(async (historico) => {

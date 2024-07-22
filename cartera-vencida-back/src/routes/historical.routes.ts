@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { deleteHistorico, getHistoricoById, getHistoricos, getHistoricosBodegas, getHistoricosBodegasNoPagado, getHistoricosByCIU, getHistoricosPuestos, getHistoricosPuestosNoPagado, newHistorico, obtenerNumeroReporte, payHistorico, updateHistorico } from '../controllers/historical.controller';
+import { deleteHistorico, getHistoricoById, getHistoricos, getHistoricosBodegas, getHistoricosBodegasCero, getHistoricosBodegasNoPagado, getHistoricosByCIU, getHistoricosPuestos, getHistoricosPuestosCero, getHistoricosPuestosNoPagado, newHistorico, obtenerNumeroReporte, payHistorico, updateHistorico } from '../controllers/historical.controller';
 
 const router = Router();
 router.get('/numeroreporte', obtenerNumeroReporte); // Obtener el siguiente número de reporte
@@ -8,11 +8,13 @@ router.get('/bodega/', getHistoricosBodegas); // Obtener todos los registros his
 router.get('/bodega/pagados', getHistoricosBodegasNoPagado); // Obtener todos los registros históricos de bodega no pagados
 router.get('/puesto/', getHistoricosPuestos); // Obtener todos los registros históricos
 router.get('/puesto/pagados', getHistoricosPuestosNoPagado); // Obtener todos los registros históricos de bodega no pagados
-router.get('/:id', getHistoricoById); // Obtener todos los registros históricos por ID
-router.get('/ciu/:ciu', getHistoricosByCIU); // Obtener todos los registros históricos por CIU
+//router.get('/:id', getHistoricoById); // Obtener todos los registros históricos por ID
+//router.get('/ciu/:ciu', getHistoricosByCIU); // Obtener todos los registros históricos por CIU
 router.post('/', newHistorico); // Crear un nuevo registro histórico
 router.post('/pagado/:id', payHistorico); // Actualizar el campo Pagado del registro histórico por ID
 router.put('/:id', updateHistorico); // Actualizar un registro histórico por ID
 router.delete('/:id', deleteHistorico); // Eliminar un registro histórico por ID
+router.get('/bodega/nuevos', getHistoricosBodegasCero); // Obtener registros históricos bodegas con 0 notificaciones
+router.get('/puesto/nuevos', getHistoricosPuestosCero); // Obtener registros históricos puestos con 0 notificaciones
 
 export default router;

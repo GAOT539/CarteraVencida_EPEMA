@@ -44,10 +44,15 @@ export default function UploadDialog({ open, onClose, titulo }: BodegasDialogPro
 
       if (result.success) {
         console.log('Procesado con éxito:', result.data);
+        setSelectedFile(null); // Limpiar archivo después de procesar
       } else {
         console.error('Error al procesar:', result);
       }
     }
+  };
+
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
   };
 
   return (
@@ -73,9 +78,19 @@ export default function UploadDialog({ open, onClose, titulo }: BodegasDialogPro
         </DialogContentText>
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px' }}>
           {selectedFile ? (
-            <Typography variant="body2" sx={{ textAlign: 'center' }}>
-              {selectedFile.name}
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant="body2" sx={{ textAlign: 'center', marginRight: '10px' }}>
+                {selectedFile.name}
+              </Typography>
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={handleRemoveFile}
+                sx={{ marginLeft: '10px' }}
+              >
+                Eliminar
+              </Button>
+            </Box>
           ) : (
             <Button
               variant="outlined"
