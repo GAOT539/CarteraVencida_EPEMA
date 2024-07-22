@@ -119,7 +119,7 @@ export const getHistoricosBodegasNoPagado = async (req: Request, res: Response) 
         'pagado',
         [Sequelize.fn('MAX', Sequelize.col('fecha')), 'fecha'],
       ],
-      group: ['ciu', 'bodega'],
+      group: ['id'],
       include: [{
         model: Contribuyentes,
         as: 'contribuyente',
@@ -128,7 +128,7 @@ export const getHistoricosBodegasNoPagado = async (req: Request, res: Response) 
       raw: true,
     });
 
-    if (historicosList.length === 0) {
+    if (historicosList.length === 0) { 
       return res.status(404).json({
         msg: 'No se encontraron historicos asociados a bodegas que no hayan sido pagados',
       });
@@ -211,7 +211,7 @@ export const getHistoricosPuestosNoPagado = async (req: Request, res: Response) 
         'pagado',
         [Sequelize.fn('MAX', Sequelize.col('fecha')), 'fecha'],
       ],
-      group: ['ciu', 'puesto'],
+      group: ['id'],
       include: [{
         model: Contribuyentes,
         as: 'contribuyente',

@@ -4,7 +4,7 @@ import { TextField, Button, Container, Grid, Box, InputAdornment } from '@mui/ma
 import SearchIcon from '@mui/icons-material/Search';
 import colors from '../resources/style/colors';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { getAllHistoricos, getHistoricosBodegas, getHistoricosPuestos } from '../providers/options/historical';
+import { getAllHistoricos, getHistoricosBodegasNoPagado, getHistoricosPuestosNoPagado } from '../providers/options/historical';
 import UploadDialog from './upload_Dialog';
 import { useAppContext } from '../AppContext';
 
@@ -49,9 +49,9 @@ export default function DataTable() {
 
   const fetchBodegas = async () => {
     try {
-      const result = await getHistoricosBodegas();
+      const result = await getHistoricosBodegasNoPagado();
       if (result.success) {
-        const transformedData = transformData(result.historicosWithContribuyentes);
+        const transformedData = transformData(result.historicosList);
         setRows(transformedData);
         filterData(searchText, transformedData); // Filtrar datos después de cargar
       }
@@ -62,9 +62,9 @@ export default function DataTable() {
 
   const fetchPuestos = async () => {
     try {
-      const result = await getHistoricosPuestos();
+      const result = await getHistoricosPuestosNoPagado();
       if (result.success) {
-        const transformedData = transformData(result.historicosWithContribuyentes);
+        const transformedData = transformData(result.historicosList);
         setRows(transformedData);
         filterData(searchText, transformedData); // Filtrar datos después de cargar
       }

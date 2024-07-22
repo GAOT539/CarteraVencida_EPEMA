@@ -122,7 +122,7 @@ const getHistoricosBodegasNoPagado = (req, res) => __awaiter(void 0, void 0, voi
                 'pagado',
                 [sequelize_1.Sequelize.fn('MAX', sequelize_1.Sequelize.col('fecha')), 'fecha'],
             ],
-            group: ['ciu', 'bodega'],
+            group: ['id'],
             include: [{
                     model: contributors_models_1.default,
                     as: 'contribuyente',
@@ -205,7 +205,7 @@ const getHistoricosPuestosNoPagado = (req, res) => __awaiter(void 0, void 0, voi
                 'pagado',
                 [sequelize_1.Sequelize.fn('MAX', sequelize_1.Sequelize.col('fecha')), 'fecha'],
             ],
-            group: ['ciu', 'puesto'],
+            group: ['id'],
             include: [{
                     model: contributors_models_1.default,
                     as: 'contribuyente',

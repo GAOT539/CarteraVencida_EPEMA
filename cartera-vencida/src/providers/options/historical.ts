@@ -44,7 +44,7 @@ export const getHistoricosBodegas = async () => {
 // Obtener todos los registros históricos donde bodega no es null y pagado es NO
 export const getHistoricosBodegasNoPagado = async () => {
     try {
-        const response = await axios.get(`${API_HISTORICAL}/bodegas/nopagado`);
+        const response = await axios.get(`${API_HISTORICAL}/bodega/pagados`);
         const data = response.data;
         return {
             success: true,
@@ -63,7 +63,7 @@ export const getHistoricosBodegasNoPagado = async () => {
 // Obtener todos los registros históricos donde puesto no es null y pagado es NO
 export const getHistoricosPuestosNoPagado = async () => {
     try {
-        const response = await axios.get(`${API_HISTORICAL}/puestos/nopagado`);
+        const response = await axios.get(`${API_HISTORICAL}/puesto/pagados`);
         const data = response.data;
         return {
             success: true,
