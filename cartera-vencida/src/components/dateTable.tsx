@@ -5,6 +5,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import SearchIcon from '@mui/icons-material/Search';
 import colors from '../resources/style/colors';
+import UploadDialog from './upload_Dialog';
 
 const columnsPuesto: GridColDef[] = [
   { field: 'id', headerName: 'ID', flex: 0.5 },
@@ -45,6 +46,12 @@ const rows = [
 export default function DataTable() {
   const [searchText, setSearchText] = useState('');
   const [filteredRows, setFilteredRows] = useState(rows);
+  const [tituloRow, setTitulo] = useState('');
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value.toLowerCase();
@@ -58,7 +65,7 @@ export default function DataTable() {
   };
 
   const handleLoadData = () => {
-    setFilteredRows(rows);
+    setDialogOpen(true);
   };
 
   const handleNotifyAll = () => {
@@ -69,22 +76,40 @@ export default function DataTable() {
     console.log('Descargar PDFs');
   };
 
+  const handleChangeBodegas = () => {
+    setTitulo('Bodegas');
+  };
+  
+  const handleChangePuestos = () => {
+    setTitulo('Puestos');
+  };
+
   return (
     <Container maxWidth="lg" style={{ padding: 20 }}>
       <Grid container spacing={2}>
         <Grid item xs={12} style={{ textAlign: 'center' }}>
           <Button
-            variant="contained" sx={{ marginLeft: 2, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }} onClick={handleLoadData}>
+            variant="contained" sx={{ marginLeft: 2, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }} onClick={handleChangeBodegas}>
             Bodegas
           </Button>
           <Button
-            variant="contained" sx={{ marginLeft: 2, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }} onClick={handleLoadData}>
+            variant="contained" sx={{ marginLeft: 2, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }} onClick={handleChangePuestos}>
             Puestos
           </Button>
           <Button
-            variant="contained" startIcon={<CloudUploadIcon />} sx={{ marginLeft: 2, backgroundColor: colors.orangeSalmon, '&:hover': { backgroundColor: colors.orangeSalmonGradient } }} onClick={handleLoadData}>
+            variant="contained"
+            startIcon={<CloudUploadIcon />}
+            sx={{ marginLeft: 2, backgroundColor: colors.orangeSalmon, '&:hover': { backgroundColor: colors.orangeSalmonGradient } }}
+            onClick={handleLoadData}
+            disabled={!tituloRow}
+          >
             Cargar datos
           </Button>
+          <UploadDialog
+            open={dialogOpen}
+            onClose={handleCloseDialog}
+            titulo= {tituloRow}
+          />
         </Grid>
         <Grid item xs={12}>
           <TextField
