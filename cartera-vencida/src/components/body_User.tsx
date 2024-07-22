@@ -178,7 +178,13 @@ const Body_Usuario: React.FC = () => {
                             columns={columnsContribuyentes}
                             getRowId={(row) => row.ciu}
                             onRowClick={handleRowClick}
-                            sx={{ width: '100%', height: 550 }} // Ajusta la altura según sea necesario
+                            sx={{ width: '100%', height: 550,
+                                '& .MuiDataGrid-columnHeaderTitleContainer': {
+                                    backgroundColor: colors.background_WhiteSmokeBlack,
+                                },
+                                '& .MuiDataGrid-columnHeader': {
+                                    backgroundColor: colors.background_WhiteSmokeBlack,
+                                } }} // Ajusta la altura según sea necesario
                         />
                     </Box>
                 </Grid>

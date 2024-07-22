@@ -17,7 +17,6 @@ const columnsHistoricos: GridColDef[] = [
     { field: 'id', headerName: 'ID', flex: 1 },
     { field: 'numero_reporte', headerName: 'Número de Reporte', flex: 1 },
     { field: 'ciu', headerName: 'CIU', flex: 1 },
-    { field: 'nombre', headerName: 'Nombre', flex: 2 },
     { field: 'ubicacion', headerName: 'Ubicación', flex: 2 },
     { field: 'fecha', headerName: 'Fecha', flex: 1 },
     { field: 'meses', headerName: 'Meses', flex: 1 },
@@ -100,8 +99,7 @@ const Body_Historical: React.FC = () => {
                 row.cantNotificaciones?.toString().includes(search.toLowerCase()) ||
                 row.archivo?.toString().includes(search.toLowerCase()) ||
                 row.valor?.toString().includes(search.toLowerCase()) ||
-                row.pagado?.toLowerCase().includes(search.toLowerCase()) ||
-                row.nombre?.toLowerCase().includes(search.toLowerCase())
+                row.pagado?.toLowerCase().includes(search.toLowerCase()) 
             );
         }
         if (start && end) {
@@ -207,6 +205,12 @@ const Body_Historical: React.FC = () => {
                             '& .MuiDataGrid-cell:hover': {
                                 color: colors.orangeSalmon,
                             },
+                            '& .MuiDataGrid-columnHeaderTitleContainer': {
+                                backgroundColor: colors.background_WhiteSmokeBlack,
+                            },
+                            '& .MuiDataGrid-columnHeader': {
+                                backgroundColor: colors.background_WhiteSmokeBlack,
+                            }
                         }}
                     />
                 </Grid>

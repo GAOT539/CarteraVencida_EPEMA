@@ -8,6 +8,7 @@ import Body_Login from './components/body_Login';
 import Body_User from './components/body_User';
 import Body_Error from './components/body_Error';
 import GeneradorPDF from './components/generator_PDF';
+import colors from './resources/style/colors';
 
 const AppRoutes: React.FC = () => {
     const location = useLocation();
@@ -36,7 +37,7 @@ function App() {
         <BrowserRouter>
             <div>
                 <Bar_Header />
-                <main>
+                <main style={{ backgroundColor: colors.background_WhiteSmoke }}>
                     <AppRoutes />
                 </main>
                 <Bar_Footer />
