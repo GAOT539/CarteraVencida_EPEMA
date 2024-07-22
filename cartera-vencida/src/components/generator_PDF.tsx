@@ -154,7 +154,7 @@ const MyDocument = ({ numero_reporte, fecha, ciu, contribuyente, cedula, num_pue
       <View style={styles.section06}>
         <View style={styles.roundedSquare}>
           <Text style={styles.texts} hyphenationCallback={hyphenationCallback}>
-            Notificación al correo electrónico señalado por el usuario catastado (después de la tercera notificación):{"\n"}{"\n"}
+            Notificación al correo electrónico señalado por el usuario catrastado (después de la tercera notificación):{"\n"}{"\n"}
             En la ciudad de Ambato, a __________ del mes __________ año ______ siendo las _____ h _____ se procede a notificar al correo electrónico ___________________________________ señalado por el usuario catastrado en el contrato de arrendamiento del puesto/bodega/local/núcleo/cubículo Nro. ______ nave ________ sección ________.{"\n"}
             CERTIFICO.-{"\n"}{"\n"}
             Supervisor de Nave{"\n"}
