@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.obtenerNumeroReporte = exports.payHistorico = exports.updateHistorico = exports.deleteHistorico = exports.getHistoricosByCIU = exports.getHistoricoById = exports.getHistoricosPuestos = exports.getHistoricosPuestosNoPagado = exports.getHistoricosBodegasNoPagado = exports.getHistoricosBodegas = exports.getHistoricos = exports.newHistorico = void 0;
+exports.obtenerNumeroReporte = exports.payHistorico = exports.updateHistorico = exports.deleteHistorico = exports.getHistoricosByCIU = exports.getHistoricoById = exports.getHistoricosPuestosCero = exports.getHistoricosPuestos = exports.getHistoricosPuestosNoPagado = exports.getHistoricosBodegasCero = exports.getHistoricosBodegasNoPagado = exports.getHistoricosBodegas = exports.getHistoricos = exports.newHistorico = void 0;
 const historical_models_1 = require("../models/historical.models");
 const manage_error_1 = require("../error/manage.error");
 const sequelize_1 = require("sequelize");
@@ -140,6 +140,39 @@ const getHistoricosBodegasNoPagado = (req, res) => __awaiter(void 0, void 0, voi
     }
 });
 exports.getHistoricosBodegasNoPagado = getHistoricosBodegasNoPagado;
+const getHistoricosBodegasCero = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const historicosList = yield historical_models_1.Historicos.findAll({
+            where: {
+                bodega: {
+                    [sequelize_1.Op.ne]: null,
+                },
+                cantNotificaciones: 0,
+            },
+        });
+        if (historicosList.length === 0) {
+            return res.status(404).json({
+                msg: 'No se encontraron historicos asociados a bodegas con cantNotificaciones igual a 0',
+            });
+        }
+        // Obtener datos de contribuyentes
+        const historicosWithContribuyentes = yield Promise.all(historicosList.map((historico) => __awaiter(void 0, void 0, void 0, function* () {
+            const historicoData = historico.get({ plain: true });
+            const contribuyente = yield contributors_models_1.default.findOne({
+                where: { ciu: historicoData.ciu },
+            });
+            return Object.assign(Object.assign({}, historicoData), { nombre: contribuyente ? contribuyente.get('nombre') : 'Desconocido', cedula: contribuyente ? contribuyente.get('cedula') : 'Desconocido' });
+        })));
+        res.json(historicosWithContribuyentes);
+    }
+    catch (error) {
+        return res.status(500).json({
+            msg: manage_error_1.ErrorMessages.SERVER_ERROR,
+            error,
+        });
+    }
+});
+exports.getHistoricosBodegasCero = getHistoricosBodegasCero;
 // Obtener todos los registros históricos donde bodega no es null y pagado es NO
 const getHistoricosPuestosNoPagado = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -218,6 +251,39 @@ const getHistoricosPuestos = (req, res) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.getHistoricosPuestos = getHistoricosPuestos;
+const getHistoricosPuestosCero = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const historicosList = yield historical_models_1.Historicos.findAll({
+            where: {
+                puesto: {
+                    [sequelize_1.Op.ne]: null,
+                },
+                cantNotificaciones: 0,
+            },
+        });
+        if (historicosList.length === 0) {
+            return res.status(404).json({
+                msg: 'No se encontraron historicos asociados a puestos con cantNotificaciones igual a 0',
+            });
+        }
+        // Obtener datos de contribuyentes
+        const historicosWithContribuyentes = yield Promise.all(historicosList.map((historico) => __awaiter(void 0, void 0, void 0, function* () {
+            const historicoData = historico.get({ plain: true });
+            const contribuyente = yield contributors_models_1.default.findOne({
+                where: { ciu: historicoData.ciu },
+            });
+            return Object.assign(Object.assign({}, historicoData), { nombre: contribuyente ? contribuyente.get('nombre') : 'Desconocido', cedula: contribuyente ? contribuyente.get('cedula') : 'Desconocido' });
+        })));
+        res.json(historicosWithContribuyentes);
+    }
+    catch (error) {
+        return res.status(500).json({
+            msg: manage_error_1.ErrorMessages.SERVER_ERROR,
+            error,
+        });
+    }
+});
+exports.getHistoricosPuestosCero = getHistoricosPuestosCero;
 //Obtener historico por el id
 const getHistoricoById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;

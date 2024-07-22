@@ -8,4 +8,5 @@ router.post('/puestos/contribuyentes', uploadFile, carteraVencidaPuestos);
 router.get('/bodegas/primera', notificarPrimeraBodegas);
 router.get('/puestos/primera', notificarPrimeraPuestos);
 
+
 export default router;
