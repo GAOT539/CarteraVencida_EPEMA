@@ -1,28 +1,19 @@
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
-import Avatar from '@mui/material/Avatar'; 
-import logoEpema from '../resources/images/logoFill.png';
+import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Button, MenuItem, Avatar } from '@mui/material';
+import { Menu as MenuIcon } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import logoEpema from '../resources/images/logoEpema-Photoroom.png';
 import colors from '../resources/style/colors';
-import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 
 const pages = [
-  { name: 'Cartera Vencida', path: '/' },
+  { name: 'Cartera Vencida', path: '/informacion' },
   { name: 'Históricos', path: '/historicos' },
   { name: 'Gestor Usuarios', path: '/login' }
 ];
 
 function Bar_Header() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
-  const navigate = useNavigate(); // Inicializa useNavigate
+  const navigate = useNavigate();
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -55,7 +46,7 @@ function Bar_Header() {
             variant="h6"
             noWrap
             component="a"
-            onClick={() => navigate('/')} // Redirige a la página principal
+            onClick={() => navigate('/')} 
             sx={{
               fontSize: '1.8rem',
               display: { xs: 'none', md: 'flex' },
@@ -64,7 +55,7 @@ function Bar_Header() {
               letterSpacing: '.3rem',
               color: colors.white,
               textDecoration: 'none',
-              cursor: 'pointer', // Añade cursor pointer
+              cursor: 'pointer',
             }}
           >
             EP-EMA
@@ -120,7 +111,7 @@ function Bar_Header() {
             variant="h5"
             noWrap
             component="a"
-            onClick={() => navigate('/')} // Redirige a la página principal
+            onClick={() => navigate('/')} 
             sx={{
               fontSize: '1.6rem',
               mr: 2,
@@ -131,7 +122,7 @@ function Bar_Header() {
               letterSpacing: '.3rem',
               color: colors.white,
               textDecoration: 'none',
-              cursor: 'pointer', // Añade cursor pointer
+              cursor: 'pointer', 
             }}
           >
             EP-EMA
@@ -141,7 +132,7 @@ function Bar_Header() {
             {pages.map((page) => (
               <Button
                 key={page.name}
-                onClick={() => handleNavigate(page.path)} // Navega a la ruta correspondiente
+                onClick={() => handleNavigate(page.path)}
                 sx={{
                   my: 2,
                   color: colors.white,

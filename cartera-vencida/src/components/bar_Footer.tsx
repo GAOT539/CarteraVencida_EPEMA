@@ -1,8 +1,6 @@
 import React from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import logoEpema from '../resources/images/logoFill.png';
+import { Box, Typography, Divider } from '@mui/material';
+import logoEpema from '../resources/images/logoEpema-Photoroom.png';
 import colors from '../resources/style/colors';
 
 const Bar_Footer: React.FC = () => {

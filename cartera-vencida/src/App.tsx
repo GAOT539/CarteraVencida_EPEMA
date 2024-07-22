@@ -9,18 +9,19 @@ import Body_User from './components/body_User';
 import Body_Error from './components/body_Error';
 import GeneradorPDF from './components/generator_PDF';
 import colors from './resources/style/colors';
+import Body_Home from './components/body_Home';
 
 const AppRoutes: React.FC = () => {
     const location = useLocation();
 
     useEffect(() => {
-        // Limpiar estado de autenticación cuando la ruta cambia
         localStorage.removeItem('isAuthenticated');
     }, [location]);
 
     return (
         <Routes>
-            <Route path="/" element={<Body_Information />} />
+            <Route path="/" element={<Body_Home />} />
+            <Route path="/informacion" element={<Body_Information />} />
             <Route path="/historicos" element={<Body_Historical />} />
             <Route path="/login" element={<Body_Login />} />
             <Route path="/pdf" element={<GeneradorPDF />} />

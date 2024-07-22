@@ -160,6 +160,11 @@ const styles = StyleSheet.create({
   table2Cell: {
     fontSize: 8,
     textAlign: 'center',
+  },
+  table2Cell_V: {
+    fontSize: 10,
+    textAlign: 'center',
+    color: colors.text_Red,
   }
 });
 

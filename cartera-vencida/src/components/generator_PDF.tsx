@@ -14,8 +14,8 @@ Font.register({
 
 const hyphenationCallback = (word: any) => [word];
 
-const MyDocument = ({ numero_reporte, fecha, ciu, contribuyente, cedula, num_puesto_bodega, nave, seccion, cant_meses, boleta_Uno, boleta_Dos, boleta_Tres }:
-  { numero_reporte: string, fecha: string, ciu: string, contribuyente: string, cedula: string, num_puesto_bodega: string, nave: string, seccion: string, cant_meses: string, boleta_Uno: boolean, boleta_Dos: boolean, boleta_Tres: boolean }) => (
+const MyDocument = ({ numero_reporte, fecha, ciu, contribuyente, cedula, num_puesto_bodega, nave, seccion, cant_meses, boleta_Uno, boleta_Dos, boleta_Tres, boleta_Uno_Fijada, boleta_Dos_Fijada, boleta_Tres_Fijada }:
+  { numero_reporte: string, fecha: string, ciu: string, contribuyente: string, cedula: string, num_puesto_bodega: string, nave: string, seccion: string, cant_meses: string, boleta_Uno: boolean, boleta_Dos: boolean, boleta_Tres: boolean, boleta_Uno_Fijada: boolean, boleta_Dos_Fijada: boolean, boleta_Tres_Fijada: boolean }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <View style={styles.header}>
@@ -96,19 +96,19 @@ const MyDocument = ({ numero_reporte, fecha, ciu, contribuyente, cedula, num_pue
               <Text style={styles.table2Cell}>Boleta uno(1):</Text>
             </View>
             <View style={styles.table2Col}>
-              <Text style={styles.table2Cell}>{boleta_Uno ? "✓" : ""}</Text>
+              <Text style={styles.table2Cell_V}>{boleta_Uno ? "X" : ""}</Text>
             </View>
             <View style={styles.table2Col}>
               <Text style={styles.table2Cell}>Boleta dos(2):</Text>
             </View>
             <View style={styles.table2Col}>
-              <Text style={styles.table2Cell}>{boleta_Dos ? "✓" : ""}</Text>
+              <Text style={styles.table2Cell_V}>{boleta_Dos ? "X" : ""}</Text>
             </View>
             <View style={styles.table2Col}>
               <Text style={styles.table2Cell}>Boleta tres(3):</Text>
             </View>
             <View style={styles.table2Col}>
-              <Text style={styles.table2Cell}>{boleta_Tres ? "✓" : ""}</Text>
+              <Text style={styles.table2Cell_V}>{boleta_Tres ? "X" : ""}</Text>
             </View>
           </View>
           <View style={styles.table2Row}>
@@ -119,19 +119,19 @@ const MyDocument = ({ numero_reporte, fecha, ciu, contribuyente, cedula, num_pue
               <Text style={styles.table2Cell}>Boleta uno(1):</Text>
             </View>
             <View style={styles.table2Col}>
-              <Text style={styles.table2Cell}>{boleta_Uno ? "✓" : ""}</Text>
+              <Text style={styles.table2Cell_V}>{boleta_Uno_Fijada ? "X" : ""}</Text>
             </View>
             <View style={styles.table2Col}>
               <Text style={styles.table2Cell}>Boleta dos(2):</Text>
             </View>
             <View style={styles.table2Col}>
-              <Text style={styles.table2Cell}>{boleta_Dos ? "✓" : ""}</Text>
+              <Text style={styles.table2Cell_V}>{boleta_Dos_Fijada ? "X" : ""}</Text>
             </View>
             <View style={styles.table2Col}>
               <Text style={styles.table2Cell}>Boleta tres(3):</Text>
             </View>
             <View style={styles.table2Col}>
-              <Text style={styles.table2Cell}>{boleta_Tres ? "✓" : ""}</Text>
+              <Text style={styles.table2Cell_V}>{boleta_Tres_Fijada ? "X" : ""}</Text>
             </View>
           </View>
         </View>
@@ -177,9 +177,12 @@ const GeneradorPDF = () => {
     nave: "",
     seccion: "",
     cant_meses: "",
-    boleta_Uno: true,
-    boleta_Dos: true,
+    boleta_Uno: false,
+    boleta_Dos: false,
     boleta_Tres: false,
+    boleta_Uno_Fijada: false,
+    boleta_Dos_Fijada: false,
+    boleta_Tres_Fijada: false,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -208,8 +211,9 @@ const GeneradorPDF = () => {
           <input
             type={key.includes("boleta") ? "checkbox" : "text"}
             id={key}
-            value={(formData as any)[key]}  // Usamos type assertion aquí
+            value={(formData as any)[key]}
             checked={key.includes("boleta") ? (formData as any)[key] : undefined}
+            
             onChange={handleChange}
           />
           <br />
