@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { DataGrid, GridColDef, GridRowParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { TextField, Container, Grid, Box, InputAdornment, Typography, Button, Snackbar, Alert } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers-pro/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
@@ -14,7 +14,7 @@ import { getAllHistoricos, getHistoricosBodegas, getHistoricosPuestos } from '..
 dayjs.locale('es');
 
 const columnsHistoricos: GridColDef[] = [
-    { field: 'id', headerName: 'ID', flex: 1 },
+    { field: 'id', headerName: 'ID', flex: 1 }, // Oculta la columna ID
     { field: 'numero_reporte', headerName: 'Número de Reporte', flex: 1 },
     { field: 'ciu', headerName: 'CIU', flex: 1 },
     { field: 'ubicacion', headerName: 'Ubicación', flex: 2 },
@@ -51,7 +51,7 @@ const Body_Historical: React.FC = () => {
         if (result.success) {
             const transformedData = transformData(result.historicosList);
             setRows(transformedData);
-            setFilteredRows(transformedData);
+            filterData(searchTerm, startDate, endDate, transformedData);
         }
     };
 
@@ -60,7 +60,7 @@ const Body_Historical: React.FC = () => {
         if (result.success) {
             const transformedData = transformData(result.historicosWithContribuyentes);
             setRows(transformedData);
-            setFilteredRows(transformedData);
+            filterData(searchTerm, startDate, endDate, transformedData);
         }
     };
 
@@ -69,45 +69,48 @@ const Body_Historical: React.FC = () => {
         if (result.success) {
             const transformedData = transformData(result.historicosWithContribuyentes);
             setRows(transformedData);
-            setFilteredRows(transformedData);
+            filterData(searchTerm, startDate, endDate, transformedData);
         }
     };
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
-        filterData(event.target.value, startDate, endDate);
+        filterData(event.target.value, startDate, endDate, rows);
     };
 
     const handleDateChange = (type: 'start' | 'end') => (date: dayjs.Dayjs | null) => {
         if (type === 'start') {
+            if (endDate && date && date.isAfter(endDate)) {
+                setEndDate(date);
+            }
             setStartDate(date);
         } else {
+            if (startDate && date && date.isBefore(startDate)) {
+                setStartDate(date);
+            }
             setEndDate(date);
         }
-        filterData(searchTerm, type === 'start' ? date : startDate, type === 'end' ? date : endDate);
+        filterData(searchTerm, type === 'start' ? date : startDate, type === 'end' ? date : endDate, rows);
     };
 
-    const filterData = (search: string, start: dayjs.Dayjs | null, end: dayjs.Dayjs | null) => {
-        let filtered = rows;
+    const filterData = (search: string, start: dayjs.Dayjs | null, end: dayjs.Dayjs | null, data: any[]) => {
+        let filtered = data;
+
         if (search) {
             filtered = filtered.filter(row =>
                 row.numero_reporte?.toString().includes(search.toLowerCase()) ||
                 row.ciu?.toLowerCase().includes(search.toLowerCase()) ||
-                row.ubicacion?.toLowerCase().includes(search.toLowerCase()) ||
-                row.fecha?.toLowerCase().includes(search.toLowerCase()) ||
-                row.meses?.toString().includes(search.toLowerCase()) ||
-                row.cantNotificaciones?.toString().includes(search.toLowerCase()) ||
-                row.archivo?.toString().includes(search.toLowerCase()) ||
-                row.valor?.toString().includes(search.toLowerCase()) ||
-                row.pagado?.toLowerCase().includes(search.toLowerCase()) 
+                row.cantNotificaciones?.toString().includes(search.toLowerCase())
             );
         }
+
         if (start && end) {
             filtered = filtered.filter(row => {
                 const date = dayjs(row.fecha);
                 return date.isAfter(start) && date.isBefore(end);
             });
         }
+
         setFilteredRows(filtered);
     };
 
@@ -153,6 +156,8 @@ const Body_Historical: React.FC = () => {
                                     <DatePicker
                                         value={startDate}
                                         onChange={handleDateChange('start')}
+                                        disableFuture
+                                        shouldDisableDate={(date) => endDate ? date.isAfter(endDate) : false}
                                         sx={{ width: 166 }}
                                     />
                                 </LocalizationProvider>
@@ -165,17 +170,12 @@ const Body_Historical: React.FC = () => {
                                     <DatePicker
                                         value={endDate}
                                         onChange={handleDateChange('end')}
+                                        disableFuture
+                                        shouldDisableDate={(date) => startDate ? date.isBefore(startDate) : false}
                                         sx={{ width: 166 }}
                                     />
                                 </LocalizationProvider>
                             </Box>
-                            <Button
-                                variant="contained"
-                                onClick={() => filterData(searchTerm, startDate, endDate)}
-                                sx={{ marginRight: 3, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}
-                            >
-                                FILTRO
-                            </Button>
                         </Box>
                         <TextField
                             variant="outlined"
@@ -198,6 +198,9 @@ const Body_Historical: React.FC = () => {
                     <DataGrid
                         rows={filteredRows}
                         columns={columnsHistoricos}
+                        columnVisibilityModel={{
+                            id: false
+                        }}
                         sx={{
                             boxShadow: 2,
                             border: 2,
