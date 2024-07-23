@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.notificarPrimeraPuestos = exports.notificarPrimeraBodegas = exports.carteraVencidaPuestos = exports.carteraVencidaBodegas = exports.leerXMLBodegas = exports.uploadFile = void 0;
+exports.actualizarPDFHistorico = exports.notificarPrimeraPuestos = exports.notificarPrimeraBodegas = exports.carteraVencidaPuestos = exports.carteraVencidaBodegas = exports.leerXMLBodegas = exports.uploadFile = void 0;
 const xml2js_1 = require("xml2js");
 const fs_1 = __importDefault(require("fs"));
 const multer_1 = __importDefault(require("multer"));
@@ -376,3 +376,40 @@ const notificarPrimeraPuestos = (req, res) => __awaiter(void 0, void 0, void 0, 
     }
 });
 exports.notificarPrimeraPuestos = notificarPrimeraPuestos;
+// Método para actualizar el archivo PDF de un histórico
+const actualizarPDFHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const file = req.file;
+    if (!file) {
+        return res.status(400).json({
+            msg: 'No se ha proporcionado ningún archivo'
+        });
+    }
+    try {
+        // Verificar si el historial existe
+        const historico = yield historical_models_1.default.findByPk(id);
+        if (!historico) {
+            return res.status(404).json({
+                msg: 'Histórico no encontrado'
+            });
+        }
+        // Guardar el archivo PDF como BLOB en el registro del historial
+        yield historical_models_1.default.update({ archivo: file.buffer }, {
+            where: {
+                id: id,
+            },
+        });
+        // Responder con éxito
+        return res.status(200).json({
+            msg: 'Archivo PDF actualizado exitosamente'
+        });
+    }
+    catch (error) {
+        console.error('Error al actualizar el archivo PDF:', error);
+        return res.status(500).json({
+            msg: 'Error al actualizar el archivo PDF',
+            error: error
+        });
+    }
+});
+exports.actualizarPDFHistorico = actualizarPDFHistorico;
