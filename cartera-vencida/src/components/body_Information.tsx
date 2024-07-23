@@ -1,7 +1,6 @@
 import React from 'react';
 import DataTable from './dateTable';
 import Taxpayers from './taxpayers';
-import Notification from './notification';
 import colors from '../resources/style/colors';
 import { Box, Grid, useTheme, useMediaQuery } from '@mui/material';
 
@@ -15,7 +14,6 @@ const Body_Information: React.FC = () => {
         <Grid item xs={12} sm={4}>
           <Box sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', height: '100%', gap: theme.spacing(2) }}>
             <Taxpayers />
-            <Notification />
           </Box>
         </Grid>
         <Grid item xs={12} sm={8}>

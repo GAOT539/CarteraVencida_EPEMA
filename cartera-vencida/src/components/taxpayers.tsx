@@ -1,7 +1,10 @@
 // Taxpayers.tsx
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, TextField, Typography } from '@mui/material';
 import { useAppContext } from '../AppContext';
+import { Button, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import colors from '../resources/style/colors';
 
 const Taxpayers: React.FC = () => {
   const { opcion_Titulo, selectedRow } = useAppContext();
@@ -11,6 +14,19 @@ const Taxpayers: React.FC = () => {
   const [months, setMonths] = React.useState(0);
   const [ciu, setCiu] = React.useState('');
   const [amount, setAmount] = React.useState(0);
+  const [notificationType, setNotificationType] = useState<string>('');
+
+  const handleNotificationChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setNotificationType(event.target.value as string);
+  };
+
+  const handleConfirmClick = () => {
+    // Aquí puedes agregar la lógica para confirmar la notificación
+  };
+
+  const handleDownloadClick = () => {
+    // Aquí puedes agregar la lógica para descargar el PDF
+  };
 
   useEffect(() => {
     if (selectedRow) {
@@ -87,6 +103,44 @@ const Taxpayers: React.FC = () => {
       <Box mb={2}>
         <hr />
       </Box>
+      <Box sx={{ padding: 4 }}>
+      <Box mb={2}>
+        <Typography variant="h5">Crear Notificación</Typography>
+      </Box>
+      <Box display="flex" justifyContent="flex-start" alignItems="center" mb={2}>
+        <FormControl sx={{ marginRight: 2 }}>
+          <InputLabel>Notificación</InputLabel>
+          <Select
+            value={notificationType}
+            //onChange={handleNotificationChange}
+            sx={{ width: '12em' }}
+          >
+            <MenuItem value="Primera">Primera Notificación</MenuItem>
+            <MenuItem value="Segunda">Segunda Notificación</MenuItem>
+            <MenuItem value="Tercera">Tercera Notificación</MenuItem>
+            <MenuItem value="PAGADO">PAGADO</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+      <Box display="flex" justifyContent="flex-start" alignItems="center" mb={2}>
+        <Button
+          variant="contained"
+          sx={{ marginRight: 2, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}
+          onClick={handleConfirmClick}
+        >
+          Actualizar Cartera
+        </Button>
+        <Button
+          variant="contained"
+          startIcon={<CloudDownloadIcon />}
+          sx={{ backgroundColor: colors.orangeSalmon, '&:hover': { backgroundColor: colors.orangeSalmonGradient } }}
+          onClick={handleDownloadClick}
+        >
+          DESCARGAR PDF
+        </Button>
+      </Box>
+      <hr />
+    </Box>
     </Box>
   );
 };
