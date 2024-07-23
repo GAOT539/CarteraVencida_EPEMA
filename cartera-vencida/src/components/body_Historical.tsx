@@ -15,14 +15,14 @@ dayjs.locale('es');
 
 const columnsHistoricos: GridColDef[] = [
     { field: 'id', headerName: 'ID', flex: 1 }, // Oculta la columna ID
-    { field: 'numero_reporte', headerName: 'Número de Reporte', flex: 1 },
+    { field: 'numero_reporte', headerName: 'N. Reporte', flex: 1 },
     { field: 'ciu', headerName: 'CIU', flex: 1 },
     { field: 'nombre', headerName: 'Nombre', flex: 1 },
     { field: 'cedula', headerName: 'Cedula', flex: 1 },
     { field: 'ubicacion', headerName: 'Ubicación', flex: 2 },
     { field: 'fecha', headerName: 'Fecha', flex: 1 },
     { field: 'meses', headerName: 'Meses', flex: 1 },
-    { field: 'cantNotificaciones', headerName: 'Cantidad de Notificaciones', flex: 1 },
+    { field: 'cantNotificaciones', headerName: 'Cant. Notificaciones', flex: 1 },
     { field: 'archivo', headerName: 'Archivo', flex: 1 },
     { field: 'valor', headerName: 'Valor', flex: 1 },
     { field: 'pagado', headerName: 'Pagado', flex: 1 }
@@ -100,9 +100,8 @@ const Body_Historical: React.FC = () => {
 
         if (search) {
             filtered = filtered.filter(row =>
-                row.numero_reporte?.toString().includes(search.toLowerCase()) ||
                 row.ciu?.toLowerCase().includes(search.toLowerCase()) ||
-                row.cantNotificaciones?.toString().includes(search.toLowerCase())
+                row.ubicacion?.toLowerCase().includes(search.toLowerCase())
             );
         }
 
