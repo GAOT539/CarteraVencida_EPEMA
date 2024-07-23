@@ -1,16 +1,17 @@
-// DataTable.tsx
 import React, { useState, useEffect } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { TextField, Button, Container, Grid, Box, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import colors from '../resources/style/colors';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { getAllHistoricos, getHistoricosBodegasNoPagado, getHistoricosPuestosNoPagado } from '../providers/options/historical';
+import { getHistoricosBodegasNoPagado, getHistoricosPuestosNoPagado } from '../providers/options/historical';
 import UploadDialog from './upload_Dialog';
 import { useAppContext } from '../AppContext';
+import { CloudDownload } from '@mui/icons-material';
+import GeneradorPDF from './generator_PDF';
 
 const columnsHistoricos: GridColDef[] = [
-  { field: 'id', headerName: 'ID', flex: 1 }, // Oculta la columna ID
+  { field: 'id', headerName: 'ID', flex: 1 }, 
   { field: 'numero_reporte', headerName: 'Número de Reporte', flex: 1 },
   { field: 'ciu', headerName: 'CIU', flex: 1 },
   { field: 'contribuyente.nombre', headerName: 'Nombre', flex: 1 },
@@ -78,26 +79,21 @@ export default function DataTable() {
         row.cantNotificaciones?.toString().toLowerCase().includes(search.toLowerCase())
       );
     }
-    setFilteredRows(filtered);
-  };
+    setFilteredRows(filtered); };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setSearchText(value);
-    filterData(value, rows);
-  };
+    filterData(value, rows); };
 
   const handleLoadData = () => {
-    setDialogOpen(true);
-  };
+    setDialogOpen(true);  };
 
   const handleNotifyAll = () => {
-    console.log('Notificar a todos');
-  };
+    console.log('Notificar a todos');  };
 
   const handleDownloadPDFs = () => {
-    console.log('Descargar PDFs');
-  };
+    console.log('Descargar PDFs');  };
 
   const handleChangeBodegas = () => {
     setOpcion_Titulo('Bodegas');
@@ -125,31 +121,27 @@ export default function DataTable() {
           <Button
             variant="contained"
             sx={{ marginLeft: 2, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}
-            onClick={handleChangeBodegas}
-          >
-            Bodegas
-          </Button>
+            onClick={handleChangeBodegas}>Bodegas</Button>
           <Button
             variant="contained"
             sx={{ marginLeft: 2, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}
-            onClick={handleChangePuestos}
-          >
-            Puestos
-          </Button>
+            onClick={handleChangePuestos}>Puestos</Button>
           <Button
             variant="contained"
             startIcon={<CloudUploadIcon />}
             sx={{ marginLeft: 2, backgroundColor: colors.orangeSalmon, '&:hover': { backgroundColor: colors.orangeSalmonGradient } }}
             onClick={handleLoadData}
-            disabled={!opcion_Titulo}
-          >
-            Cargar datos
-          </Button>
+            disabled={!opcion_Titulo}>Cargar datos</Button>
+            <Button
+            variant="contained"
+            startIcon={<CloudDownload />}
+            sx={{ marginLeft: 2, backgroundColor: colors.orangeSalmon, '&:hover': { backgroundColor: colors.orangeSalmonGradient } }}
+            onClick={handleDownloadPDFs}
+            disabled={!opcion_Titulo}>Descargar PDFs</Button>
           <UploadDialog
             open={dialogOpen}
             onClose={handleCloseDialog}
-            titulo={opcion_Titulo}
-          />
+            titulo={opcion_Titulo} />
         </Grid>
 
         <Grid item xs={12}>
@@ -165,8 +157,7 @@ export default function DataTable() {
                   <SearchIcon />
                 </InputAdornment>
               ),
-            }}
-          />
+            }} />
         </Grid>
         <Grid item xs={12}>
           <Box style={{ width: '100%' }}>
@@ -190,19 +181,14 @@ export default function DataTable() {
                 border: 2,
                 borderColor: colors.oliveGreen,
                 '& .MuiDataGrid-cell:hover': {
-                  color: colors.orangeSalmon,
-                },
+                  color: colors.orangeSalmon,},
                 '& .MuiDataGrid-columnHeaderTitleContainer': {
-                  backgroundColor: colors.background_WhiteSmokeBlack,
-                },
+                  backgroundColor: colors.background_WhiteSmokeBlack,},
                 '& .MuiDataGrid-columnHeader': {
-                  backgroundColor: colors.background_WhiteSmokeBlack,
-                }
-              }}
-            />
+                  backgroundColor: colors.background_WhiteSmokeBlack,}
+              }} />
           </Box>
         </Grid>
       </Grid>
-    </Container>
-  );
+    </Container>);
 }

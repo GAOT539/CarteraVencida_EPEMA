@@ -406,3 +406,47 @@ export const notificarPrimeraPuestos = async (req: Request, res: Response) => {
     });
   }
 };
+
+// Método para actualizar el archivo PDF de un histórico
+export const actualizarPDFHistorico = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const file = req.file;
+
+  if (!file) {
+      return res.status(400).json({
+          msg: 'No se ha proporcionado ningún archivo'
+      });
+  }
+
+  try {
+      // Verificar si el historial existe
+      const historico = await Historicos.findByPk(id);
+
+      if (!historico) {
+          return res.status(404).json({
+              msg: 'Histórico no encontrado'
+          });
+      }
+
+      // Guardar el archivo PDF como BLOB en el registro del historial
+      await Historicos.update(
+        { archivo: file.buffer },
+        {
+          where: {
+            id: id, 
+          },
+        }
+      );
+
+      // Responder con éxito
+      return res.status(200).json({
+          msg: 'Archivo PDF actualizado exitosamente'
+      });
+  } catch (error) {
+      console.error('Error al actualizar el archivo PDF:', error);
+      return res.status(500).json({
+          msg: 'Error al actualizar el archivo PDF',
+          error: error
+      });
+  }
+};

@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import { Document, Page, Text, View, PDFDownloadLink, Image, Font } from "@react-pdf/renderer";
 import styles from "../resources/style/style_Generator_PDF";
-// Registrar las fuentes
+
 Font.register({
   family: "Roboto",
   fonts: [
     { src: require("../resources/fonts/Roboto/Roboto-Regular.ttf") },
     { src: require("../resources/fonts/Roboto/Roboto-Black.ttf"), fontWeight: "bold" },
-    { src: require("../resources/fonts/Roboto/Roboto-Italic.ttf"), fontStyle: "italic" }
-
-  ]
+    { src: require("../resources/fonts/Roboto/Roboto-Italic.ttf"), fontStyle: "italic" }]
 });
 
 const hyphenationCallback = (word: any) => [word];
@@ -27,6 +25,7 @@ const MyDocument = ({ numero_reporte, fecha, ciu, contribuyente, cedula, num_pue
           MERCADO MAYORISTA AMBATO
         </Text>
       </View>
+      
       <View style={styles.row}>
         <Text style={styles.notification}>NOTIFICACION CARTERA VENCIDA</Text>
         <Text style={styles.reportNumber}>Nº <Text style={styles.reportNumber_N}>{numero_reporte}</Text></Text>

@@ -1,5 +1,9 @@
 import { Router } from 'express';
-import {  carteraVencidaBodegas, carteraVencidaPuestos, leerXMLBodegas, notificarPrimeraBodegas, notificarPrimeraPuestos, uploadFile } from '../controllers/files.controller';
+import {  actualizarPDFHistorico, carteraVencidaBodegas, carteraVencidaPuestos, leerXMLBodegas, notificarPrimeraBodegas, notificarPrimeraPuestos, uploadFile } from '../controllers/files.controller';
+import multer from 'multer';
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
 
 const router = Router();
 router.post('/', uploadFile, leerXMLBodegas);
@@ -8,5 +12,6 @@ router.post('/puestos/contribuyentes', uploadFile, carteraVencidaPuestos);
 router.get('/bodegas/primera', notificarPrimeraBodegas);
 router.get('/puestos/primera', notificarPrimeraPuestos);
 
+router.post('/historicos/subir/:id', upload.single('file'), actualizarPDFHistorico);
 
 export default router;
