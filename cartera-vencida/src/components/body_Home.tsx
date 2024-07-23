@@ -45,13 +45,13 @@ const Home: React.FC = () => {
                         component="h1"
                         sx={{ color: colors.black, fontWeight: 'bold' }}
                     >
-                        Aplicación para Realizar Cálculos de Cartera Vencida de EPEMA
+                        Aplicación para Notificación de Cartera Vencida de EP-EMA
                     </Typography>
                     <Typography
                         variant="body1"
                         sx={{ color: colors.black, mt: 4 }}
                     >
-                        Bienvenido a la aplicación de cálculo de cartera vencida de EPEMA. Aquí puede calcular y gestionar carteras vencidas de manera eficiente.
+                        Bienvenido a la aplicación de cálculo de cartera vencida de EPEMA. Aquí puede notificar y gestionar carteras vencidas de manera eficiente.
                     </Typography>
                 </Box>
                 <Box
