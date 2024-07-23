@@ -120,7 +120,7 @@ const Body_Usuario: React.FC = () => {
                         <TextField
                             label="Buscar Contribuyente"
                             variant="outlined"
-                            sx={{ minWidth: 200 }} // Ajuste el tamaño mínimo
+                            sx={{ minWidth: 200 }} 
                             InputProps={{
                                 endAdornment: (
                                     <InputAdornment position="end">
@@ -184,7 +184,7 @@ const Body_Usuario: React.FC = () => {
                                 },
                                 '& .MuiDataGrid-columnHeader': {
                                     backgroundColor: colors.background_WhiteSmokeBlack,
-                                } }} // Ajusta la altura según sea necesario
+                                } }} 
                         />
                     </Box>
                 </Grid>
