@@ -7,16 +7,17 @@ import { Box, Grid, useTheme, useMediaQuery } from '@mui/material';
 const Body_Information: React.FC = () => {
   const theme = useTheme();
   const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
+  const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
 
   return (
     <Box sx={{ backgroundColor: colors.background_WhiteSmoke, minHeight: '100vh', padding: theme.spacing(2) }}>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={4}>
+        <Grid item xs={12} sm={12} md={4}>
           <Box sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', height: '100%', gap: theme.spacing(2) }}>
             <Taxpayers />
           </Box>
         </Grid>
-        <Grid item xs={12} sm={8}>
+        <Grid item xs={12} sm={12} md={8}>
           <Box sx={{ height: '100%' }}>
             <DataTable />
           </Box>
