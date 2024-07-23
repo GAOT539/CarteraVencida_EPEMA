@@ -1,3 +1,4 @@
+// DataTable.tsx
 import React, { useState, useEffect } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { TextField, Button, Container, Grid, Box, InputAdornment } from '@mui/material';
@@ -8,11 +9,12 @@ import { getAllHistoricos, getHistoricosBodegasNoPagado, getHistoricosPuestosNoP
 import UploadDialog from './upload_Dialog';
 import { useAppContext } from '../AppContext';
 
-// Columnas actualizadas para coincidir con las de Body_Historical.tsx
 const columnsHistoricos: GridColDef[] = [
-  { field: 'id', headerName: 'ID', flex: 1 }, // Muestra la columna ID
+  { field: 'id', headerName: 'ID', flex: 1 }, // Oculta la columna ID
   { field: 'numero_reporte', headerName: 'Número de Reporte', flex: 1 },
   { field: 'ciu', headerName: 'CIU', flex: 1 },
+  { field: 'contribuyente.nombre', headerName: 'Nombre', flex: 1 },
+  { field: 'contribuyente.cedula', headerName: 'Cedula', flex: 1 },
   { field: 'ubicacion', headerName: 'Ubicación', flex: 2 },
   { field: 'fecha', headerName: 'Fecha', flex: 1 },
   { field: 'meses', headerName: 'Meses', flex: 1 },
@@ -27,35 +29,20 @@ export default function DataTable() {
   const [filteredRows, setFilteredRows] = useState<any[]>([]);
   const [rows, setRows] = useState<any[]>([]);
   const [dialogOpen, setDialogOpen] = React.useState(false);
-  const { setOpcion_Titulo, opcion_Titulo } = useAppContext();
+  const { setOpcion_Titulo, opcion_Titulo, setSelectedRow } = useAppContext();
 
   useEffect(() => {
-    // Cargar los datos iniciales
-    fetchBodegas() ;
+    fetchBodegas();
     setOpcion_Titulo('Bodegas');
   }, []);
-
-  const fetchHistoricos = async () => {
-    try {
-      const result = await getAllHistoricos();
-      if (result.success) {
-        const transformedData = transformData(result.historicosList);
-        setRows(transformedData);
-        filterData(searchText, transformedData); // Filtrar datos después de cargar
-      }
-    } catch (error) {
-      console.error('Error fetching historicos:', error);
-    }
-  };
 
   const fetchBodegas = async () => {
     try {
       const result = await getHistoricosBodegasNoPagado();
       if (result.success) {
         const transformedData = transformData(result.historicosList);
-        console.log(result)
         setRows(transformedData);
-        filterData(searchText, transformedData); // Filtrar datos después de cargar
+        filterData(searchText, transformedData);
       }
     } catch (error) {
       console.error('Error fetching bodegas:', error);
@@ -65,11 +52,10 @@ export default function DataTable() {
   const fetchPuestos = async () => {
     try {
       const result = await getHistoricosPuestosNoPagado();
-      console.log(result)
       if (result.success) {
         const transformedData = transformData(result.historicosList);
         setRows(transformedData);
-        filterData(searchText, transformedData); // Filtrar datos después de cargar
+        filterData(searchText, transformedData);
       }
     } catch (error) {
       console.error('Error fetching puestos:', error);
@@ -115,16 +101,21 @@ export default function DataTable() {
 
   const handleChangeBodegas = () => {
     setOpcion_Titulo('Bodegas');
-    fetchBodegas(); // Cargar datos de bodegas
+    fetchBodegas();
   };
 
   const handleChangePuestos = () => {
     setOpcion_Titulo('Puestos');
-    fetchPuestos(); // Cargar datos de puestos
+    fetchPuestos();
   };
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
+  };
+
+  const handleRowClick = (params: any) => {
+    const selectedRow = { ...params.row, seccion: params.row.ubicacion.split(' ').pop() || '' };
+    setSelectedRow(selectedRow);
   };
 
   return (
@@ -132,13 +123,15 @@ export default function DataTable() {
       <Grid container spacing={2}>
         <Grid item xs={12} style={{ textAlign: 'center' }}>
           <Button
-            variant="contained" sx={{ marginLeft: 2, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}
+            variant="contained"
+            sx={{ marginLeft: 2, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}
             onClick={handleChangeBodegas}
           >
             Bodegas
           </Button>
           <Button
-            variant="contained" sx={{ marginLeft: 2, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}
+            variant="contained"
+            sx={{ marginLeft: 2, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}
             onClick={handleChangePuestos}
           >
             Puestos
@@ -181,7 +174,9 @@ export default function DataTable() {
               rows={filteredRows}
               columns={columnsHistoricos}
               columnVisibilityModel={{
-                id: false
+                id: false,
+                'contribuyente.nombre':false,
+                'contribuyente.cedula':false
               }}
               initialState={{
                 pagination: {
@@ -189,6 +184,7 @@ export default function DataTable() {
                 },
               }}
               pageSizeOptions={[5, 10]}
+              onRowClick={handleRowClick}
               sx={{
                 boxShadow: 2,
                 border: 2,

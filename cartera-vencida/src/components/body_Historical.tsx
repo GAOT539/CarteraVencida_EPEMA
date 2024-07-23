@@ -17,6 +17,8 @@ const columnsHistoricos: GridColDef[] = [
     { field: 'id', headerName: 'ID', flex: 1 }, // Oculta la columna ID
     { field: 'numero_reporte', headerName: 'Número de Reporte', flex: 1 },
     { field: 'ciu', headerName: 'CIU', flex: 1 },
+    { field: 'nombre', headerName: 'Nombre', flex: 1 },
+    { field: 'cedula', headerName: 'Cedula', flex: 1 },
     { field: 'ubicacion', headerName: 'Ubicación', flex: 2 },
     { field: 'fecha', headerName: 'Fecha', flex: 1 },
     { field: 'meses', headerName: 'Meses', flex: 1 },
@@ -199,7 +201,9 @@ const Body_Historical: React.FC = () => {
                         rows={filteredRows}
                         columns={columnsHistoricos}
                         columnVisibilityModel={{
-                            id: false
+                            id: false,
+                            nombre:false,
+                            cedula:false
                         }}
                         sx={{
                             boxShadow: 2,

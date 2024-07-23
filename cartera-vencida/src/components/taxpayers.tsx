@@ -1,18 +1,27 @@
-import React from 'react';
+// Taxpayers.tsx
+import React, { useEffect } from 'react';
 import { Box, TextField, Typography } from '@mui/material';
 import { useAppContext } from '../AppContext';
 
-
-
 const Taxpayers: React.FC = () => {
-  const [contributor, setContributor] = React.useState('AGUAGUIÑA FREDDY PATRICIO');
-  const [activity, setActivity] = React.useState('FRUTA IMPORTADA');
-  const [warehouse, setWarehouse] = React.useState('N-A-08');
-  const [months, setMonths] = React.useState(3);
-  const [ciu, setCiu] = React.useState(392215);
-  const [amount, setAmount] = React.useState(388.4);
-  const { opcion_Titulo } = useAppContext();
+  const { opcion_Titulo, selectedRow } = useAppContext();
+  const [contributor, setContributor] = React.useState('');
+  const [activity, setActivity] = React.useState('');
+  const [warehouse, setWarehouse] = React.useState('');
+  const [months, setMonths] = React.useState(0);
+  const [ciu, setCiu] = React.useState('');
+  const [amount, setAmount] = React.useState(0);
 
+  useEffect(() => {
+    if (selectedRow) {
+      setContributor(selectedRow['contribuyente.nombre'] || '');
+      setActivity(selectedRow.seccion || '');
+      setWarehouse(selectedRow.ubicacion || '');
+      setMonths(selectedRow.meses || 0);
+      setCiu(selectedRow.ciu || '');
+      setAmount(selectedRow.valor || 0);
+    }
+  }, [selectedRow]);
 
   return (
     <Box sx={{ padding: 4 }}>
@@ -36,7 +45,7 @@ const Taxpayers: React.FC = () => {
         <TextField
           label="CIU"
           value={ciu}
-          onChange={(e) => setCiu(Number(e.target.value))}
+          onChange={(e) => setCiu(e.target.value)}
           disabled
           sx={{ width: '30%' }}
         />
