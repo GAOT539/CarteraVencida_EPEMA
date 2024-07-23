@@ -4,10 +4,11 @@ import { TextField, Button, Container, Grid, Box, InputAdornment } from '@mui/ma
 import SearchIcon from '@mui/icons-material/Search';
 import colors from '../resources/style/colors';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { getHistoricosBodegasNoPagado, getHistoricosPuestosNoPagado } from '../providers/options/historical';
+import { getHistoricosBodegasNoPagado, getHistoricosBodegasNuevos, getHistoricosPuestosNoPagado, getHistoricosPuestosNuevos } from '../providers/options/historical';
 import UploadDialog from './upload_Dialog';
 import { useAppContext } from '../AppContext';
 import { CloudDownload } from '@mui/icons-material';
+
 import GeneradorPDF from './generator_PDF';
 
 const columnsHistoricos: GridColDef[] = [
@@ -30,13 +31,47 @@ export default function DataTable() {
   const [filteredRows, setFilteredRows] = useState<any[]>([]);
   const [rows, setRows] = useState<any[]>([]);
   const [dialogOpen, setDialogOpen] = React.useState(false);
-  const { setOpcion_Titulo, opcion_Titulo, setSelectedRow } = useAppContext();
+  const { setOpcion_Titulo, opcion_Titulo, setSelectedRow, nuevaData } = useAppContext();
+  const [carga, setCarga]= useState('');
 
   useEffect(() => {
     fetchBodegas();
     setOpcion_Titulo('Bodegas');
   }, []);
 
+  useEffect(() => {
+    if (nuevaData == "Bodegas") {
+      fetchBodegasNuevos()
+    } else {
+      fetchPuestosNuevos()
+    }
+  }, [nuevaData]);
+
+  const fetchBodegasNuevos = async () => {
+    try {
+      const result = await getHistoricosBodegasNuevos();
+      if (result.success) {
+        const transformedData = transformData(result.historicosWithContribuyentes);
+        setRows(transformedData);
+        filterData(searchText, transformedData);
+      }
+    } catch (error) {
+      console.error('Error fetching bodegas:', error);
+    }
+  };
+
+  const fetchPuestosNuevos = async () => {
+    try {
+      const result = await getHistoricosPuestosNuevos();
+      if (result.success) {
+        const transformedData = transformData(result.historicosWithContribuyentes);
+        setRows(transformedData);
+        filterData(searchText, transformedData);
+      }
+    } catch (error) {
+      console.error('Error fetching bodegas:', error);
+    }
+  };
   const fetchBodegas = async () => {
     try {
       const result = await getHistoricosBodegasNoPagado();

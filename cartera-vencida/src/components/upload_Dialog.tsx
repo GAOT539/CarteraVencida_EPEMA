@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, useMediaQuery, Box, Typography, Snackbar, Alert } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { getCarteraVencidaBodegas, getCarteraVencidaPuestos } from '../providers/options/files';
+import { useAppContext } from '../AppContext';
 
 interface BodegasDialogProps {
   open: boolean;
@@ -11,6 +12,7 @@ interface BodegasDialogProps {
 
 export default function UploadDialog({ open, onClose, titulo }: BodegasDialogProps) {
   const theme = useTheme();
+  const { setNuevaData } = useAppContext();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
@@ -26,11 +28,11 @@ export default function UploadDialog({ open, onClose, titulo }: BodegasDialogPro
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
-      if (file.type === "text/xml") {
+      if (file.type === 'text/xml') {
         setSelectedFile(file);
-        console.log("Archivo seleccionado:", file);
+        console.log('Archivo seleccionado:', file);
       } else {
-        alert("Por favor seleccione un archivo XML.");
+        alert('Por favor seleccione un archivo XML.');
       }
     }
   };
@@ -43,16 +45,18 @@ export default function UploadDialog({ open, onClose, titulo }: BodegasDialogPro
       } else {
         result = await getCarteraVencidaPuestos(selectedFile);
       }
-
       if (result.success) {
+        setNuevaData(titulo);
         console.log('Procesado con éxito:', result.data);
         setSnackbarMessage('Archivo procesado con éxito.');
         setSnackbarOpen(true);
         setSelectedFile(null);
+        onClose(); // Cerrar el modal después de un procesamiento exitoso
       } else {
         console.error('Error al procesar:', result);
         setSnackbarMessage('Error al procesar el archivo.');
         setSnackbarOpen(true);
+        onClose(); // Cerrar el modal incluso si hay un error
       }
     }
   };
