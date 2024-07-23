@@ -5,6 +5,8 @@ import { useAppContext } from '../AppContext';
 import { Button, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import colors from '../resources/style/colors';
+import { generarPDF } from './crear_PDF';
+import { saveAs } from 'file-saver';
 
 const Taxpayers: React.FC = () => {
   const { opcion_Titulo, selectedRow } = useAppContext();
@@ -24,8 +26,10 @@ const Taxpayers: React.FC = () => {
     // Aquí puedes agregar la lógica para confirmar la notificación
   };
 
-  const handleDownloadClick = () => {
-    // Aquí puedes agregar la lógica para descargar el PDF
+  const handleDownloadClick = async () => {
+    console.log(selectedRow);
+    const pdfBlob = await generarPDF(selectedRow);
+    saveAs(pdfBlob, `notificacion_${selectedRow.numero_reporte}.pdf`);
   };
 
   useEffect(() => {
