@@ -15,9 +15,9 @@ const Body_Login: React.FC = () => {
         event.preventDefault();
         if (username === 'admin' && password === '12345') {
             console.log('Iniciar sesión:', username, password);
-            localStorage.setItem('isAuthenticated', 'true'); // Guardar estado de autenticación
+            localStorage.setItem('isAuthenticated', 'true'); 
             setError(false);
-            navigate('/usuarios'); // Redirigir a body_Users.tsx
+            navigate('/usuarios'); 
         } else {
             setError(true);
         }
@@ -42,8 +42,8 @@ const Body_Login: React.FC = () => {
                                 value={username}
                                 onChange={(event) => setUsername(event.target.value)}
                                 sx={{
-                                    width: 400, // establece un ancho fijo de 100px
-                                    margin: 'auto' // centra el TextField horizontalmente
+                                    width: 400, 
+                                    margin: 'auto'
                                 }}
                                 InputProps={{
                                     startAdornment: (
@@ -61,8 +61,8 @@ const Body_Login: React.FC = () => {
                                 value={password}
                                 onChange={(event) => setPassword(event.target.value)}
                                 sx={{
-                                    width: 400, // establece un ancho fijo de 100px
-                                    margin: 'auto' // centra el TextField horizontalmente
+                                    width: 400, 
+                                    margin: 'auto' 
                                 }}
                                 InputProps={{
                                     startAdornment: (

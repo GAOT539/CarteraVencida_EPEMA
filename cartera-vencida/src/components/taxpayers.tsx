@@ -26,7 +26,7 @@ const Taxpayers: React.FC = () => {
   return (
     <Box sx={{ padding: 4 }}>
       <Box mb={2}>
-        <Typography variant="h4" gutterBottom>{opcion_Titulo}</Typography> {/* Mostrar el título dinámicamente */}
+        <Typography variant="h4" gutterBottom>{opcion_Titulo}</Typography>
       </Box>
       <Box mb={2}>
         <Typography variant="h5" sx={{ textAlign: 'right' }}>Nave - AMBULANTES</Typography>

@@ -4,7 +4,7 @@ import { Grid, Typography, Button, Box } from '@mui/material';
 import colors from '../resources/style/colors';
 
 const Body_Error: React.FC<{ isProtected?: boolean }> = ({ isProtected }) => {
-    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'; // Puedes usar tu propia lógica de autenticación
+    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'; 
     const location = useLocation();
 
     if (isProtected && !isAuthenticated) {

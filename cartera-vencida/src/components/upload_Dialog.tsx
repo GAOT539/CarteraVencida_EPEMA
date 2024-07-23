@@ -48,7 +48,7 @@ export default function UploadDialog({ open, onClose, titulo }: BodegasDialogPro
         console.log('Procesado con éxito:', result.data);
         setSnackbarMessage('Archivo procesado con éxito.');
         setSnackbarOpen(true);
-        setSelectedFile(null); // Limpiar archivo después de procesar
+        setSelectedFile(null);
       } else {
         console.error('Error al procesar:', result);
         setSnackbarMessage('Error al procesar el archivo.');
