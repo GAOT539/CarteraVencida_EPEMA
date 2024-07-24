@@ -250,8 +250,8 @@ const Taxpayers: React.FC = () => {
             marginRight: { xs: 0, sm: 2 },
             marginBottom: { xs: 2, sm: 0 },
             width: { xs: "100%", sm: "auto" },
-            backgroundColor: colors.oliveGreen,
-            "&:hover": { backgroundColor: colors.oliveGreenGradient },
+            backgroundColor: colors.orangeSalmon,
+            "&:hover": { backgroundColor: colors.orangeSalmonGradient },
           }}
           onClick={handleDownloadClick}
         >
