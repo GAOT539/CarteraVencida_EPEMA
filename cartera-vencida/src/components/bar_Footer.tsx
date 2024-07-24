@@ -5,20 +5,11 @@ import colors from '../resources/style/colors';
 
 const Bar_Footer: React.FC = () => {
   return (
-    <Box
-      component="footer"
-      sx={{
-        backgroundColor: colors.background_Green,
-        padding: '20px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        color: colors.white,
-      }}
-    >
+    <Box component="footer" sx={{ backgroundColor: colors.background_Green, padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: colors.white, }} >
       <Box sx={{ width: '100px', height: 'auto' }}>
         <img alt="EP-EMA Logo" src={logoEpema} style={{ width: '100%', height: 'auto' }} />
       </Box>
+
       <Box sx={{ textAlign: 'center', flexGrow: 1 }}>
         <Typography variant="h4" component="h4" sx={{ margin: 0, padding: 0, fontSize: '1.2em' }}>
           El centro de acopio más grande el Ecuador

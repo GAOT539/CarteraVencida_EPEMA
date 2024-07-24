@@ -200,14 +200,13 @@ export default function DataTable() {
         </Grid>
 
         <Grid item xs={12}>
-          <TextField
-            label="Buscar" variant="outlined" value={searchText} onChange={handleSearch} fullWidth InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }} />
+          <TextField label="Buscar" variant="outlined" value={searchText} onChange={handleSearch} fullWidth InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }} />
         </Grid>
 
         <Grid item xs={12}>

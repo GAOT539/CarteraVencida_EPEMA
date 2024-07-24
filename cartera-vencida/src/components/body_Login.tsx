@@ -15,9 +15,9 @@ const Body_Login: React.FC = () => {
         event.preventDefault();
         if (username === 'admin' && password === '12345') {
             console.log('Iniciar sesión:', username, password);
-            localStorage.setItem('isAuthenticated', 'true'); 
+            localStorage.setItem('isAuthenticated', 'true');
             setError(false);
-            navigate('/usuarios'); 
+            navigate('/usuarios');
         } else {
             setError(true);
         }
@@ -30,48 +30,35 @@ const Body_Login: React.FC = () => {
                     <FontAwesomeIcon icon={faLock} />
                 </IconButton>
             </Grid>
+
             <Grid container item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
                 <Typography variant="h4">Iniciar sesión</Typography>
             </Grid>
+
             <Grid item xs={12}>
                 <form onSubmit={handleSubmit}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
-                            <TextField
-                                label="Usuario"
-                                value={username}
-                                onChange={(event) => setUsername(event.target.value)}
-                                sx={{
-                                    width: 400, 
-                                    margin: 'auto'
-                                }}
+                            <TextField label="Usuario" value={username} onChange={(event) => setUsername(event.target.value)} sx={{ width: 400, margin: 'auto' }}
                                 InputProps={{
                                     startAdornment: (
                                         <IconButton>
                                             <FontAwesomeIcon icon={faUser} />
                                         </IconButton>
                                     ),
-                                }}
-                            />
+                                }} />
                         </Grid>
+
                         <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
-                            <TextField
-                                label="Contraseña"
-                                type="password"
-                                value={password}
-                                onChange={(event) => setPassword(event.target.value)}
-                                sx={{
-                                    width: 400, 
-                                    margin: 'auto' 
-                                }}
+                            <TextField label="Contraseña" type="password" value={password} onChange={(event) => setPassword(event.target.value)}
+                                sx={{ width: 400, margin: 'auto' }}
                                 InputProps={{
                                     startAdornment: (
                                         <IconButton>
                                             <FontAwesomeIcon icon={faLock} />
                                         </IconButton>
                                     ),
-                                }}
-                            />
+                                }} />
                         </Grid>
                         <Grid item xs={12}>
                             <Grid container sx={{ display: 'flex', justifyContent: 'center' }}>
