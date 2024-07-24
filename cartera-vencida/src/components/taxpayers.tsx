@@ -1,14 +1,31 @@
-// Taxpayers.tsx
 import React, { useEffect, useState } from "react";
-import { Alert, Box, SelectChangeEvent, Snackbar, TextField, Typography, } from "@mui/material";
+import {
+  Alert,
+  Box,
+  SelectChangeEvent,
+  Snackbar,
+  TextField,
+  Typography,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
 import { useAppContext } from "../AppContext";
-import { Button, FormControl, InputLabel, MenuItem, Select, } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import colors from "../resources/style/colors";
 import { generarPDF } from "./crear_PDF";
 import { saveAs } from "file-saver";
 
 const Taxpayers: React.FC = () => {
+  const theme = useTheme();
+  const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
+  const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
   const { opcion_Titulo, selectedRow } = useAppContext();
   const [contributor, setContributor] = React.useState("");
   const [activity, setActivity] = React.useState("");
@@ -41,6 +58,9 @@ const Taxpayers: React.FC = () => {
   };
 
   const naves = selectedRow?.nave ? selectedRow.nave : "NAVE";
+  const cantNotificaciones = selectedRow?.cantNotificaciones || 0;
+  const pagado = selectedRow?.pagado || 'NO';
+
 
   useEffect(() => {
     if (selectedRow) {
@@ -75,20 +95,21 @@ const Taxpayers: React.FC = () => {
         alignItems="center"
         mb={2}
         marginBottom={4}
+        flexDirection={{ xs: "column", md: "row" }}
       >
         <TextField
           label="Contribuyente"
           value={contributor}
           onChange={(e) => setContributor(e.target.value)}
           disabled
-          sx={{ width: "65%" }}
+          sx={{ width: { xs: "100%", md: "65%" }, mb: { xs: 2, md: 0 } }}
         />
         <TextField
           label="CIU"
           value={ciu}
           onChange={(e) => setCiu(e.target.value)}
           disabled
-          sx={{ width: "30%" }}
+          sx={{ width: { xs: "100%", md: "30%" } }}
         />
       </Box>
       <Box
@@ -97,13 +118,14 @@ const Taxpayers: React.FC = () => {
         alignItems="center"
         mb={2}
         marginBottom={4}
+        flexDirection={{ xs: "column", md: "row" }}
       >
         <TextField
           label="Actividad"
           value={activity}
           onChange={(e) => setActivity(e.target.value)}
           disabled
-          sx={{ width: "65%" }}
+          sx={{ width: { xs: "100%", md: "65%" }, mb: { xs: 2, md: 0 } }}
         />
         <TextField
           label="Meses"
@@ -111,7 +133,7 @@ const Taxpayers: React.FC = () => {
           value={months}
           onChange={(e) => setMonths(Number(e.target.value))}
           disabled
-          sx={{ width: "30%" }}
+          sx={{ width: { xs: "100%", md: "30%" } }}
         />
       </Box>
       <Box
@@ -120,13 +142,14 @@ const Taxpayers: React.FC = () => {
         alignItems="center"
         mb={2}
         marginBottom={4}
+        flexDirection={{ xs: "column", md: "row" }}
       >
         <TextField
           label="Puesto"
           value={warehouse}
           onChange={(e) => setWarehouse(e.target.value)}
           disabled
-          sx={{ width: "65%" }}
+          sx={{ width: { xs: "100%", md: "65%" }, mb: { xs: 2, md: 0 } }}
         />
         <TextField
           label="Valor a Pagar"
@@ -134,13 +157,12 @@ const Taxpayers: React.FC = () => {
           value={amount}
           onChange={(e) => setAmount(Number(e.target.value))}
           disabled
-          sx={{ width: "30%" }}
+          sx={{ width: { xs: "100%", md: "30%" } }}
         />
       </Box>
       <Box mb={2}>
         <hr />
       </Box>
-
       <Box sx={{ padding: 4 }}>
         <Box mb={2}>
           <Typography variant="h5">Crear Notificación</Typography>
@@ -154,24 +176,25 @@ const Taxpayers: React.FC = () => {
             flexDirection: { xs: "column", sm: "row" },
           }}
         >
-      <FormControl
-        sx={{
-          width: '94%',
-          alignItems: "center",
-          marginBottom: { xs: 2, sm: 0 },
-        }}
-      >
-        <InputLabel>Notificación</InputLabel>
-        <Select
-          onChange={handleNotificationChange}
-          value={notificationType}
-          sx={{ width: '100%' }}
-        >
-          <MenuItem value="Segunda">Segunda Notificación</MenuItem>
-          <MenuItem value="Tercera">Tercera Notificación</MenuItem>
-          <MenuItem value="PAGADO">PAGADO</MenuItem>
-        </Select>
-      </FormControl>
+          <FormControl
+            sx={{
+              width: "94%",
+              alignItems: "center",
+              marginBottom: { xs: 2, sm: 0 },
+            }}
+          >
+            <InputLabel>Notificación</InputLabel>
+            <Select
+              onChange={handleNotificationChange}
+              value={notificationType}
+              sx={{ width: "100%" }}
+            >
+              <MenuItem value="Primera" disabled={cantNotificaciones >= 1 || pagado === 'SI'}>Primera Notificación</MenuItem>
+              <MenuItem value="Segunda" disabled={cantNotificaciones >= 2 || pagado === 'SI'}>Segunda Notificación</MenuItem>
+              <MenuItem value="Tercera" disabled={cantNotificaciones >= 3 || pagado === 'SI'}>Tercera Notificación</MenuItem>
+              <MenuItem value="PAGADO" disabled={pagado === 'SI'}>PAGADO</MenuItem>
+            </Select>
+          </FormControl>
         </Box>
         <Box
           sx={{
