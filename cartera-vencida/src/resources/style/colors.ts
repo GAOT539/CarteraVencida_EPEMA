@@ -19,8 +19,10 @@ const colors = {
     oliveGreenDarker: '#263a21',
 
     blue: '#2e78cc',
-    blueGradient: '#1f518b'
+    blueGradient: '#1f518b',
     
+    purple: '#6A1B9A',
+    purpleGradient: '#4A148C'
 };
 
 export default colors;

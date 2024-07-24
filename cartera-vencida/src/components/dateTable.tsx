@@ -20,6 +20,7 @@ import {
 import UploadDialog from "./upload_Dialog";
 import { useAppContext } from "../AppContext";
 import { CloudDownload } from "@mui/icons-material";
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
 import GeneradorPDF from "./generator_PDF";
 
@@ -58,8 +59,10 @@ export default function DataTable() {
 
   useEffect(() => {
     if (nuevaData == "Bodegas") {
+      setOpcion_Titulo("Bodegas Cargadas");
       fetchBodegasNuevos();
     } else {
+      setOpcion_Titulo("Puestos Cargados");
       fetchPuestosNuevos();
     }
   }, [nuevaData]);
@@ -156,7 +159,16 @@ export default function DataTable() {
   const handleLoadData = () => {
     setDialogOpen(true);
   };
-
+  
+  const handleShowCharged = () => {
+    if (nuevaData == "Bodegas") {
+      setOpcion_Titulo("Bodegas Cargadas");
+      fetchBodegasNuevos();
+    } else {
+      setOpcion_Titulo("Puestos Cargados");
+      fetchPuestosNuevos();
+    }
+  };
   const handleNotifyAll = () => {
     console.log("Notificar a todos");
   };
@@ -242,6 +254,18 @@ export default function DataTable() {
               disabled={!opcion_Titulo}
             >
               Descargar PDFs
+            </Button>
+            <Button
+              variant="contained"
+              startIcon={<PictureAsPdfIcon />}
+              sx={{
+                backgroundColor: colors.purple,
+                "&:hover": { backgroundColor: colors.purpleGradient },
+              }}
+              onClick={handleShowCharged}
+              disabled={!opcion_Titulo}
+            >
+              Ver datos Cargados
             </Button>
           </Box>
           <UploadDialog
