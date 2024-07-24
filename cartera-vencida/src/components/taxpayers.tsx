@@ -131,7 +131,7 @@ const Taxpayers: React.FC = () => {
       <hr />
 
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} flexDirection={{ xs: 'column', md: 'row' }} >
-        <FormControl sx={{ width: "94%", alignItems: "center", marginBottom: { xs: 2, sm: 0 }, }} >
+        <FormControl sx={{ width: "100%", alignItems: "center", marginBottom: { xs: 2, sm: 0 }, }} >
           <InputLabel>Notificación</InputLabel>
           <Select onChange={handleNotificationChange} value={notificationType} sx={{ width: "100%" }} disabled={!selectedRow} >
             <MenuItem value="Primera" disabled={cantNotificaciones >= 1 || pagado === 'SI'}>
