@@ -23,6 +23,7 @@ import { CloudDownload } from "@mui/icons-material";
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
 import GeneradorPDF from "./generator_PDF";
+import { getPDFFile } from "../providers/options/files";
 
 const columnsHistoricos: GridColDef[] = [
   { field: "id", headerName: "ID", flex: 1 },
@@ -38,7 +39,21 @@ const columnsHistoricos: GridColDef[] = [
     headerName: "Cantidad de Notificaciones",
     flex: 1,
   },
-  { field: "archivo", headerName: "Archivo", flex: 1 },
+  {
+    field: 'archivo',
+    headerName: 'Archivo',
+    flex: 1,
+    renderCell: (params) => (
+        <Button
+            variant="outlined"
+            color="secondary"
+            onClick={() => getPDFFile(params.value)}
+            disabled={!params.value}
+        >
+            Ver
+        </Button>
+    ),
+},
   { field: "valor", headerName: "Valor", flex: 1 },
   { field: "pagado", headerName: "Pagado", flex: 1 },
 ];
