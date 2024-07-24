@@ -113,3 +113,28 @@ export const notifyFirstPuestos = async () => {
         };
     }
 };
+
+// Método para obtener un archivo PDF usando POST
+export const getPDFFile = async (filename: string) => {
+    try {
+        const response = await axios.post(`${API_FILES}/historicos/ver-pdf`, { filename }, {
+            responseType: 'blob', // Asegúrate de que la respuesta sea tratada como un blob
+        });
+
+        // Crear una URL para el archivo y abrirlo en una nueva pestaña
+        const url = URL.createObjectURL(response.data);
+        window.open(url); // Abre el archivo en una nueva pestaña
+
+        return {
+            success: true,
+            data: response.data,
+        };
+    } catch (error) {
+        return {
+            success: false,
+            error: {
+                message: error || 'Sin respuesta desde el servidor Back-end.',
+            },
+        };
+    }
+};

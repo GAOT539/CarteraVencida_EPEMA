@@ -50,7 +50,7 @@ exports.Historicos = connection_db_1.default.define('historicos', {
         allowNull: true,
     },
     archivo: {
-        type: sequelize_1.DataTypes.BLOB,
+        type: sequelize_1.DataTypes.STRING(200),
         allowNull: true,
     },
     valor: {

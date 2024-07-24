@@ -9,12 +9,13 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import colors from '../resources/style/colors';
 import { getAllHistoricos, getHistoricosBodegas, getHistoricosPuestos } from '../providers/options/historical';
+import { getPDFFile } from '../providers/options/files';
 
 // Configura dayjs con el idioma español
 dayjs.locale('es');
 
 const columnsHistoricos: GridColDef[] = [
-    { field: 'id', headerName: 'ID', flex: 1 }, // Oculta la columna ID
+    { field: 'id', headerName: 'ID', flex: 1 },
     { field: 'numero_reporte', headerName: 'N. Reporte', flex: 1 },
     { field: 'ciu', headerName: 'CIU', flex: 1 },
     { field: 'nombre', headerName: 'Nombre', flex: 1 },
@@ -23,7 +24,20 @@ const columnsHistoricos: GridColDef[] = [
     { field: 'fecha', headerName: 'Fecha', flex: 1 },
     { field: 'meses', headerName: 'Meses', flex: 1 },
     { field: 'cantNotificaciones', headerName: 'Cant. Notificaciones', flex: 1 },
-    { field: 'archivo', headerName: 'Archivo', flex: 1 },
+    {
+        field: 'archivo',
+        headerName: 'Archivo',
+        flex: 1,
+        renderCell: (params) => (
+            <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => getPDFFile(params.value)}
+            >
+                Ver
+            </Button>
+        ),
+    },
     { field: 'valor', headerName: 'Valor', flex: 1 },
     { field: 'pagado', headerName: 'Pagado', flex: 1 }
 ];
@@ -201,8 +215,8 @@ const Body_Historical: React.FC = () => {
                         columns={columnsHistoricos}
                         columnVisibilityModel={{
                             id: false,
-                            nombre:false,
-                            cedula:false
+                            nombre: false,
+                            cedula: false
                         }}
                         sx={{
                             boxShadow: 2,

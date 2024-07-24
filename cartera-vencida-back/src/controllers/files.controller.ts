@@ -6,6 +6,7 @@ import axios from 'axios';
 import Contribuyentes from '../models/contributors.models';
 import Historicos from '../models/historical.models';
 import { Op } from 'sequelize';
+import path from 'path';
 
 // Configuración de multer para manejar archivos
 const storage = multer.diskStorage({
@@ -413,40 +414,80 @@ export const actualizarPDFHistorico = async (req: Request, res: Response) => {
   const file = req.file;
 
   if (!file) {
-      return res.status(400).json({
-          msg: 'No se ha proporcionado ningún archivo'
-      });
+    return res.status(400).json({
+      msg: 'No se ha proporcionado ningún archivo'
+    });
   }
 
   try {
-      // Verificar si el historial existe
-      const historico = await Historicos.findByPk(id);
+    // Verificar si el historial existe
+    const historico = await Historicos.findByPk(id);
 
-      if (!historico) {
-          return res.status(404).json({
-              msg: 'Histórico no encontrado'
-          });
+    if (!historico) {
+      return res.status(404).json({
+        msg: 'Histórico no encontrado'
+      });
+    }
+
+    // Obtener el nombre original del archivo
+    const originalName = file.originalname;
+    
+    // Crear la ruta completa para guardar el archivo
+    const filePath = path.join('C:/Users/User/Documents/Historicos', originalName);
+
+    // Guardar el archivo en el sistema de archivos
+    fs.writeFileSync(filePath, file.buffer);
+
+    // Actualizar la base de datos con la URL del archivo (puedes guardar solo el nombre si no necesitas la ruta completa)
+    await Historicos.update(
+      { archivo: filePath }, // Guarda solo el nombre del archivo en la base de datos
+      {
+        where: {
+          id: id, 
+        },
+      }
+    );
+
+    // Responder con éxito
+    return res.status(200).json({
+      msg: 'Archivo PDF actualizado exitosamente',
+      filePath: filePath // Opcional: Devuelve la ruta donde se guardó el archivo
+    });
+  } catch (error) {
+    console.error('Error al actualizar el archivo PDF:', error);
+    return res.status(500).json({
+      msg: 'Error al actualizar el archivo PDF',
+      error: error
+    });
+  }
+};
+
+export const verPDFHistorico = async (req: Request, res: Response) => {
+  const { filename } = req.body; // Obtener el nombre del archivo del cuerpo de la solicitud
+
+  if (!filename) {
+      return res.status(400).send('Nombre del archivo no proporcionado');
+  }
+
+  // Normalizar el nombre del archivo para evitar problemas de ruta
+  const sanitizedFilename = path.basename(filename);
+
+  // Construir la ruta del archivo en el servidor
+  const filePath = path.join('C:/Users/User/Documents/Historicos', sanitizedFilename);
+
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+      if (err) {
+          return res.status(404).send('Archivo no encontrado');
       }
 
-      // Guardar el archivo PDF como BLOB en el registro del historial
-      await Historicos.update(
-        { archivo: file.buffer },
-        {
-          where: {
-            id: id, 
-          },
-        }
-      );
-
-      // Responder con éxito
-      return res.status(200).json({
-          msg: 'Archivo PDF actualizado exitosamente'
+      // Configurar el encabezado de respuesta para el tipo de archivo PDF
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `inline; filename="${sanitizedFilename}"`);
+      
+      res.sendFile(filePath, (err) => {
+          if (err) {
+              res.status(500).send('Error al enviar el archivo');
+          }
       });
-  } catch (error) {
-      console.error('Error al actualizar el archivo PDF:', error);
-      return res.status(500).json({
-          msg: 'Error al actualizar el archivo PDF',
-          error: error
-      });
-  }
+  });
 };

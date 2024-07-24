@@ -15,4 +15,5 @@ router.post('/puestos/contribuyentes', files_controller_1.uploadFile, files_cont
 router.get('/bodegas/primera', files_controller_1.notificarPrimeraBodegas);
 router.get('/puestos/primera', files_controller_1.notificarPrimeraPuestos);
 router.post('/historicos/subir/:id', upload.single('file'), files_controller_1.actualizarPDFHistorico);
+router.post('/historicos/ver-pdf', files_controller_1.verPDFHistorico);
 exports.default = router;

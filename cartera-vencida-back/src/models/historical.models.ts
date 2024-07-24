@@ -36,7 +36,7 @@ export const Historicos = connection.define('historicos', {
     type: DataTypes.DATEONLY,
     allowNull: true,
   },
-  meses:{
+  meses: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
@@ -45,7 +45,7 @@ export const Historicos = connection.define('historicos', {
     allowNull: true,
   },
   archivo: {
-    type: DataTypes.BLOB,
+    type: DataTypes.STRING(200),
     allowNull: true,
   },
   valor: {
