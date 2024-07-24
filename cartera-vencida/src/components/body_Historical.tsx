@@ -31,8 +31,9 @@ const columnsHistoricos: GridColDef[] = [
         renderCell: (params) => (
             <Button
                 variant="outlined"
-                color="primary"
+                color="secondary"
                 onClick={() => getPDFFile(params.value)}
+                disabled={!params.value}
             >
                 Ver
             </Button>
