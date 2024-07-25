@@ -21,26 +21,11 @@ const columnsHistoricos: GridColDef[] = [
   { field: "ubicacion", headerName: "Ubicación", flex: 2 },
   { field: "fecha", headerName: "Fecha", flex: 1 },
   { field: "meses", headerName: "Meses", flex: 1 },
-  {
-    field: "cantNotificaciones",
-    headerName: "Cantidad de Notificaciones",
-    flex: 1,
-  },
-  {
-    field: 'archivo',
-    headerName: 'Archivo',
-    flex: 1,
-    renderCell: (params) => (
-        <Button
-            variant="outlined"
-            color="secondary"
-            onClick={() => getPDFFile(params.value)}
-            disabled={!params.value}
-        >
-            Ver
-        </Button>
-    ),
-},
+  { field: "cantNotificaciones", headerName: "Cantidad de Notificaciones", flex: 1, },
+  { field: 'archivo', headerName: 'Archivo', flex: 1,
+    renderCell: (params) => ( <Button variant="outlined" color="secondary" onClick={() => getPDFFile(params.value)} disabled={!params.value} >
+        Ver
+      </Button> ), },
   { field: "valor", headerName: "Valor", flex: 1 },
   { field: "pagado", headerName: "Pagado", flex: 1 },
 ];
