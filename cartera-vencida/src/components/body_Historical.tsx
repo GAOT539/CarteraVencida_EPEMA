@@ -11,7 +11,6 @@ import colors from '../resources/style/colors';
 import { getAllHistoricos, getHistoricosBodegas, getHistoricosPuestos } from '../providers/options/historical';
 import { getPDFFile } from '../providers/options/files';
 
-// Configura dayjs con el idioma español
 dayjs.locale('es');
 
 const columnsHistoricos: GridColDef[] = [
@@ -143,24 +142,19 @@ const Body_Historical: React.FC = () => {
                             Historicos
                         </Typography>
                         <Box display="flex" alignItems="center">
-                            <Button
-                                variant="contained"
-                                onClick={fetchBodegas}
-                                sx={{ marginRight: 3, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}
-                            >
+                            <Button variant="contained" onClick={fetchBodegas} sx={{ marginRight: 3, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }} >
                                 BODEGAS
                             </Button>
-                            <Button
-                                variant="contained"
-                                onClick={fetchPuestos}
-                                sx={{ marginRight: 3, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }}
-                            >
+                            <Button variant="contained" onClick={fetchPuestos} sx={{ marginRight: 3, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }} >
                                 PUESTOS
                             </Button>
                         </Box>
                     </Box>
+
                     <hr />
+
                 </Grid>
+
                 <Grid item xs={12} style={{ textAlign: 'center' }}>
                     <Box display="flex" alignItems="center" justifyContent="space-between">
                         <Box display="flex" alignItems="center">
@@ -169,13 +163,7 @@ const Body_Historical: React.FC = () => {
                                     FECHA INICIO:
                                 </Typography>
                                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-                                    <DatePicker
-                                        value={startDate}
-                                        onChange={handleDateChange('start')}
-                                        disableFuture
-                                        shouldDisableDate={(date) => endDate ? date.isAfter(endDate) : false}
-                                        sx={{ width: 166 }}
-                                    />
+                                    <DatePicker value={startDate} onChange={handleDateChange('start')} disableFuture shouldDisableDate={(date) => endDate ? date.isAfter(endDate) : false} sx={{ width: 166 }} />
                                 </LocalizationProvider>
                             </Box>
                             <Box display="flex" alignItems="center" mr={2}>
@@ -183,57 +171,30 @@ const Body_Historical: React.FC = () => {
                                     FECHA FIN:
                                 </Typography>
                                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-                                    <DatePicker
-                                        value={endDate}
-                                        onChange={handleDateChange('end')}
-                                        disableFuture
-                                        shouldDisableDate={(date) => startDate ? date.isBefore(startDate) : false}
-                                        sx={{ width: 166 }}
-                                    />
+                                    <DatePicker value={endDate} onChange={handleDateChange('end')} disableFuture shouldDisableDate={(date) => startDate ? date.isBefore(startDate) : false} sx={{ width: 166 }} />
                                 </LocalizationProvider>
                             </Box>
                         </Box>
-                        <TextField
-                            variant="outlined"
-                            size="medium"
-                            value={searchTerm}
-                            onChange={handleSearch}
-                            placeholder="Buscar..."
-                            InputProps={{
+                        
+                        <TextField variant="outlined" size="medium" value={searchTerm} onChange={handleSearch}
+                            placeholder="Buscar..." InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
                                         <SearchIcon />
                                     </InputAdornment>
                                 ),
                             }}
-                            sx={{ width: 400 }}
-                        />
+                            sx={{ width: 400 }} />
                     </Box>
+
                 </Grid>
                 <Grid item xs={12} style={{ height: 647, width: '100%' }}>
-                    <DataGrid
-                        rows={filteredRows}
-                        columns={columnsHistoricos}
-                        columnVisibilityModel={{
-                            id: false,
-                            nombre: false,
-                            cedula: false
-                        }}
-                        sx={{
-                            boxShadow: 2,
-                            border: 2,
-                            borderColor: colors.oliveGreen,
-                            '& .MuiDataGrid-cell:hover': {
-                                color: colors.orangeSalmon,
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer': {
-                                backgroundColor: colors.background_WhiteSmokeBlack,
-                            },
-                            '& .MuiDataGrid-columnHeader': {
-                                backgroundColor: colors.background_WhiteSmokeBlack,
-                            }
-                        }}
-                    />
+                    <DataGrid rows={filteredRows} columns={columnsHistoricos} columnVisibilityModel={{ id: false, nombre:false, cedula:false}}
+                        sx={{ boxShadow: 2, border: 2, borderColor: colors.oliveGreen,
+                            '& .MuiDataGrid-cell:hover': { color: colors.orangeSalmon,},
+                            '& .MuiDataGrid-columnHeaderTitleContainer': { backgroundColor: colors.background_WhiteSmokeBlack, },
+                            '& .MuiDataGrid-columnHeader': { backgroundColor: colors.background_WhiteSmokeBlack,}
+                        }} />
                 </Grid>
             </Grid>
             <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>

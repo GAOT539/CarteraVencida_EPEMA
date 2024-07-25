@@ -1,27 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import {
-  TextField,
-  Button,
-  Container,
-  Grid,
-  Box,
-  InputAdornment,
-} from "@mui/material";
+import { TextField, Button, Container, Grid, Box, InputAdornment, } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import colors from "../resources/style/colors";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import {
-  getHistoricosBodegasNoPagado,
-  getHistoricosBodegasNuevos,
-  getHistoricosPuestosNoPagado,
-  getHistoricosPuestosNuevos,
-} from "../providers/options/historical";
+import { getHistoricosBodegasNoPagado, getHistoricosBodegasNuevos, getHistoricosPuestosNoPagado, getHistoricosPuestosNuevos, } from "../providers/options/historical";
 import UploadDialog from "./upload_Dialog";
 import { useAppContext } from "../AppContext";
 import { CloudDownload } from "@mui/icons-material";
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-
 import GeneradorPDF from "./generator_PDF";
 import { getPDFFile } from "../providers/options/files";
 
@@ -63,8 +50,7 @@ export default function DataTable() {
   const [filteredRows, setFilteredRows] = useState<any[]>([]);
   const [rows, setRows] = useState<any[]>([]);
   const [dialogOpen, setDialogOpen] = React.useState(false);
-  const { setOpcion_Titulo, opcion_Titulo, setSelectedRow, nuevaData } =
-    useAppContext();
+  const { setOpcion_Titulo, opcion_Titulo, setSelectedRow, nuevaData } = useAppContext();
   const [carga, setCarga] = useState("");
 
   useEffect(() => {
@@ -111,6 +97,7 @@ export default function DataTable() {
       console.error("Error fetching bodegas:", error);
     }
   };
+
   const fetchBodegas = async () => {
     try {
       const result = await getHistoricosBodegasNoPagado();
@@ -140,9 +127,8 @@ export default function DataTable() {
   const transformData = (data: any[]) => {
     return data.map((row) => ({
       ...row,
-      ubicacion: `${row.bodega || ""} ${row.puesto || ""} ${row.nave || ""} ${
-        row.seccion || ""
-      }`.trim(),
+      ubicacion: `${row.bodega || ""} ${row.puesto || ""} ${row.nave || ""} ${row.seccion || ""
+        }`.trim(),
     }));
   };
 
@@ -151,18 +137,11 @@ export default function DataTable() {
     if (search) {
       filtered = filtered.filter(
         (row) =>
-          row.numero_reporte
-            ?.toString()
-            .toLowerCase()
-            .includes(search.toLowerCase()) ||
+          row.numero_reporte?.toString().toLowerCase().includes(search.toLowerCase()) ||
           row.ciu?.toLowerCase().includes(search.toLowerCase()) ||
-          row.cantNotificaciones
-            ?.toString()
-            .toLowerCase()
-            .includes(search.toLowerCase())
+          row.cantNotificaciones?.toString().toLowerCase().includes(search.toLowerCase())
       );
-    }
-    setFilteredRows(filtered);
+    } setFilteredRows(filtered);
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -174,7 +153,7 @@ export default function DataTable() {
   const handleLoadData = () => {
     setDialogOpen(true);
   };
-  
+
   const handleShowCharged = () => {
     if (nuevaData == "Bodegas") {
       setOpcion_Titulo("Bodegas Cargadas");
@@ -184,6 +163,7 @@ export default function DataTable() {
       fetchPuestosNuevos();
     }
   };
+
   const handleNotifyAll = () => {
     console.log("Notificar a todos");
   };
@@ -218,126 +198,51 @@ export default function DataTable() {
     <Container maxWidth="lg" style={{ padding: 20 }}>
       <Grid container spacing={2}>
         <Grid item xs={12} style={{ textAlign: "center" }}>
-          <Box
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "center",
-              gap: 2,
-            }}
-          >
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: colors.oliveGreen,
-                "&:hover": { backgroundColor: colors.oliveGreenGradient },
-              }}
-              onClick={handleChangeBodegas}
-            >
+          <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 2, }} >
+            <Button variant="contained" sx={{ backgroundColor: colors.oliveGreen, "&:hover": { backgroundColor: colors.oliveGreenGradient }, }} onClick={handleChangeBodegas} >
               Bodegas
             </Button>
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: colors.oliveGreen,
-                "&:hover": { backgroundColor: colors.oliveGreenGradient },
-              }}
-              onClick={handleChangePuestos}
-            >
+            <Button variant="contained" sx={{ backgroundColor: colors.oliveGreen, "&:hover": { backgroundColor: colors.oliveGreenGradient }, }} onClick={handleChangePuestos} >
               Puestos
             </Button>
-            <Button
-              variant="contained"
-              startIcon={<CloudUploadIcon />}
-              sx={{
-                backgroundColor: colors.blue,
-                "&:hover": { backgroundColor: colors.blueGradient },
-              }}
-              onClick={handleLoadData}
-              disabled={!opcion_Titulo}
-            >
+            <Button variant="contained" startIcon={<CloudUploadIcon />} sx={{ backgroundColor: colors.blue, "&:hover": { backgroundColor: colors.blueGradient }, }} onClick={handleLoadData} disabled={!opcion_Titulo} >
               Cargar datos
             </Button>
-            <Button
-              variant="contained"
-              startIcon={<CloudDownload />}
-              sx={{
-                backgroundColor: colors.orangeSalmon,
-                "&:hover": { backgroundColor: colors.orangeSalmonGradient },
-              }}
-              onClick={handleDownloadPDFs}
-              disabled={!opcion_Titulo}
-            >
+            <Button variant="contained" startIcon={<CloudDownload />} sx={{ backgroundColor: colors.orangeSalmon, "&:hover": { backgroundColor: colors.orangeSalmonGradient }, }} onClick={handleDownloadPDFs} disabled={!opcion_Titulo} >
               Descargar PDFs
             </Button>
-            <Button
-              variant="contained"
-              startIcon={<PictureAsPdfIcon />}
-              sx={{
-                backgroundColor: colors.purple,
-                "&:hover": { backgroundColor: colors.purpleGradient },
-              }}
-              onClick={handleShowCharged}
-              disabled={!opcion_Titulo}
-            >
+            <Button variant="contained" startIcon={<PictureAsPdfIcon />} sx={{ backgroundColor: colors.purple, "&:hover": { backgroundColor: colors.purpleGradient }, }} onClick={handleShowCharged} disabled={!opcion_Titulo} >
               Ver datos Cargados
             </Button>
           </Box>
-          <UploadDialog
-            open={dialogOpen}
-            onClose={handleCloseDialog}
-            titulo={opcion_Titulo}
-          />
+          <UploadDialog open={dialogOpen} onClose={handleCloseDialog} titulo={opcion_Titulo} />
         </Grid>
 
         <Grid item xs={12}>
-          <TextField
-            label="Buscar"
-            variant="outlined"
-            value={searchText}
-            onChange={handleSearch}
-            fullWidth
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
+          <TextField label="Buscar" variant="outlined" value={searchText} onChange={handleSearch} fullWidth InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }} />
         </Grid>
+
         <Grid item xs={12}>
           <Box style={{ width: "100%" }}>
             <DataGrid
               rows={filteredRows}
               columns={columnsHistoricos}
-              columnVisibilityModel={{
-                id: false,
-                "contribuyente.nombre": false,
-                "contribuyente.cedula": false,
-              }}
-              initialState={{
-                pagination: {
-                  paginationModel: { page: 0, pageSize: 11 },
-                },
-              }}
-              pageSizeOptions={[5, 10]}
+              columnVisibilityModel={{ id: false, "contribuyente.nombre": false, "contribuyente.cedula": false, }}
+              initialState={{ pagination: { paginationModel: { page: 0, pageSize: 11 }, }, }}
+              pageSizeOptions={[5, 10, 11, 20]}
               onRowClick={handleRowClick}
               sx={{
-                boxShadow: 2,
-                border: 2,
-                borderColor: colors.oliveGreen,
-                "& .MuiDataGrid-cell:hover": {
-                  color: colors.orangeSalmon,
-                },
-                "& .MuiDataGrid-columnHeaderTitleContainer": {
-                  backgroundColor: colors.background_WhiteSmokeBlack,
-                },
-                "& .MuiDataGrid-columnHeader": {
-                  backgroundColor: colors.background_WhiteSmokeBlack,
-                },
-              }}
-            />
+                boxShadow: 2, border: 2, borderColor: colors.oliveGreen,
+                "& .MuiDataGrid-cell:hover": { color: colors.orangeSalmon, },
+                "& .MuiDataGrid-columnHeaderTitleContainer": { backgroundColor: colors.background_WhiteSmokeBlack, },
+                "& .MuiDataGrid-columnHeader": { backgroundColor: colors.background_WhiteSmokeBlack, },
+              }} />
           </Box>
         </Grid>
       </Grid>

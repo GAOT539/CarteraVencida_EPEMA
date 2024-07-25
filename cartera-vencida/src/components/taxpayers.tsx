@@ -1,31 +1,17 @@
 import React, { useEffect, useState } from "react";
-import {
-  Alert,
-  Box,
-  SelectChangeEvent,
-  Snackbar,
-  TextField,
-  Typography,
-  useTheme,
-  useMediaQuery,
-} from "@mui/material";
+import { Alert, Box, SelectChangeEvent, Snackbar, TextField, Typography, useTheme, useMediaQuery, } from "@mui/material";
 import { useAppContext } from "../AppContext";
-import {
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-} from "@mui/material";
+import { Button, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import colors from "../resources/style/colors";
 import { generarPDF } from "./crear_PDF";
 import { saveAs } from "file-saver";
+import { updateHistorico } from "../providers/options/historical";
 
 const Taxpayers: React.FC = () => {
   const theme = useTheme();
-  const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
-  const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
+  const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
+  const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
   const { opcion_Titulo, selectedRow } = useAppContext();
   const [contributor, setContributor] = React.useState("");
   const [activity, setActivity] = React.useState("");
@@ -35,16 +21,58 @@ const Taxpayers: React.FC = () => {
   const [amount, setAmount] = React.useState(0);
   const [notificationType, setNotificationType] = useState<string>("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const handleNotificationChange = (event: SelectChangeEvent) => {
-    setNotificationType(event.target.value as string);
-  };
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
-  const handleConfirmClick = () => {
-    // Aquí puedes agregar la lógica para confirmar la notificación
+  const handleNotificationChange = (event: SelectChangeEvent) => { setNotificationType(event.target.value as string); };
+
+  const handleConfirmClick = async () => {
+    if (!selectedRow) {
+      setSnackbarMessage("Debe seleccionar una fila para continuar.");
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      return;
+    }
+
+    let cantNotificaciones;
+    let pagado;
+
+    switch (notificationType) {
+      case "Primera":
+        cantNotificaciones = 1;
+        break;
+      case "Segunda":
+        cantNotificaciones = 2;
+        break;
+      case "Tercera":
+        cantNotificaciones = 3;
+        break;
+      case "PAGADO":
+        pagado = 'SI';
+        break;
+      default:
+        cantNotificaciones = selectedRow.cantNotificaciones;
+        pagado = 'NO';
+        break;
+    }
+
+    const response = await updateHistorico(selectedRow.id, { cantNotificaciones, pagado });
+
+    if (response.success) {
+      setSnackbarMessage("Registro actualizado exitosamente.");
+      setSnackbarSeverity('success');
+    } else {
+      setSnackbarMessage(`Error al actualizar el registro: ${response.error?.message}`);
+      setSnackbarSeverity('error');
+    }
+
+    setSnackbarOpen(true);
   };
 
   const handleDownloadClick = async () => {
     if (!selectedRow) {
+      setSnackbarMessage("Debe seleccionar una fila para continuar.");
+      setSnackbarSeverity('error');
       setSnackbarOpen(true);
       return;
     }
@@ -53,14 +81,11 @@ const Taxpayers: React.FC = () => {
     saveAs(pdfBlob, `notificacion_${selectedRow.numero_reporte}.pdf`);
   };
 
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
-  };
+  const handleCloseSnackbar = () => { setSnackbarOpen(false); };
 
   const naves = selectedRow?.nave ? selectedRow.nave : "NAVE";
   const cantNotificaciones = selectedRow?.cantNotificaciones || 0;
   const pagado = selectedRow?.pagado || 'NO';
-
 
   useEffect(() => {
     if (selectedRow) {
@@ -70,17 +95,14 @@ const Taxpayers: React.FC = () => {
       setMonths(selectedRow.meses || 0);
       setCiu(selectedRow.ciu || "");
       setAmount(selectedRow.valor || 0);
+
+      setNotificationType("");
     }
   }, [selectedRow]);
 
   return (
     <Box sx={{ padding: 4 }}>
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={1}
-      >
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={1} >
         <Typography variant="h4" gutterBottom>
           {opcion_Titulo}
         </Typography>
@@ -88,160 +110,65 @@ const Taxpayers: React.FC = () => {
           {naves}
         </Typography>
       </Box>
+
       <hr />
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={2}
-        marginBottom={4}
-        flexDirection={{ xs: "column", md: "row" }}
-      >
-        <TextField
-          label="Contribuyente"
-          value={contributor}
-          onChange={(e) => setContributor(e.target.value)}
-          disabled
-          sx={{ width: { xs: "100%", md: "65%" }, mb: { xs: 2, md: 0 } }}
-        />
-        <TextField
-          label="CIU"
-          value={ciu}
-          onChange={(e) => setCiu(e.target.value)}
-          disabled
-          sx={{ width: { xs: "100%", md: "30%" } }}
-        />
+
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} marginBottom={4} flexDirection={{ xs: 'column', md: 'row' }} >
+        <TextField label="Contribuyente" value={contributor} onChange={(e) => setContributor(e.target.value)} disabled sx={{ width: { xs: '100%', md: '65%' }, mb: { xs: 2, md: 0 } }} />
+        <TextField label="CIU" value={ciu} onChange={(e) => setCiu(e.target.value)} disabled sx={{ width: { xs: '100%', md: '30%' } }} />
       </Box>
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={2}
-        marginBottom={4}
-        flexDirection={{ xs: "column", md: "row" }}
-      >
-        <TextField
-          label="Actividad"
-          value={activity}
-          onChange={(e) => setActivity(e.target.value)}
-          disabled
-          sx={{ width: { xs: "100%", md: "65%" }, mb: { xs: 2, md: 0 } }}
-        />
-        <TextField
-          label="Meses"
-          type="number"
-          value={months}
-          onChange={(e) => setMonths(Number(e.target.value))}
-          disabled
-          sx={{ width: { xs: "100%", md: "30%" } }}
-        />
+
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} marginBottom={4} flexDirection={{ xs: 'column', md: 'row' }} >
+        <TextField label="Actividad" value={activity} onChange={(e) => setActivity(e.target.value)} disabled sx={{ width: { xs: '100%', md: '65%' }, mb: { xs: 2, md: 0 } }} />
+        <TextField label="Meses" type="number" value={months} onChange={(e) => setMonths(Number(e.target.value))} disabled sx={{ width: { xs: '100%', md: '30%' } }} />
       </Box>
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={2}
-        marginBottom={4}
-        flexDirection={{ xs: "column", md: "row" }}
-      >
-        <TextField
-          label="Puesto"
-          value={warehouse}
-          onChange={(e) => setWarehouse(e.target.value)}
-          disabled
-          sx={{ width: { xs: "100%", md: "65%" }, mb: { xs: 2, md: 0 } }}
-        />
-        <TextField
-          label="Valor a Pagar"
-          type="number"
-          value={amount}
-          onChange={(e) => setAmount(Number(e.target.value))}
-          disabled
-          sx={{ width: { xs: "100%", md: "30%" } }}
-        />
+
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} marginBottom={4} flexDirection={{ xs: 'column', md: 'row' }} >
+        <TextField label="Puesto" value={warehouse} onChange={(e) => setWarehouse(e.target.value)} disabled sx={{ width: { xs: '100%', md: '65%' }, mb: { xs: 2, md: 0 } }} />
+        <TextField label="Valor a Pagar" type="number" value={amount} onChange={(e) => setAmount(Number(e.target.value))} disabled sx={{ width: { xs: '100%', md: '30%' } }} />
       </Box>
-      <Box mb={2}>
-        <hr />
-      </Box>
-      <Box sx={{ padding: 4 }}>
-        <Box mb={2}>
-          <Typography variant="h5">Crear Notificación</Typography>
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 2,
-            flexDirection: { xs: "column", sm: "row" },
-          }}
-        >
-          <FormControl
-            sx={{
-              width: "94%",
-              alignItems: "center",
-              marginBottom: { xs: 2, sm: 0 },
-            }}
-          >
-            <InputLabel>Notificación</InputLabel>
-            <Select
-              onChange={handleNotificationChange}
-              value={notificationType}
-              sx={{ width: "100%" }}
-            >
-              <MenuItem value="Primera" disabled={cantNotificaciones >= 1 || pagado === 'SI'}>Primera Notificación</MenuItem>
-              <MenuItem value="Segunda" disabled={cantNotificaciones >= 2 || pagado === 'SI'}>Segunda Notificación</MenuItem>
-              <MenuItem value="Tercera" disabled={cantNotificaciones >= 3 || pagado === 'SI'}>Tercera Notificación</MenuItem>
-              <MenuItem value="PAGADO" disabled={pagado === 'SI'}>PAGADO</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-start",
-            alignItems: "center",
-            mb: 2,
-            flexDirection: { xs: "column", sm: "row" },
-          }}
-        >
-          <Button
-            variant="contained"
-            sx={{
-              marginRight: { xs: 0, sm: 2 },
-              marginBottom: { xs: 2, sm: 0 },
-              width: { xs: "100%", sm: "auto" },
-              backgroundColor: colors.oliveGreen,
-              "&:hover": { backgroundColor: colors.oliveGreenGradient },
-            }}
-            onClick={handleConfirmClick}
-          >
-            Actualizar Cartera
-          </Button>
-          <Button
-            variant="contained"
-            startIcon={<CloudDownloadIcon />}
-            sx={{
-              width: { xs: "100%", sm: "auto" },
-              backgroundColor: colors.orangeSalmon,
-              "&:hover": { backgroundColor: colors.orangeSalmonGradient },
-            }}
-            onClick={handleDownloadClick}
-          >
-            DESCARGAR PDF
-          </Button>
-          <Snackbar
-            open={snackbarOpen}
-            autoHideDuration={6000}
-            onClose={handleCloseSnackbar}
-          >
-            <Alert onClose={handleCloseSnackbar} severity="error">
-              Por favor, seleccione datos de la tabla antes de descargar.
-            </Alert>
-          </Snackbar>
-        </Box>
-      </Box>
+
       <hr />
+
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} flexDirection={{ xs: 'column', md: 'row' }} >
+        <FormControl sx={{ width: "100%", alignItems: "center", marginBottom: { xs: 2, sm: 0 }, }} >
+          <InputLabel>Notificación</InputLabel>
+          <Select onChange={handleNotificationChange} value={notificationType} sx={{ width: "100%" }} disabled={!selectedRow} >
+            <MenuItem value="Primera" disabled={cantNotificaciones >= 1 || pagado === 'SI'}>
+              Primera Notificación
+            </MenuItem>
+            <MenuItem value="Segunda" disabled={cantNotificaciones >= 2 || pagado === 'SI'}>
+              Segunda Notificación
+            </MenuItem>
+            <MenuItem value="Tercera" disabled={cantNotificaciones >= 3 || pagado === 'SI'}>
+              Tercera Notificación
+            </MenuItem>
+            <MenuItem value="PAGADO" disabled={pagado === 'SI'}>
+              PAGADO
+            </MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+
+      <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 2, }} >
+        <Button variant="contained" sx={{
+          marginRight: { xs: 0, sm: 2 }, marginBottom: { xs: 2, sm: 0 }, width: { xs: "100%", sm: "auto" }, backgroundColor: colors.oliveGreen, "&:hover": { backgroundColor: colors.oliveGreenGradient },
+        }} onClick={handleConfirmClick} >
+          Actualizar Cartera
+        </Button>
+        <Button variant="contained" startIcon={<CloudDownloadIcon />}
+          sx={{
+            marginRight: { xs: 0, sm: 2 }, marginBottom: { xs: 2, sm: 0 }, width: { xs: "100%", sm: "auto" }, backgroundColor: colors.orangeSalmon, "&:hover": { backgroundColor: colors.orangeSalmonGradient },
+          }} onClick={handleDownloadClick} >
+          Descargar PDF
+        </Button>
+      </Box>
+
+      <Snackbar open={snackbarOpen} autoHideDuration={4000} onClose={() => setSnackbarOpen(false)} anchorOrigin={{ vertical: "bottom", horizontal: "left" }}>
+        <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

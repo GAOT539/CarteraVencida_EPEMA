@@ -8,6 +8,7 @@ Font.register({
     { src: require("../resources/fonts/Roboto/Roboto-Black.ttf"), fontWeight: "bold" },
     { src: require("../resources/fonts/Roboto/Roboto-Italic.ttf"), fontStyle: "italic" }]
 });
+
 const determineBoletas = (cantNotificaciones: number) => {
     if (cantNotificaciones == 1) {
         boleta_Uno = true;
@@ -17,16 +18,19 @@ const determineBoletas = (cantNotificaciones: number) => {
         boleta_Tres = true;
     }
   };
+
 let boleta_Uno = false;
 let boleta_Dos = false;
 let boleta_Tres = false;
+
 const boleta_Uno_Fijada = false;
 const boleta_Dos_Fijada = false;
 const boleta_Tres_Fijada = false;
+
 const getCurrentDate = () => {
     const date = new Date();
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses van de 0 a 11, por lo que se le suma 1
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
@@ -38,9 +42,7 @@ const MyDocument = (selectedRow: any) => (
     <Page size="A4" style={styles.page}>
       <View style={styles.header}>
         <Image style={styles.logo} src={require("../resources/images/logoEpema.jpg")} />
-        <Text style={styles.title}>
-          EMPRESA PUBLICA – EMPRESA MUNICIPAL{"\n"}
-          MERCADO MAYORISTA AMBATO
+        <Text style={styles.title}> EMPRESA PUBLICA – EMPRESA MUNICIPAL{"\n"}MERCADO MAYORISTA AMBATO
         </Text>
       </View>
       
@@ -48,18 +50,24 @@ const MyDocument = (selectedRow: any) => (
         <Text style={styles.notification}>NOTIFICACION CARTERA VENCIDA</Text>
         <Text style={styles.reportNumber}>Nº <Text style={styles.reportNumber_N}>{selectedRow.numero_reporte}</Text></Text>
       </View>
+
       <View style={styles.separator} />
+
       <View style={styles.section01}>
         <View style={styles.row}>
           <Text style={styles.texts}>FECHA: <Text style={styles.texts_Blod}>{currentDate}</Text></Text>
         </View>
+
         <View style={styles.row}>
           <Text style={styles.texts}>HORA: ________</Text>
         </View>
+
         <View style={styles.row}>
           <Text style={styles.texts}>CIU: <Text style={styles.texts_Blod}>{selectedRow.ciu}</Text></Text>
         </View>
+
       </View>
+
       <View style={styles.section02}>
         <View style={styles.wrap}>
           <Text style={styles.texts} hyphenationCallback={hyphenationCallback}>
@@ -69,12 +77,14 @@ const MyDocument = (selectedRow: any) => (
           </Text>
         </View>
       </View>
+
       <View style={styles.section03}>
         <View style={styles.table}>
           <View style={styles.tableRow}>
             <View style={styles.tableCol}>
               <Text style={styles.tableCell}>Notificación en persona:</Text>
             </View>
+
             <View style={styles.tableCol}>
               <Text style={styles.tableCell}></Text>
             </View>
@@ -127,6 +137,7 @@ const MyDocument = (selectedRow: any) => (
               <Text style={styles.table2Cell_V}>{boleta_Tres ? "X" : ""}</Text>
             </View>
           </View>
+
           <View style={styles.table2Row}>
             <View style={styles.table2Col}>
               <Text style={styles.table2Cell}>Notificación por boleta fijada:</Text>
@@ -189,8 +200,8 @@ export const generarPDF = async (selectedRow: any) => {
         cedula: selectedRow["contribuyente.cedula"] || selectedRow.cedula,
         nombre: selectedRow["contribuyente.nombre"] || selectedRow.nombre}
     const doc = <MyDocument {...adjustedRow} />;
-    const asPdf = pdf(); // No necesita argumentos
-    asPdf.updateContainer(doc); // Pasamos el componente React aquí
-    const blob = await asPdf.toBlob(); // Crea un blob del documento
+    const asPdf = pdf();
+    asPdf.updateContainer(doc);
+    const blob = await asPdf.toBlob();
     return blob;
   };
