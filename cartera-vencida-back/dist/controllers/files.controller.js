@@ -397,7 +397,7 @@ const actualizarPDFHistorico = (req, res) => __awaiter(void 0, void 0, void 0, f
         // Obtener el nombre original del archivo
         const originalName = file.originalname;
         // Crear la ruta completa para guardar el archivo
-        const filePath = path_1.default.join('C:/Users/User/Documents/Historicos', originalName);
+        const filePath = path_1.default.join('C:/Historicos', originalName);
         // Guardar el archivo en el sistema de archivos
         fs_1.default.writeFileSync(filePath, file.buffer);
         // Actualizar la base de datos con la URL del archivo (puedes guardar solo el nombre si no necesitas la ruta completa)
@@ -430,7 +430,7 @@ const verPDFHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function
     // Normalizar el nombre del archivo para evitar problemas de ruta
     const sanitizedFilename = path_1.default.basename(filename);
     // Construir la ruta del archivo en el servidor
-    const filePath = path_1.default.join('C:/Users/User/Documents/Historicos', sanitizedFilename);
+    const filePath = path_1.default.join('C:/Historicos', sanitizedFilename);
     fs_1.default.access(filePath, fs_1.default.constants.F_OK, (err) => {
         if (err) {
             return res.status(404).send('Archivo no encontrado');

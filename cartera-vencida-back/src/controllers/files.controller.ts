@@ -433,7 +433,7 @@ export const actualizarPDFHistorico = async (req: Request, res: Response) => {
     const originalName = file.originalname;
     
     // Crear la ruta completa para guardar el archivo
-    const filePath = path.join('C:/Users/User/Documents/Historicos', originalName);
+    const filePath = path.join('C:/Historicos', originalName);
 
     // Guardar el archivo en el sistema de archivos
     fs.writeFileSync(filePath, file.buffer);
@@ -473,7 +473,7 @@ export const verPDFHistorico = async (req: Request, res: Response) => {
   const sanitizedFilename = path.basename(filename);
 
   // Construir la ruta del archivo en el servidor
-  const filePath = path.join('C:/Users/User/Documents/Historicos', sanitizedFilename);
+  const filePath = path.join('C:/Historicos', sanitizedFilename);
 
   fs.access(filePath, fs.constants.F_OK, (err) => {
       if (err) {
