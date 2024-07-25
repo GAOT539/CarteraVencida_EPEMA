@@ -235,7 +235,6 @@ export default function DataTable() {
               columns={columnsHistoricos}
               columnVisibilityModel={{ id: false, "contribuyente.nombre": false, "contribuyente.cedula": false, }}
               initialState={{ pagination: { paginationModel: { page: 0, pageSize: 11 }, }, }}
-              pageSizeOptions={[5, 10, 11, 20]}
               onRowClick={handleRowClick}
               sx={{
                 boxShadow: 2, border: 2, borderColor: colors.oliveGreen,

@@ -190,6 +190,7 @@ const Body_Historical: React.FC = () => {
                 </Grid>
                 <Grid item xs={12} style={{ height: 647, width: '100%' }}>
                     <DataGrid rows={filteredRows} columns={columnsHistoricos} columnVisibilityModel={{ id: false, nombre:false, cedula:false}}
+                    pageSizeOptions={[]}
                         sx={{ boxShadow: 2, border: 2, borderColor: colors.oliveGreen,
                             '& .MuiDataGrid-cell:hover': { color: colors.orangeSalmon,},
                             '& .MuiDataGrid-columnHeaderTitleContainer': { backgroundColor: colors.background_WhiteSmokeBlack, },
