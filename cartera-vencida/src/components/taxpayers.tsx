@@ -72,13 +72,22 @@ const Taxpayers: React.FC = () => {
     if (pagado == "SI") {
       response = await updateHistorico(selectedRow.id, { cantNotificaciones, pagado });
     }else{
-      const updatedRow = { ...selectedRow, cantNotificaciones, numero_reporte, archivo , fecha};
-      response = await addHistorico(updatedRow)
-      const newId = response.historico.msg
-      const pdfBlob = await generarPDF(updatedRow);
-      await uploadPDFFile(newId, convertirBlobAFile(pdfBlob, `${updatedRow.ciu}-${updatedRow.numero_reporte}.pdf`))
-      await getPDFFile(`${updatedRow.ciu}-${updatedRow.numero_reporte}.pdf`)
-      setupdatedRow(`${updatedRow.ciu}-${updatedRow.numero_reporte}`)
+      if (cantNotificaciones == 1) {
+        response = await updateHistorico(selectedRow.id, { cantNotificaciones, pagado });
+        const pdfBlob = await generarPDF(selectedRow);
+        await uploadPDFFile(selectedRow.id, convertirBlobAFile(pdfBlob, `notificacion_${selectedRow.ciu}-${selectedRow.numero_reporte}.pdf`))
+        await getPDFFile(`notificacion_${selectedRow.ciu}-${selectedRow.numero_reporte}.pdf`)
+        setupdatedRow(`${selectedRow.ciu}-${selectedRow.numero_reporte}`)
+      } else {
+        const updatedRow = { ...selectedRow, cantNotificaciones, numero_reporte, archivo , fecha};
+        response = await addHistorico(updatedRow)
+        const newId = response.historico.msg
+        const pdfBlob = await generarPDF(updatedRow);
+        await uploadPDFFile(newId, convertirBlobAFile(pdfBlob, `notificacion_${updatedRow.ciu}-${updatedRow.numero_reporte}.pdf`))
+        await getPDFFile(`notificacion_${updatedRow.ciu}-${updatedRow.numero_reporte}.pdf`)
+        setupdatedRow(`${updatedRow.ciu}-${updatedRow.numero_reporte}`)
+      }
+     
     }
     
     if (response.success) {
