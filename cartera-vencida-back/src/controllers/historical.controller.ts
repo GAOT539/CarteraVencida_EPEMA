@@ -9,7 +9,7 @@ export const newHistorico = async (req: Request, res: Response) => {
   const { ciu,numero_reporte, bodega, puesto, nave, seccion, fecha, meses, cantNotificaciones, archivo, valor, pagado } = req.body;
 
   try {
-    await Historicos.create({
+    const nuevoHistorico = await Historicos.create({
       ciu,
       numero_reporte,
       bodega,
@@ -25,7 +25,7 @@ export const newHistorico = async (req: Request, res: Response) => {
     });
 
     res.json({
-      msg: `Registro histórico con CIU ${ciu} ha sido creado satisfactoriamente!`
+      msg: nuevoHistorico.dataValues.id
     });
 
   } catch (error) {

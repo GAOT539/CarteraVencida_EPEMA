@@ -21,7 +21,7 @@ const contributors_models_1 = __importDefault(require("../models/contributors.mo
 const newHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { ciu, numero_reporte, bodega, puesto, nave, seccion, fecha, meses, cantNotificaciones, archivo, valor, pagado } = req.body;
     try {
-        yield historical_models_1.Historicos.create({
+        const nuevoHistorico = yield historical_models_1.Historicos.create({
             ciu,
             numero_reporte,
             bodega,
@@ -36,7 +36,7 @@ const newHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             pagado
         });
         res.json({
-            msg: `Registro histórico con CIU ${ciu} ha sido creado satisfactoriamente!`
+            msg: nuevoHistorico.dataValues.id
         });
     }
     catch (error) {
