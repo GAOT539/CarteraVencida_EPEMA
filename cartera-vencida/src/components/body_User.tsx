@@ -151,7 +151,7 @@ const Body_Usuario: React.FC = () => {
   return (
     <Box sx={{ padding: 4 }}>
   <Typography variant="h4" gutterBottom>
-    Contribuyentes
+    CONTRIBUYENTES
   </Typography>
   {/* Contenedor flex para alinear la barra de búsqueda a la derecha */}
   <Box sx={{ mb: 2, display: 'flex', justifyContent: 'flex-end', width: '100%' }}>

@@ -139,7 +139,7 @@ const Body_Historical: React.FC = () => {
                 <Grid item xs={12} style={{ textAlign: 'center' }}>
                     <Box display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
                         <Typography variant="h5" gutterBottom>
-                            Historicos
+                            HISTORICOS
                         </Typography>
                         <Box display="flex" alignItems="center">
                             <Button variant="contained" onClick={fetchBodegas} sx={{ marginRight: 3, backgroundColor: colors.oliveGreen, '&:hover': { backgroundColor: colors.oliveGreenGradient } }} >
