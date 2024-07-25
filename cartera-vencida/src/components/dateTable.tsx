@@ -35,7 +35,7 @@ export default function DataTable() {
   const [filteredRows, setFilteredRows] = useState<any[]>([]);
   const [rows, setRows] = useState<any[]>([]);
   const [dialogOpen, setDialogOpen] = React.useState(false);
-  const { setOpcion_Titulo, opcion_Titulo, setSelectedRow, nuevaData } = useAppContext();
+  const { setOpcion_Titulo, opcion_Titulo, setSelectedRow, nuevaData, updatedRow } = useAppContext();
   const [carga, setCarga] = useState("");
 
   useEffect(() => {
@@ -52,6 +52,19 @@ export default function DataTable() {
       fetchPuestosNuevos();
     }
   }, [nuevaData]);
+
+  
+  useEffect(() => {
+    if (opcion_Titulo == "Bodegas") {
+      fetchBodegas();
+    } else {
+      fetchPuestos();
+    }
+
+    const textoSeparado = updatedRow.split('-');
+    setSearchText(textoSeparado[0])
+    filterData(textoSeparado[0], rows);
+  }, [updatedRow]);
 
   const fetchBodegasNuevos = async () => {
     try {
@@ -119,6 +132,7 @@ export default function DataTable() {
 
   const filterData = (search: string, data: any[]) => {
     let filtered = data;
+    console.log(filtered)
     if (search) {
       filtered = filtered.filter(
         (row) =>

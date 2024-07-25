@@ -6,13 +6,15 @@ import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import colors from "../resources/style/colors";
 import { generarPDF } from "./crear_PDF";
 import { saveAs } from "file-saver";
-import { updateHistorico } from "../providers/options/historical";
+import { addHistorico, obtenerNumeroReporte, updateHistorico } from "../providers/options/historical";
+import { getPDFFile, uploadPDFFile } from "../providers/options/files";
+import { getTodayDate } from "@mui/x-date-pickers/internals";
 
 const Taxpayers: React.FC = () => {
   const theme = useTheme();
   const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
   const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
-  const { opcion_Titulo, selectedRow } = useAppContext();
+  const { opcion_Titulo, selectedRow, setupdatedRow } = useAppContext();
   const [contributor, setContributor] = React.useState("");
   const [activity, setActivity] = React.useState("");
   const [warehouse, setWarehouse] = React.useState("");
@@ -25,7 +27,16 @@ const Taxpayers: React.FC = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
   const handleNotificationChange = (event: SelectChangeEvent) => { setNotificationType(event.target.value as string); };
-
+  const convertirBlobAFile = (blob: Blob, nombreArchivo: string): File => {
+    return new File([blob], nombreArchivo, { type: blob.type, lastModified: new Date().getTime() });
+  };
+  const formatDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Meses empiezan en 0
+    const day = String(date.getDate()).padStart(2, '0'); // Asegura dos dígitos
+  
+    return `${year}-${month}-${day}`;
+  };
   const handleConfirmClick = async () => {
     if (!selectedRow) {
       setSnackbarMessage("Debe seleccionar una fila para continuar.");
@@ -35,8 +46,10 @@ const Taxpayers: React.FC = () => {
     }
 
     let cantNotificaciones;
-    let pagado;
-
+    let pagado = "NO";
+    let numero_reporte = (await obtenerNumeroReporte()).siguienteNumeroReporte;
+    let archivo = null;
+    let fecha = formatDate(new Date());
     switch (notificationType) {
       case "Primera":
         cantNotificaciones = 1;
@@ -55,9 +68,19 @@ const Taxpayers: React.FC = () => {
         pagado = 'NO';
         break;
     }
-
-    const response = await updateHistorico(selectedRow.id, { cantNotificaciones, pagado });
-
+    let response;
+    if (pagado == "SI") {
+      response = await updateHistorico(selectedRow.id, { cantNotificaciones, pagado });
+    }else{
+      const updatedRow = { ...selectedRow, cantNotificaciones, numero_reporte, archivo , fecha};
+      response = await addHistorico(updatedRow)
+      const newId = response.historico.msg
+      const pdfBlob = await generarPDF(updatedRow);
+      await uploadPDFFile(newId, convertirBlobAFile(pdfBlob, `${updatedRow.ciu}-${updatedRow.numero_reporte}.pdf`))
+      await getPDFFile(`${updatedRow.ciu}-${updatedRow.numero_reporte}.pdf`)
+      setupdatedRow(`${updatedRow.ciu}-${updatedRow.numero_reporte}`)
+    }
+    
     if (response.success) {
       setSnackbarMessage("Registro actualizado exitosamente.");
       setSnackbarSeverity('success');
@@ -65,7 +88,6 @@ const Taxpayers: React.FC = () => {
       setSnackbarMessage(`Error al actualizar el registro: ${response.error?.message}`);
       setSnackbarSeverity('error');
     }
-
     setSnackbarOpen(true);
   };
 

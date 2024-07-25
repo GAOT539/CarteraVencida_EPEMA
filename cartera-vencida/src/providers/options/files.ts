@@ -138,3 +138,37 @@ export const getPDFFile = async (filename: string) => {
         };
     }
 };
+
+export const uploadPDFFile = async (id: string, file: File) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+  
+      const response = await axios.post(`${API_FILES}/historicos/subir/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
+      if (response.status === 200) {
+        return {
+          success: true,
+          data: response.data,
+        };
+      } else {
+        return {
+          success: false,
+          error: {
+            message: 'Error al subir el archivo',
+          },
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: {
+          message: error || 'Error en la solicitud',
+        },
+      };
+    }
+  };
