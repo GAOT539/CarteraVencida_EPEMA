@@ -74,7 +74,7 @@ const Taxpayers: React.FC = () => {
     }else{
       if (cantNotificaciones == 1) {
         response = await updateHistorico(selectedRow.id, { cantNotificaciones, pagado });
-        const pdfBlob = await generarPDF(selectedRow);
+        const pdfBlob = await generarPDF(selectedRow, cantNotificaciones);
         await uploadPDFFile(selectedRow.id, convertirBlobAFile(pdfBlob, `notificacion_${selectedRow.ciu}-${selectedRow.numero_reporte}.pdf`))
         await getPDFFile(`notificacion_${selectedRow.ciu}-${selectedRow.numero_reporte}.pdf`)
         setupdatedRow(`${selectedRow.ciu}-${selectedRow.numero_reporte}`)
@@ -82,7 +82,7 @@ const Taxpayers: React.FC = () => {
         const updatedRow = { ...selectedRow, cantNotificaciones, numero_reporte, archivo , fecha};
         response = await addHistorico(updatedRow)
         const newId = response.historico.msg
-        const pdfBlob = await generarPDF(updatedRow);
+        const pdfBlob = await generarPDF(updatedRow, cantNotificaciones);
         await uploadPDFFile(newId, convertirBlobAFile(pdfBlob, `notificacion_${updatedRow.ciu}-${updatedRow.numero_reporte}.pdf`))
         await getPDFFile(`notificacion_${updatedRow.ciu}-${updatedRow.numero_reporte}.pdf`)
         setupdatedRow(`${updatedRow.ciu}-${updatedRow.numero_reporte}`)
@@ -108,7 +108,7 @@ const Taxpayers: React.FC = () => {
       return;
     }
     console.log(selectedRow);
-    const pdfBlob = await generarPDF(selectedRow);
+    const pdfBlob = await generarPDF(selectedRow,selectedRow.cantNotificaciones);
     saveAs(pdfBlob, `notificacion_${selectedRow.numero_reporte}.pdf`);
   };
 

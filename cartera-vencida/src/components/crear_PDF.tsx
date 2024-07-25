@@ -10,14 +10,14 @@ Font.register({
 });
 
 const determineBoletas = (cantNotificaciones: number) => {
-    if (cantNotificaciones == 1) {
-        boleta_Uno = true;
-    }else if (cantNotificaciones == 2) {
-        boleta_Dos = true;
-    } else {
-        boleta_Tres = true;
-    }
-  };
+  if (cantNotificaciones == 1) {
+    boleta_Uno = true; boleta_Dos = false; boleta_Tres = false;
+  } else if (cantNotificaciones == 2) {
+    boleta_Uno = false; boleta_Dos = true; boleta_Tres = false; 
+  } else {
+    boleta_Uno = false; boleta_Dos = false; boleta_Tres = true; 
+  }
+};
 
 let boleta_Uno = false;
 let boleta_Dos = false;
@@ -28,13 +28,13 @@ const boleta_Dos_Fijada = false;
 const boleta_Tres_Fijada = false;
 
 const getCurrentDate = () => {
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); 
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-  const currentDate = getCurrentDate();
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+const currentDate = getCurrentDate();
 const hyphenationCallback = (word: any) => [word];
 
 const MyDocument = (selectedRow: any) => (
@@ -45,7 +45,7 @@ const MyDocument = (selectedRow: any) => (
         <Text style={styles.title}> EMPRESA PUBLICA – EMPRESA MUNICIPAL{"\n"}MERCADO MAYORISTA AMBATO
         </Text>
       </View>
-      
+
       <View style={styles.row}>
         <Text style={styles.notification}>NOTIFICACION CARTERA VENCIDA</Text>
         <Text style={styles.reportNumber}>Nº <Text style={styles.reportNumber_N}>{selectedRow.numero_reporte}</Text></Text>
@@ -146,19 +146,19 @@ const MyDocument = (selectedRow: any) => (
               <Text style={styles.table2Cell}>Boleta uno(1):</Text>
             </View>
             <View style={styles.table2Col}>
-              <Text style={styles.table2Cell_V}>{boleta_Uno_Fijada ? "X" : ""}</Text>
+              <Text style={styles.table2Cell_V}>{""}</Text>
             </View>
             <View style={styles.table2Col}>
               <Text style={styles.table2Cell}>Boleta dos(2):</Text>
             </View>
             <View style={styles.table2Col}>
-              <Text style={styles.table2Cell_V}>{boleta_Dos_Fijada ? "X" : ""}</Text>
+              <Text style={styles.table2Cell_V}>{""}</Text>
             </View>
             <View style={styles.table2Col}>
               <Text style={styles.table2Cell}>Boleta tres(3):</Text>
             </View>
             <View style={styles.table2Col}>
-              <Text style={styles.table2Cell_V}>{boleta_Tres_Fijada ? "X" : ""}</Text>
+              <Text style={styles.table2Cell_V}>{""}</Text>
             </View>
           </View>
         </View>
@@ -193,15 +193,17 @@ const MyDocument = (selectedRow: any) => (
   </Document>
 );
 
-export const generarPDF = async (selectedRow: any) => {
-    determineBoletas(selectedRow.cantNotificaciones)
-    const adjustedRow = {
-        ...selectedRow,
-        cedula: selectedRow["contribuyente.cedula"] || selectedRow.cedula,
-        nombre: selectedRow["contribuyente.nombre"] || selectedRow.nombre}
-    const doc = <MyDocument {...adjustedRow} />;
-    const asPdf = pdf();
-    asPdf.updateContainer(doc);
-    const blob = await asPdf.toBlob();
-    return blob;
-  };
+export const generarPDF = async (selectedRow: any, notificaciones: number) => {
+  console.log(notificaciones)
+  determineBoletas(notificaciones)
+  const adjustedRow = {
+    ...selectedRow,
+    cedula: selectedRow["contribuyente.cedula"] || selectedRow.cedula,
+    nombre: selectedRow["contribuyente.nombre"] || selectedRow.nombre
+  }
+  const doc = <MyDocument {...adjustedRow} />;
+  const asPdf = pdf();
+  asPdf.updateContainer(doc);
+  const blob = await asPdf.toBlob();
+  return blob;
+};

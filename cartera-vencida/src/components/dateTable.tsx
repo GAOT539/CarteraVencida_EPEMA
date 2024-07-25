@@ -132,7 +132,6 @@ export default function DataTable() {
 
   const filterData = (search: string, data: any[]) => {
     let filtered = data;
-    console.log(filtered)
     if (search) {
       filtered = filtered.filter(
         (row) =>
