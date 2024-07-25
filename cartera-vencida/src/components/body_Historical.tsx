@@ -122,7 +122,7 @@ const Body_Historical: React.FC = () => {
         if (start && end) {
             filtered = filtered.filter(row => {
                 const date = dayjs(row.fecha);
-                return date.isAfter(start) && date.isBefore(end);
+                return (date.isAfter(start)||date.isSame(start))  && (date.isBefore(end)||date.isSame(end));
             });
         }
 
