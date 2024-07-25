@@ -22,11 +22,11 @@ exports.Historicos = connection_db_1.default.define('historicos', {
         allowNull: false,
     },
     bodega: {
-        type: sequelize_1.DataTypes.STRING(30),
+        type: sequelize_1.DataTypes.STRING(70),
         allowNull: true,
     },
     puesto: {
-        type: sequelize_1.DataTypes.STRING(30),
+        type: sequelize_1.DataTypes.STRING(70),
         allowNull: true,
     },
     nave: {

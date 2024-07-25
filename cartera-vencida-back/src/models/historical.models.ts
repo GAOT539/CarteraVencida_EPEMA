@@ -17,11 +17,11 @@ export const Historicos = connection.define('historicos', {
     allowNull: false,
   },
   bodega: {
-    type: DataTypes.STRING(30),
+    type: DataTypes.STRING(70),
     allowNull: true,
   },
   puesto: {
-    type: DataTypes.STRING(30),
+    type: DataTypes.STRING(70),
     allowNull: true,
   },
   nave: {
