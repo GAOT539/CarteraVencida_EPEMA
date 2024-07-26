@@ -9,6 +9,7 @@ import { saveAs } from "file-saver";
 import { addHistorico, obtenerNumeroReporte, updateHistorico } from "../providers/options/historical";
 import { getPDFFile, uploadPDFFile } from "../providers/options/files";
 import { getTodayDate } from "@mui/x-date-pickers/internals";
+import BrowserUpdatedIcon from '@mui/icons-material/BrowserUpdated';
 
 const Taxpayers: React.FC = () => {
   const theme = useTheme();
@@ -112,8 +113,6 @@ const Taxpayers: React.FC = () => {
     saveAs(pdfBlob, `notificacion_${selectedRow.numero_reporte}.pdf`);
   };
 
-  const handleCloseSnackbar = () => { setSnackbarOpen(false); };
-
   const naves = selectedRow?.nave ? selectedRow.nave : "NAVE";
   const cantNotificaciones = selectedRow?.cantNotificaciones || 0;
   const pagado = selectedRow?.pagado || 'NO';
@@ -182,16 +181,10 @@ const Taxpayers: React.FC = () => {
       </Box>
 
       <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 2, }} >
-        <Button variant="contained" sx={{
+        <Button startIcon={<BrowserUpdatedIcon />} variant="contained" sx={{
           marginRight: { xs: 0, sm: 2 }, marginBottom: { xs: 2, sm: 0 }, width: { xs: "100%", sm: "auto" }, backgroundColor: colors.oliveGreen, "&:hover": { backgroundColor: colors.oliveGreenGradient },
         }} onClick={handleConfirmClick} >
           Actualizar Cartera
-        </Button>
-        <Button variant="contained" startIcon={<CloudDownloadIcon />}
-          sx={{
-            marginRight: { xs: 0, sm: 2 }, marginBottom: { xs: 2, sm: 0 }, width: { xs: "100%", sm: "auto" }, backgroundColor: colors.orangeSalmon, "&:hover": { backgroundColor: colors.orangeSalmonGradient },
-          }} onClick={handleDownloadClick} >
-          Descargar PDF
         </Button>
       </Box>
 

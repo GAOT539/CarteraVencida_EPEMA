@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { TextField, Button, Container, Grid, Box, InputAdornment, } from "@mui/material";
+import { TextField, Button, Container, Grid, Box, InputAdornment, Backdrop, CircularProgress, } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import colors from "../resources/style/colors";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { getHistoricosBodegasNoPagado, getHistoricosBodegasNuevos, getHistoricosPuestosNoPagado, getHistoricosPuestosNuevos, } from "../providers/options/historical";
+import { getHistoricosBodegasNoPagado, getHistoricosBodegasNuevos, getHistoricosPuestosNoPagado, getHistoricosPuestosNuevos, updateHistorico, } from "../providers/options/historical";
 import UploadDialog from "./upload_Dialog";
 import { useAppContext } from "../AppContext";
-import { CloudDownload } from "@mui/icons-material";
-import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import GeneradorPDF from "./generator_PDF";
-import { getPDFFile } from "../providers/options/files";
+import FileOpenIcon from '@mui/icons-material/FileOpen';
+import PlagiarismIcon from '@mui/icons-material/Plagiarism';
+import { getPDFFile, uploadPDFFile } from "../providers/options/files";
+import { generarPDF } from "./crear_PDF";
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 const columnsHistoricos: GridColDef[] = [
   { field: "id", headerName: "ID", flex: 1 },
@@ -22,10 +24,12 @@ const columnsHistoricos: GridColDef[] = [
   { field: "fecha", headerName: "Fecha", flex: 1 },
   { field: "meses", headerName: "Meses", flex: 1 },
   { field: "cantNotificaciones", headerName: "Cantidad de Notificaciones", flex: 1, },
-  { field: 'archivo', headerName: 'Archivo', flex: 1,
-    renderCell: (params) => ( <Button variant="outlined" color="secondary" onClick={() => getPDFFile(params.value)} disabled={!params.value} >
-        Ver
-      </Button> ), },
+  {
+    field: 'archivo', headerName: 'Archivo', flex: 1,
+    renderCell: (params) => (<Button variant="outlined" color="secondary" onClick={() => getPDFFile(params.value)} disabled={!params.value} >
+      Ver
+    </Button>),
+  },
   { field: "valor", headerName: "Valor", flex: 1 },
   { field: "pagado", headerName: "Pagado", flex: 1 },
 ];
@@ -36,7 +40,7 @@ export default function DataTable() {
   const [rows, setRows] = useState<any[]>([]);
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const { setOpcion_Titulo, opcion_Titulo, setSelectedRow, nuevaData, updatedRow } = useAppContext();
-  const [carga, setCarga] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchBodegas();
@@ -53,7 +57,7 @@ export default function DataTable() {
     }
   }, [nuevaData]);
 
-  
+
   useEffect(() => {
     if (opcion_Titulo == "Bodegas") {
       fetchBodegas();
@@ -161,13 +165,49 @@ export default function DataTable() {
       fetchPuestosNuevos();
     }
   };
-
-  const handleNotifyAll = () => {
-    console.log("Notificar a todos");
+  const convertirBlobAFile = (blob: Blob, nombreArchivo: string): File => {
+    return new File([blob], nombreArchivo, { type: blob.type, lastModified: new Date().getTime() });
   };
 
-  const handleDownloadPDFs = () => {
-    console.log("Descargar PDFs");
+  const handleDownloadPDFs = async () => {
+    const batchSize = 5; // Tamaño del lote
+    const zip = new JSZip(); // Crear instancia de JSZip
+  
+    if (opcion_Titulo === "Bodegas" || opcion_Titulo === "Puestos") {
+      console.log("NO");
+    } else {
+      setLoading(true); // Iniciar la carga
+      for (let i = 0; i < rows.length; i += batchSize) {
+        const batch = rows.slice(i, i + batchSize);
+        await Promise.all(batch.map(async (element) => {
+          try {
+            const response = await updateHistorico(element.id, { cantNotificaciones: 1, pagado: "NO" });
+            const pdfBlob = await generarPDF(element, 1);
+            await uploadPDFFile(element.id, convertirBlobAFile(pdfBlob, `notificacion_${element.ciu}-${element.numero_reporte}.pdf`));
+            const file = convertirBlobAFile(pdfBlob, `notificacion_${element.ciu}-${element.numero_reporte}.pdf`);
+  
+            // Agregar el archivo al ZIP
+            zip.file(file.name, pdfBlob);
+          } catch (error) {
+            console.error('Error al generar o subir el PDF:', error);
+          }
+        }));
+      }
+      setLoading(false); // Finalizar la carga
+  
+      // Generar el archivo ZIP y descargarlo
+      zip.generateAsync({ type: 'blob' }).then((content) => {
+        saveAs(content, `Notificaciones-${new Date().toLocaleDateString()}.zip`); // Descargar el archivo ZIP
+      });
+    }
+  
+    if (opcion_Titulo.includes("Bodegas")) {
+      setOpcion_Titulo("Bodegas")
+      fetchBodegas()
+    } else {
+      setOpcion_Titulo("Puestos")
+      fetchPuestos()
+    }
   };
 
   const handleChangeBodegas = () => {
@@ -206,12 +246,15 @@ export default function DataTable() {
             <Button variant="contained" startIcon={<CloudUploadIcon />} sx={{ backgroundColor: colors.blue, "&:hover": { backgroundColor: colors.blueGradient }, }} onClick={handleLoadData} disabled={!opcion_Titulo} >
               Cargar datos
             </Button>
-            <Button variant="contained" startIcon={<CloudDownload />} sx={{ backgroundColor: colors.orangeSalmon, "&:hover": { backgroundColor: colors.orangeSalmonGradient }, }} onClick={handleDownloadPDFs} disabled={!opcion_Titulo} >
-              Descargar PDFs
+            <Button variant="contained" startIcon={<FileOpenIcon />} sx={{ backgroundColor: colors.orangeSalmon, "&:hover": { backgroundColor: colors.orangeSalmonGradient }, }} onClick={handleDownloadPDFs} disabled={!opcion_Titulo} >
+              Primera Notificación
             </Button>
-            <Button variant="contained" startIcon={<PictureAsPdfIcon />} sx={{ backgroundColor: colors.purple, "&:hover": { backgroundColor: colors.purpleGradient }, }} onClick={handleShowCharged} disabled={!opcion_Titulo} >
+            <Button variant="contained" startIcon={<PlagiarismIcon />} sx={{ backgroundColor: colors.purple, "&:hover": { backgroundColor: colors.purpleGradient }, }} onClick={handleShowCharged} disabled={!opcion_Titulo} >
               Ver datos Cargados
             </Button>
+            <Backdrop open={loading} style={{ zIndex: 9999 }}>
+              <CircularProgress color="inherit" />
+            </Backdrop>
           </Box>
           <UploadDialog open={dialogOpen} onClose={handleCloseDialog} titulo={opcion_Titulo} />
         </Grid>
