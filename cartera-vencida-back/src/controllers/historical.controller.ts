@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Historicos } from '../models/historical.models';
 import { ErrorMessages } from '../error/manage.error';
-import { Op, Sequelize } from 'sequelize';
+import { col, fn, literal, Op, Sequelize } from 'sequelize';
 import Contribuyentes from '../models/contributors.models';
 
 // Crear un nuevo registro histórico
@@ -120,14 +120,6 @@ export const getHistoricosBodegas = async (req: Request, res: Response) => {
 export const getHistoricosBodegasNoPagado = async (req: Request, res: Response) => {
   try {
     const historicosList = await Historicos.findAll({
-      where: {
-        bodega: {
-          [Op.ne]: null,  
-        },
-        pagado: {
-          [Op.eq]: 'NO',  
-        },
-      },
       attributes: [
         'id',
         'numero_reporte',
@@ -135,14 +127,27 @@ export const getHistoricosBodegasNoPagado = async (req: Request, res: Response) 
         'bodega',
         'puesto',
         'nave',
-        'cantNotificaciones',
         'seccion',
         'meses',
+        'fecha',
+        'cantNotificaciones',
         'archivo',
         'valor',
         'pagado',
-        [Sequelize.fn('MAX', Sequelize.col('fecha')), 'fecha'],
+        [fn('DATE_FORMAT', col('fecha'), '%Y-%m'), 'mes'], // Formatea la fecha para obtener el mes
+        [fn('MAX', col('cantNotificaciones')), 'max_notificaciones'] // Obtén el máximo de cantNotificaciones
       ],
+      where: {
+        bodega: {
+          [Op.ne]: null,  
+        },
+        pagado: {
+          [Op.eq]: 'NO',
+        },
+        cantNotificaciones: {
+          [Op.ne]: 0,  
+        },
+      },
       group: [
         'id',
         'numero_reporte',
@@ -150,22 +155,20 @@ export const getHistoricosBodegasNoPagado = async (req: Request, res: Response) 
         'bodega',
         'puesto',
         'nave',
-        'cantNotificaciones',
         'seccion',
         'meses',
+        'fecha',
+        'cantNotificaciones',
         'archivo',
         'valor',
         'pagado',
-        'contribuyente.ciu',
-        'contribuyente.nombre',
-        'contribuyente.cedula'
       ],
       include: [{
         model: Contribuyentes,
         as: 'contribuyente',
         attributes: ['nombre', 'cedula'],
       }],
-      raw: true,
+      having: literal('cantNotificaciones = max_notificaciones'), // Filtra para obtener solo las notificaciones con el máximo valor
     });
 
     if (historicosList.length === 0) { 
@@ -228,14 +231,6 @@ export const getHistoricosBodegasCero = async (req: Request, res: Response) => {
 export const getHistoricosPuestosNoPagado = async (req: Request, res: Response) => {
   try {
     const historicosList = await Historicos.findAll({
-      where: {
-        puesto: {
-          [Op.ne]: null,  
-        },
-        pagado: {
-          [Op.eq]: 'NO',  
-        },
-      },
       attributes: [
         'id',
         'numero_reporte',
@@ -243,14 +238,27 @@ export const getHistoricosPuestosNoPagado = async (req: Request, res: Response) 
         'bodega',
         'puesto',
         'nave',
-        'cantNotificaciones',
         'seccion',
         'meses',
+        'fecha',
+        'cantNotificaciones',
         'archivo',
         'valor',
         'pagado',
-        [Sequelize.fn('MAX', Sequelize.col('fecha')), 'fecha'],
+        [fn('DATE_FORMAT', col('fecha'), '%Y-%m'), 'mes'], // Formatea la fecha para obtener el mes
+        [fn('MAX', col('cantNotificaciones')), 'max_notificaciones'] // Obtén el máximo de cantNotificaciones
       ],
+      where: {
+        puesto: {
+          [Op.ne]: null,  
+        },
+        cantNotificaciones: {
+          [Op.ne]: 0,  
+        },
+        pagado: {
+          [Op.eq]: 'NO',
+        },
+      },
       group: [
         'id',
         'numero_reporte',
@@ -258,22 +266,20 @@ export const getHistoricosPuestosNoPagado = async (req: Request, res: Response) 
         'bodega',
         'puesto',
         'nave',
-        'cantNotificaciones',
         'seccion',
         'meses',
+        'fecha',
+        'cantNotificaciones',
         'archivo',
         'valor',
         'pagado',
-        'contribuyente.ciu',
-        'contribuyente.nombre',
-        'contribuyente.cedula'
       ],
       include: [{
         model: Contribuyentes,
         as: 'contribuyente',
         attributes: ['nombre', 'cedula'],
       }],
-      raw: true,
+      having: literal('cantNotificaciones = max_notificaciones'), // Filtra para obtener solo las notificaciones con el máximo valor
     });
 
     if (historicosList.length === 0) {
