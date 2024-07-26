@@ -140,7 +140,7 @@ export default function DataTable() {
       filtered = filtered.filter(
         (row) =>
           row.numero_reporte?.toString().toLowerCase().includes(search.toLowerCase()) ||
-          row.ciu?.toLowerCase().includes(search.toLowerCase()) ||
+          row.ciu?.toString().toLowerCase().includes(search.toLowerCase()) ||
           row.cantNotificaciones?.toString().toLowerCase().includes(search.toLowerCase())
       );
     } setFilteredRows(filtered);

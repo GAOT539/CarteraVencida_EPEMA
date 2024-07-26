@@ -114,7 +114,7 @@ const Body_Historical: React.FC = () => {
 
         if (search) {
             filtered = filtered.filter(row =>
-                row.ciu?.toLowerCase().includes(search.toLowerCase()) ||
+                row.ciu?.toString().toLowerCase().includes(search.toLowerCase()) ||
                 row.ubicacion?.toLowerCase().includes(search.toLowerCase())
             );
         }
