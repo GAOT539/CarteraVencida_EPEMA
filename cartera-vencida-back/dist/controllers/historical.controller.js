@@ -160,6 +160,7 @@ const getHistoricosBodegasNoPagado = (req, res) => __awaiter(void 0, void 0, voi
                     as: 'contribuyente',
                     attributes: ['nombre', 'cedula'],
                 }],
+            raw: true,
             having: (0, sequelize_1.literal)('cantNotificaciones = max_notificaciones'), // Filtra para obtener solo las notificaciones con el máximo valor
         });
         if (historicosList.length === 0) {
@@ -262,6 +263,7 @@ const getHistoricosPuestosNoPagado = (req, res) => __awaiter(void 0, void 0, voi
                     as: 'contribuyente',
                     attributes: ['nombre', 'cedula'],
                 }],
+            raw: true,
             having: (0, sequelize_1.literal)('cantNotificaciones = max_notificaciones'), // Filtra para obtener solo las notificaciones con el máximo valor
         });
         if (historicosList.length === 0) {

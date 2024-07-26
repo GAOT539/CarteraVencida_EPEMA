@@ -168,6 +168,7 @@ export const getHistoricosBodegasNoPagado = async (req: Request, res: Response) 
         as: 'contribuyente',
         attributes: ['nombre', 'cedula'],
       }],
+      raw:true,
       having: literal('cantNotificaciones = max_notificaciones'), // Filtra para obtener solo las notificaciones con el máximo valor
     });
 
@@ -279,6 +280,7 @@ export const getHistoricosPuestosNoPagado = async (req: Request, res: Response) 
         as: 'contribuyente',
         attributes: ['nombre', 'cedula'],
       }],
+      raw:true,
       having: literal('cantNotificaciones = max_notificaciones'), // Filtra para obtener solo las notificaciones con el máximo valor
     });
 
