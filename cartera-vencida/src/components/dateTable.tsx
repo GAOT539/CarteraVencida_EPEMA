@@ -206,7 +206,10 @@ export default function DataTable() {
   };
 
   const handleShowCharged = () => {
-    if (nuevaData == "Bodegas") {
+    console.log(opcion_Titulo)
+    console.log(nuevaData)
+
+    if (opcion_Titulo == "Bodegas") {
       setOpcion_Titulo("Bodegas Cargadas");
       fetchBodegasNuevos();
     } else {
