@@ -69,6 +69,19 @@ export default function DataTable() {
     const textoSeparado = updatedRow.split('-');
     setSearchText(textoSeparado[0])
     filterData(textoSeparado[0], rows);
+
+    switch (opcion_Titulo) {
+      case 'Bodegas':
+        fetchBodegas();
+        break;
+      case 'Puestos':
+        fetchPuestos();
+        break;
+      default:
+        console.warn('Opción no reconocida');
+        break;
+    }
+
   }, [updatedRow]);
 
   const fetchBodegasNuevos = async () => {
