@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { TextField, Button, Container, Grid, Box, InputAdornment, Backdrop, CircularProgress, } from "@mui/material";
+import { TextField, Button, Container, Grid, Box, InputAdornment, Backdrop, CircularProgress, Snackbar, Alert, } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import colors from "../resources/style/colors";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -41,6 +41,11 @@ export default function DataTable() {
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const { setOpcion_Titulo, opcion_Titulo, setSelectedRow, nuevaData, updatedRow } = useAppContext();
   const [loading, setLoading] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<SnackbarSeverity>('info');
+
+  type SnackbarSeverity = 'info' | 'success' | 'error' | 'warning';
 
   useEffect(() => {
     fetchBodegas();
@@ -51,20 +56,16 @@ export default function DataTable() {
     if (nuevaData == "Bodegas") {
       setOpcion_Titulo("Bodegas Cargadas");
       fetchBodegasNuevos();
-    } else {
+    } else if  (nuevaData == "Puestos"){
       setOpcion_Titulo("Puestos Cargados");
       fetchPuestosNuevos();
+    }else{
+
     }
   }, [nuevaData]);
 
 
   useEffect(() => {
-    if (opcion_Titulo == "Bodegas") {
-      fetchBodegas();
-    } else {
-      fetchPuestos();
-    }
-
     const textoSeparado = updatedRow.split('-');
     setSearchText(textoSeparado[0])
     filterData(textoSeparado[0], rows);
@@ -79,9 +80,21 @@ export default function DataTable() {
         );
         setRows(transformedData);
         filterData(searchText, transformedData);
+        setSnackbarMessage('Carga de datos correcta de Bodegas Cargadas.');
+        setSnackbarSeverity('success');
+        setOpenSnackbar(true);
+      }else {
+        setRows([]);
+        setFilteredRows([]);
+        setSnackbarMessage('No existen datos cargados en Bodegas Cargadas.');
+        setSnackbarSeverity('warning');
+        setOpenSnackbar(true);
       }
     } catch (error) {
-      console.error("Error fetching bodegas:", error);
+      console.error("Error fetching Bodegas Cargadas:", error);
+      setSnackbarMessage('Error al cargar los datos de Bodegas Cargadas.');
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
     }
   };
 
@@ -94,9 +107,21 @@ export default function DataTable() {
         );
         setRows(transformedData);
         filterData(searchText, transformedData);
+        setSnackbarMessage('Carga de datos correcta de Puestos Cargadas.');
+        setSnackbarSeverity('success');
+        setOpenSnackbar(true);
+      }else {
+        setRows([]);
+        setFilteredRows([]);
+        setSnackbarMessage('No existen datos cargados en Puestos Cargadas.');
+        setSnackbarSeverity('warning');
+        setOpenSnackbar(true);
       }
     } catch (error) {
-      console.error("Error fetching bodegas:", error);
+      console.error("Error fetching Puestos Cargadas:", error);
+      setSnackbarMessage('Error al cargar los datos de Puestos Cargadas.');
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
     }
   };
 
@@ -107,9 +132,21 @@ export default function DataTable() {
         const transformedData = transformData(result.historicosList);
         setRows(transformedData);
         filterData(searchText, transformedData);
+        setSnackbarMessage('Carga de datos correcta de Bodegas.');
+        setSnackbarSeverity('success');
+        setOpenSnackbar(true);
+      } else {
+        setRows([]);
+        setFilteredRows([]);
+        setSnackbarMessage('No existen datos cargados en Bodegas.');
+        setSnackbarSeverity('warning');
+        setOpenSnackbar(true);
       }
     } catch (error) {
       console.error("Error fetching bodegas:", error);
+      setSnackbarMessage('Error al cargar los datos de Bodegas.');
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
     }
   };
 
@@ -120,9 +157,21 @@ export default function DataTable() {
         const transformedData = transformData(result.historicosList);
         setRows(transformedData);
         filterData(searchText, transformedData);
+        setSnackbarMessage('Carga de datos correcta de Puestos.');
+        setSnackbarSeverity('success');
+        setOpenSnackbar(true);
+      } else {
+        setRows([]);
+        setFilteredRows([]);
+        setSnackbarMessage('No existen datos cargados en Puestos.');
+        setSnackbarSeverity('warning');
+        setOpenSnackbar(true);
       }
     } catch (error) {
       console.error("Error fetching puestos:", error);
+      setSnackbarMessage('Error al cargar los datos de Puestos.');
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
     }
   };
 
@@ -172,7 +221,7 @@ export default function DataTable() {
   const handleDownloadPDFs = async () => {
     const batchSize = 5; // Tamaño del lote
     const zip = new JSZip(); // Crear instancia de JSZip
-  
+
     if (opcion_Titulo === "Bodegas" || opcion_Titulo === "Puestos") {
       console.log("NO");
     } else {
@@ -185,7 +234,7 @@ export default function DataTable() {
             const pdfBlob = await generarPDF(element, 1);
             await uploadPDFFile(element.id, convertirBlobAFile(pdfBlob, `notificacion_${element.ciu}-${element.numero_reporte}.pdf`));
             const file = convertirBlobAFile(pdfBlob, `notificacion_${element.ciu}-${element.numero_reporte}.pdf`);
-  
+
             // Agregar el archivo al ZIP
             zip.file(file.name, pdfBlob);
           } catch (error) {
@@ -194,13 +243,13 @@ export default function DataTable() {
         }));
       }
       setLoading(false); // Finalizar la carga
-  
+
       // Generar el archivo ZIP y descargarlo
       zip.generateAsync({ type: 'blob' }).then((content) => {
         saveAs(content, `Notificaciones-${new Date().toLocaleDateString()}.zip`); // Descargar el archivo ZIP
       });
     }
-  
+
     if (opcion_Titulo.includes("Bodegas")) {
       setOpcion_Titulo("Bodegas")
       fetchBodegas()
@@ -223,6 +272,11 @@ export default function DataTable() {
   const handleCloseDialog = () => {
     setDialogOpen(false);
   };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+
 
   const handleRowClick = (params: any) => {
     const selectedRow = {
@@ -286,6 +340,14 @@ export default function DataTable() {
           </Box>
         </Grid>
       </Grid>
+      <Snackbar
+        open={openSnackbar} autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} >
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }
