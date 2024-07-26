@@ -72,6 +72,7 @@ const Taxpayers: React.FC = () => {
     let response;
     if (pagado == "SI") {
       response = await updateHistorico(selectedRow.id, { cantNotificaciones, pagado });
+      setupdatedRow(`${selectedRow.ciu}-${selectedRow.numero_reporte}`)
     }else{
       if (cantNotificaciones == 1) {
         response = await updateHistorico(selectedRow.id, { cantNotificaciones, pagado });

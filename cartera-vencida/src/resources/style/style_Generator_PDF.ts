@@ -67,7 +67,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: "Roboto",
     fontWeight: "bold",
-    color: colors.text_Red,
     textTransform: "uppercase"
   },
   texts_Italic:{
@@ -164,7 +163,6 @@ const styles = StyleSheet.create({
   table2Cell_V: {
     fontSize: 10,
     textAlign: 'center',
-    color: colors.text_Red,
   }
 });
 
