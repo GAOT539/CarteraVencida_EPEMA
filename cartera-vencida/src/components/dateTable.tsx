@@ -44,6 +44,7 @@ export default function DataTable() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<SnackbarSeverity>('info');
+  const [buttonDisabled, setButtonDisabled] = useState(false);
 
   type SnackbarSeverity = 'info' | 'success' | 'error' | 'warning';
 
@@ -302,6 +303,14 @@ export default function DataTable() {
     setSelectedRow(selectedRow);
   };
 
+  useEffect(() => {
+    if (opcion_Titulo.includes('Cargados') || opcion_Titulo.includes('Cargadas')) {
+      setButtonDisabled(true);
+    } else {
+      setButtonDisabled(false);
+    }
+  }, [opcion_Titulo]);
+
   return (
     <Container maxWidth="lg" style={{ padding: 20 }}>
       <Grid container spacing={2}>
@@ -313,10 +322,10 @@ export default function DataTable() {
             <Button variant="contained" sx={{ backgroundColor: colors.oliveGreen, "&:hover": { backgroundColor: colors.oliveGreenGradient }, }} onClick={handleChangePuestos} >
               Puestos
             </Button>
-            <Button variant="contained" startIcon={<CloudUploadIcon />} sx={{ backgroundColor: colors.blue, "&:hover": { backgroundColor: colors.blueGradient }, }} onClick={handleLoadData} disabled={!opcion_Titulo} >
+            <Button disabled={buttonDisabled} variant="contained" startIcon={<CloudUploadIcon />} sx={{ backgroundColor: colors.blue, "&:hover": { backgroundColor: colors.blueGradient }, }} onClick={handleLoadData} >
               Cargar datos
             </Button>
-            <Button variant="contained" startIcon={<FileOpenIcon />} sx={{ backgroundColor: colors.orangeSalmon, "&:hover": { backgroundColor: colors.orangeSalmonGradient }, }} onClick={handleDownloadPDFs} disabled={!opcion_Titulo} >
+            <Button disabled={!buttonDisabled} variant="contained" startIcon={<FileOpenIcon />} sx={{ backgroundColor: colors.orangeSalmon, "&:hover": { backgroundColor: colors.orangeSalmonGradient }, }} onClick={handleDownloadPDFs} >
               Primera Notificación
             </Button>
             <Button variant="contained" startIcon={<PlagiarismIcon />} sx={{ backgroundColor: colors.purple, "&:hover": { backgroundColor: colors.purpleGradient }, }} onClick={handleShowCharged} disabled={!opcion_Titulo} >

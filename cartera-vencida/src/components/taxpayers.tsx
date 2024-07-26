@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Alert, Box, SelectChangeEvent, Snackbar, TextField, Typography, useTheme, useMediaQuery, } from "@mui/material";
 import { useAppContext } from "../AppContext";
 import { Button, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
-import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import colors from "../resources/style/colors";
 import { generarPDF } from "./crear_PDF";
 import { saveAs } from "file-saver";
@@ -27,17 +26,20 @@ const Taxpayers: React.FC = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+
   const handleNotificationChange = (event: SelectChangeEvent) => { setNotificationType(event.target.value as string); };
   const convertirBlobAFile = (blob: Blob, nombreArchivo: string): File => {
     return new File([blob], nombreArchivo, { type: blob.type, lastModified: new Date().getTime() });
   };
+
   const formatDate = (date: Date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0'); // Meses empiezan en 0
-    const day = String(date.getDate()).padStart(2, '0'); // Asegura dos dígitos
-  
+    const day = String(date.getDate()).padStart(2, '0'); // Asegura dos dígitos  
     return `${year}-${month}-${day}`;
   };
+
   const handleConfirmClick = async () => {
     if (!selectedRow) {
       setSnackbarMessage("Debe seleccionar una fila para continuar.");
@@ -73,7 +75,7 @@ const Taxpayers: React.FC = () => {
     if (pagado == "SI") {
       response = await updateHistorico(selectedRow.id, { cantNotificaciones, pagado });
       setupdatedRow(`${selectedRow.ciu}-${selectedRow.numero_reporte}`)
-    }else{
+    } else {
       if (cantNotificaciones == 1) {
         response = await updateHistorico(selectedRow.id, { cantNotificaciones, pagado });
         const pdfBlob = await generarPDF(selectedRow, cantNotificaciones);
@@ -81,7 +83,7 @@ const Taxpayers: React.FC = () => {
         await getPDFFile(`notificacion_${selectedRow.ciu}-${selectedRow.numero_reporte}.pdf`)
         setupdatedRow(`${selectedRow.ciu}-${selectedRow.numero_reporte}`)
       } else {
-        const updatedRow = { ...selectedRow, cantNotificaciones, numero_reporte, archivo , fecha};
+        const updatedRow = { ...selectedRow, cantNotificaciones, numero_reporte, archivo, fecha };
         response = await addHistorico(updatedRow)
         const newId = response.historico.msg
         const pdfBlob = await generarPDF(updatedRow, cantNotificaciones);
@@ -89,9 +91,8 @@ const Taxpayers: React.FC = () => {
         await getPDFFile(`notificacion_${updatedRow.ciu}-${updatedRow.numero_reporte}.pdf`)
         setupdatedRow(`${updatedRow.ciu}-${updatedRow.numero_reporte}`)
       }
-     
     }
-    
+
     if (response.success) {
       setSnackbarMessage("Registro actualizado exitosamente.");
       setSnackbarSeverity('success');
@@ -102,24 +103,12 @@ const Taxpayers: React.FC = () => {
     setSnackbarOpen(true);
   };
 
-  const handleDownloadClick = async () => {
-    if (!selectedRow) {
-      setSnackbarMessage("Debe seleccionar una fila para continuar.");
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true);
-      return;
-    }
-    console.log(selectedRow);
-    const pdfBlob = await generarPDF(selectedRow,selectedRow.cantNotificaciones);
-    saveAs(pdfBlob, `notificacion_${selectedRow.numero_reporte}.pdf`);
-  };
-
   const naves = selectedRow?.nave ? selectedRow.nave : "NAVE";
   const cantNotificaciones = selectedRow?.cantNotificaciones || 0;
   const pagado = selectedRow?.pagado || 'NO';
 
   useEffect(() => {
-    if (selectedRow) {
+   if (selectedRow) {
       setContributor(selectedRow["contribuyente.nombre"] || "");
       setActivity(selectedRow.seccion || "");
       setWarehouse(selectedRow.ubicacion || "");
@@ -128,8 +117,31 @@ const Taxpayers: React.FC = () => {
       setAmount(selectedRow.valor || 0);
 
       setNotificationType("");
+    }else{
+      setButtonDisabled(false);
     }
   }, [selectedRow]);
+
+  useEffect(() => {
+    if (opcion_Titulo.includes('Cargados') || opcion_Titulo.includes('Cargadas')) {
+      setButtonDisabled(false);
+      setCiu("");
+      setContributor("");
+      setActivity("");
+      setWarehouse("");
+      setMonths(0);
+      setAmount(0);      
+    } else {
+      setButtonDisabled(true);
+      setCiu("");
+      setContributor("");
+      setActivity("");
+      setWarehouse("");
+      setMonths(0);
+      setAmount(0);
+    }
+  }, [opcion_Titulo]);
+
 
   return (
     <Box sx={{ padding: 4 }}>
@@ -182,7 +194,7 @@ const Taxpayers: React.FC = () => {
       </Box>
 
       <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 2, }} >
-        <Button startIcon={<BrowserUpdatedIcon />} variant="contained" sx={{
+        <Button disabled={!buttonDisabled} startIcon={<BrowserUpdatedIcon />} variant="contained" sx={{
           marginRight: { xs: 0, sm: 2 }, marginBottom: { xs: 2, sm: 0 }, width: { xs: "100%", sm: "auto" }, backgroundColor: colors.oliveGreen, "&:hover": { backgroundColor: colors.oliveGreenGradient },
         }} onClick={handleConfirmClick} >
           Actualizar Cartera
