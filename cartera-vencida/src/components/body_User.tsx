@@ -150,91 +150,115 @@ const Body_Usuario: React.FC = () => {
 
   return (
     <Box sx={{ padding: 4 }}>
+  <Typography variant="h4" gutterBottom>
+    CONTRIBUYENTES
+  </Typography>
+  {/* Contenedor flex para alinear la barra de búsqueda a la derecha */}
+  <Box sx={{ mb: 2, display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+    <Box sx={{ width: '74.8%' }}>
+      <TextField
+        label="Buscar Contribuyente"
+        variant="outlined"
+        fullWidth
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <SearchIcon />
+            </InputAdornment>
+          ),
+        }}
+        value={searchTerm}
+        onChange={handleSearch}
+      />
+      </Box>
+      </Box>
       <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-            <Typography variant="h4" gutterBottom>
-              Contribuyentes
-            </Typography>
-            <Box sx={{ flexGrow: 1, ml: { xs: 0, sm: 2, md: 17 } }}>
-              <TextField
-                label="Buscar"
-                variant="outlined"
-                value={searchTerm}
-                onChange={handleSearch}
-                fullWidth
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Box>
-          </Box>
-        </Grid>
-
         <Grid item xs={12} sm={3}>
-          <Box display="flex" flexDirection="column" gap={2}>
-            <Box display="flex" alignItems="center" gap={1}>
-              <Typography variant="body1">CIU:</Typography>
-              <TextField value={ciu} onChange={(e) => setCiu(e.target.value)} fullWidth />
-            </Box>
-            <Box display="flex" alignItems="center" gap={1}>
-              <Typography variant="body1">Cédula:</Typography>
-              <TextField value={cedula} onChange={(e) => setCedula(e.target.value)} fullWidth />
-            </Box>
-            <Box display="flex" alignItems="center" gap={1}>
-              <Typography variant="body1">Contribuyente:</Typography>
-              <TextField value={nombre} onChange={(e) => setNombre(e.target.value)} fullWidth multiline rows={3} />
-            </Box>
-            <FormControl fullWidth>
-              <InputLabel id="estado-label">Estado</InputLabel>
-              <Select labelId="estado-label" value={estado} onChange={handleChange}>
+          <Box display="flex" alignItems="center" mb={2}>
+            <Typography variant="body1" mr={1}>
+              CIU:
+            </Typography>
+            <TextField
+              value={ciu}
+              onChange={(e) => setCiu(e.target.value)}
+              sx={{ flexGrow: 1 }}
+            />
+          </Box>
+          <Box display="flex" alignItems="center" mb={2}>
+            <Typography variant="body1" mr={1}>
+              CEDULA:
+            </Typography>
+            <TextField
+              value={cedula}
+              onChange={(e) => setCedula(e.target.value)}
+              sx={{ flexGrow: 1 }}
+            />
+          </Box>
+          <Box display="flex" mb={2}>
+            <Typography variant="body1" mr={1}>
+              CONTRIBUYENTE:
+            </Typography>
+            <TextField
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              sx={{ flexGrow: 1 }}
+              multiline
+              rows={3}
+            />
+          </Box>
+
+          <Box display="flex" alignItems="center" mb={2}>
+            <FormControl fullWidth sx={{ flexGrow: 1 }}>
+              <InputLabel id="demo-simple-select-label">ESTADO</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={estado}
+                label="ESTADO"
+                onChange={handleChange}
+              >
                 <MenuItem value={"Activo"}>Activo</MenuItem>
                 <MenuItem value={"Inactivo"}>Inactivo</MenuItem>
               </Select>
             </FormControl>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={4}>
-                <Button
-                  variant="contained"
-                  onClick={handleCreate}
-                  fullWidth
-                  sx={{
-                    bgcolor: colors.oliveGreen,
-                    "&:hover": { bgcolor: colors.oliveGreenGradient },
-                  }}
-                >
-                  Crear
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <Button
-                  variant="contained"
-                  onClick={handleEdit}
-                  fullWidth
-                  sx={{ bgcolor: colors.blue, "&:hover": { bgcolor: colors.blueGradient } }}
-                >
-                  Actualizar
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <Button
-                  variant="contained"
-                  onClick={handleDelete}
-                  fullWidth
-                  sx={{
-                    bgcolor: colors.orangeSalmon,
-                    "&:hover": { bgcolor: colors.orangeSalmonGradient },
-                  }}
-                >
-                  Eliminar
-                </Button>
-              </Grid>
-            </Grid>
           </Box>
+          <Grid item xs={12}>
+            <Box display="flex" justifyContent="flex-start" mt={2}>
+              <Button
+                variant="contained"
+                onClick={handleCreate}
+                sx={{
+                  mr: 2,
+                  bgcolor: colors.oliveGreen,
+                  "&:hover": { bgcolor: colors.oliveGreenGradient },
+                }}
+              >
+                Crear
+              </Button>
+              <Button
+                variant="contained"
+                onClick={handleEdit}
+                sx={{
+                  mr: 2,
+                  bgcolor: colors.blue,
+                  "&:hover": { bgcolor: colors.blueGradient },
+                }}
+              >
+                Actualizar
+              </Button>
+              <Button
+                variant="contained"
+                onClick={handleDelete}
+                sx={{
+                  mr: 2,
+                  bgcolor: colors.orangeSalmon,
+                  "&:hover": { bgcolor: colors.orangeSalmonGradient },
+                }}
+              >
+                Eliminar
+              </Button>
+            </Box>
+          </Grid>
         </Grid>
 
         <Grid item xs={12} sm={9}>
@@ -247,8 +271,12 @@ const Body_Usuario: React.FC = () => {
               sx={{
                 width: "100%",
                 height: 550,
-                "& .MuiDataGrid-columnHeaderTitleContainer": { backgroundColor: colors.background_WhiteSmokeBlack },
-                "& .MuiDataGrid-columnHeader": { backgroundColor: colors.background_WhiteSmokeBlack },
+                "& .MuiDataGrid-columnHeaderTitleContainer": {
+                  backgroundColor: colors.background_WhiteSmokeBlack,
+                },
+                "& .MuiDataGrid-columnHeader": {
+                  backgroundColor: colors.background_WhiteSmokeBlack,
+                },
               }}
             />
           </Box>
