@@ -141,19 +141,7 @@ const getHistoricosBodegasNoPagado = (req, res) => __awaiter(void 0, void 0, voi
                 },
             },
             group: [
-                'id',
-                'numero_reporte',
-                'ciu',
-                'bodega',
-                'puesto',
-                'nave',
-                'seccion',
-                'meses',
-                'fecha',
-                'cantNotificaciones',
-                'archivo',
-                'valor',
-                'pagado',
+                'id'
             ],
             include: [{
                     model: contributors_models_1.default,
@@ -244,19 +232,7 @@ const getHistoricosPuestosNoPagado = (req, res) => __awaiter(void 0, void 0, voi
                 },
             },
             group: [
-                'id',
-                'numero_reporte',
-                'ciu',
-                'bodega',
-                'puesto',
-                'nave',
-                'seccion',
-                'meses',
-                'fecha',
-                'cantNotificaciones',
-                'archivo',
-                'valor',
-                'pagado',
+                'id'
             ],
             include: [{
                     model: contributors_models_1.default,
