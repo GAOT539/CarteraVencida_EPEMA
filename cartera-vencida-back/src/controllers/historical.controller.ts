@@ -134,42 +134,32 @@ export const getHistoricosBodegasNoPagado = async (req: Request, res: Response) 
         'archivo',
         'valor',
         'pagado',
-        [fn('DATE_FORMAT', col('fecha'), '%Y-%m'), 'mes'], // Formatea la fecha para obtener el mes
-        [fn('MAX', col('cantNotificaciones')), 'max_notificaciones'] // Obtén el máximo de cantNotificaciones
-      ],
-      where: {
-        bodega: {
-          [Op.ne]: null,  
-        },
-        pagado: {
-          [Op.eq]: 'NO',
-        },
-        cantNotificaciones: {
-          [Op.ne]: 0,  
-        },
-      },
-      group: [
-        'id',
-        'numero_reporte',
-        'ciu',
-        'bodega',
-        'puesto',
-        'nave',
-        'seccion',
-        'meses',
-        'fecha',
-        'cantNotificaciones',
-        'archivo',
-        'valor',
-        'pagado', 
+        [col('contribuyente.nombre'), 'contribuyente_nombre'],
+        [col('contribuyente.cedula'), 'contribuyente_cedula']
       ],
       include: [{
         model: Contribuyentes,
         as: 'contribuyente',
-        attributes: ['nombre', 'cedula'],
+        attributes: []
       }],
-      raw:true,
-      having: literal('cantNotificaciones = max_notificaciones'), // Filtra para obtener solo las notificaciones con el máximo valor
+      where: {
+        pagado: 'NO',
+        [Op.and]: Sequelize.literal(`(
+          historicos.cantNotificaciones = (
+            SELECT MAX(h2.cantNotificaciones)
+            FROM historicos h2
+            WHERE h2.ciu = historicos.ciu
+              AND h2.bodega = historicos.bodega
+              AND h2.nave = historicos.nave
+              AND h2.seccion = historicos.seccion
+              AND h2.meses = historicos.meses
+              AND DATE_FORMAT(h2.fecha, '%Y-%m') = DATE_FORMAT(historicos.fecha, '%Y-%m')
+              AND h2.pagado = 'NO'
+              AND h2.bodega != ""
+          )
+        )`)
+      },
+      raw: true,
     });
 
     if (historicosList.length === 0) { 
@@ -246,42 +236,32 @@ export const getHistoricosPuestosNoPagado = async (req: Request, res: Response) 
         'archivo',
         'valor',
         'pagado',
-        [fn('DATE_FORMAT', col('fecha'), '%Y-%m'), 'mes'], // Formatea la fecha para obtener el mes
-        [fn('MAX', col('cantNotificaciones')), 'max_notificaciones'] // Obtén el máximo de cantNotificaciones
-      ],
-      where: {
-        puesto: {
-          [Op.ne]: null,  
-        },
-        cantNotificaciones: {
-          [Op.ne]: 0,  
-        },
-        pagado: {
-          [Op.eq]: 'NO',
-        },
-      },
-      group: [
-        'id',
-        'numero_reporte',
-        'ciu',
-        'bodega',
-        'puesto',
-        'nave',
-        'seccion',
-        'meses',
-        'fecha',
-        'cantNotificaciones',
-        'archivo',
-        'valor',
-        'pagado', 
+        [col('contribuyente.nombre'), 'contribuyente_nombre'],
+        [col('contribuyente.cedula'), 'contribuyente_cedula']
       ],
       include: [{
         model: Contribuyentes,
         as: 'contribuyente',
-        attributes: ['nombre', 'cedula'],
+        attributes: []
       }],
-      raw:true,
-      having: literal('cantNotificaciones = max_notificaciones'), // Filtra para obtener solo las notificaciones con el máximo valor
+      where: {
+        pagado: 'NO',
+        [Op.and]: Sequelize.literal(`(
+          historicos.cantNotificaciones = (
+            SELECT MAX(h2.cantNotificaciones)
+            FROM historicos h2
+            WHERE h2.ciu = historicos.ciu
+              AND h2.puesto = historicos.puesto
+              AND h2.nave = historicos.nave
+              AND h2.seccion = historicos.seccion
+              AND h2.meses = historicos.meses
+              AND DATE_FORMAT(h2.fecha, '%Y-%m') = DATE_FORMAT(historicos.fecha, '%Y-%m')
+              AND h2.pagado = 'NO'
+              AND h2.puesto != ""
+          )
+        )`)
+      },
+      raw: true,
     });
 
     if (historicosList.length === 0) {
