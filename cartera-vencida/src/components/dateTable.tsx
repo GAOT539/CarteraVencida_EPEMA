@@ -296,12 +296,9 @@ export default function DataTable() {
 
 
   const handleRowClick = (params: any) => {
-    const selectedRow = {
-      ...params.row,
-      seccion: params.row.ubicacion.split(" ").pop() || "",
-    };
-    setSelectedRow(selectedRow);
+    setSelectedRow(params.row);
   };
+  
 
   useEffect(() => {
     if (opcion_Titulo.includes('Cargados') || opcion_Titulo.includes('Cargadas')) {
