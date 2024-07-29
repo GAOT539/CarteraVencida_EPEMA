@@ -149,19 +149,7 @@ export const getHistoricosBodegasNoPagado = async (req: Request, res: Response) 
         },
       },
       group: [
-        'id',
-        'numero_reporte',
-        'ciu',
-        'bodega',
-        'puesto',
-        'nave',
-        'seccion',
-        'meses',
-        'fecha',
-        'cantNotificaciones',
-        'archivo',
-        'valor',
-        'pagado',
+        'id'
       ],
       include: [{
         model: Contribuyentes,
