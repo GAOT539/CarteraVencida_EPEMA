@@ -273,7 +273,7 @@ export const getHistoricosPuestosNoPagado = async (req: Request, res: Response) 
         'cantNotificaciones',
         'archivo',
         'valor',
-        'pagado',
+        'pagado', 
       ],
       include: [{
         model: Contribuyentes,
