@@ -55,7 +55,7 @@ const MyDocument = (selectedRow: any) => (
 
       <View style={styles.section01}>
         <View style={styles.row}>
-          <Text style={styles.texts}>FECHA: <Text style={styles.texts_Blod}>{currentDate}</Text></Text>
+          <Text style={styles.texts}>FECHA: __/__/____</Text>
         </View>
 
         <View style={styles.row}>
