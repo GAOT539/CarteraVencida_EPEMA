@@ -134,8 +134,8 @@ export const getHistoricosBodegasNoPagado = async (req: Request, res: Response) 
         'archivo',
         'valor',
         'pagado',
-        [col('contribuyente.nombre'), 'contribuyente_nombre'],
-        [col('contribuyente.cedula'), 'contribuyente_cedula']
+        [col('contribuyente.nombre'), 'contribuyente.nombre'],
+        [col('contribuyente.cedula'), 'contribuyente.cedula']
       ],
       include: [{
         model: Contribuyentes,
@@ -236,8 +236,8 @@ export const getHistoricosPuestosNoPagado = async (req: Request, res: Response) 
         'archivo',
         'valor',
         'pagado',
-        [col('contribuyente.nombre'), 'contribuyente_nombre'],
-        [col('contribuyente.cedula'), 'contribuyente_cedula']
+        [col('contribuyente.nombre'), 'contribuyente.nombre'],
+        [col('contribuyente.cedula'), 'contribuyente.cedula']
       ],
       include: [{
         model: Contribuyentes,

@@ -126,8 +126,8 @@ const getHistoricosBodegasNoPagado = (req, res) => __awaiter(void 0, void 0, voi
                 'archivo',
                 'valor',
                 'pagado',
-                [(0, sequelize_1.col)('contribuyente.nombre'), 'contribuyente_nombre'],
-                [(0, sequelize_1.col)('contribuyente.cedula'), 'contribuyente_cedula']
+                [(0, sequelize_1.col)('contribuyente.nombre'), 'contribuyente.nombre'],
+                [(0, sequelize_1.col)('contribuyente.cedula'), 'contribuyente.cedula']
             ],
             include: [{
                     model: contributors_models_1.default,
@@ -219,8 +219,8 @@ const getHistoricosPuestosNoPagado = (req, res) => __awaiter(void 0, void 0, voi
                 'archivo',
                 'valor',
                 'pagado',
-                [(0, sequelize_1.col)('contribuyente.nombre'), 'contribuyente_nombre'],
-                [(0, sequelize_1.col)('contribuyente.cedula'), 'contribuyente_cedula']
+                [(0, sequelize_1.col)('contribuyente.nombre'), 'contribuyente.nombre'],
+                [(0, sequelize_1.col)('contribuyente.cedula'), 'contribuyente.cedula']
             ],
             include: [{
                     model: contributors_models_1.default,
