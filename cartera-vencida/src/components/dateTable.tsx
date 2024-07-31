@@ -40,7 +40,7 @@ export default function DataTable() {
   const [filteredRows, setFilteredRows] = useState<any[]>([]);
   const [rows, setRows] = useState<any[]>([]);
   const [dialogOpen, setDialogOpen] = React.useState(false);
-  const { setOpcion_Titulo, opcion_Titulo, setSelectedRow, nuevaData, updatedRow } = useAppContext();
+  const { setOpcion_Titulo, opcion_Titulo, setSelectedRow, nuevaData, updatedRow, setVarClear } = useAppContext();
   const [loading, setLoading] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -312,6 +312,7 @@ export default function DataTable() {
 
   const handleMenuItemClick = (nave: string) => {
     filterDataNave(nave, rows);
+    setVarClear(true);
   };
 
   useEffect(() => {

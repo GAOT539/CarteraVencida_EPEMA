@@ -14,7 +14,7 @@ const Taxpayers: React.FC = () => {
   const theme = useTheme();
   const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
   const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
-  const { opcion_Titulo, selectedRow, setupdatedRow } = useAppContext();
+  const { opcion_Titulo, selectedRow, setupdatedRow, varClear, setVarClear } = useAppContext();
   const [contributor, setContributor] = React.useState("");
   const [activity, setActivity] = React.useState("");
   const [warehouse, setWarehouse] = React.useState("");
@@ -142,6 +142,17 @@ const Taxpayers: React.FC = () => {
     }
   }, [opcion_Titulo]);
 
+
+  useEffect(() => {
+      setButtonDisabled(true);
+      setCiu("");
+      setContributor("");
+      setActivity("");
+      setWarehouse("");
+      setMonths(0);
+      setAmount(0);
+      setVarClear(false);
+  }, [varClear]);
 
   return (
     <Box sx={{ padding: 4 }}>
