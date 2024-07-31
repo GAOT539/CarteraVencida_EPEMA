@@ -24,7 +24,7 @@ const Body_Login: React.FC = () => {
     };
 
     return (
-        <Grid container spacing={0} sx={{ padding: 24, borderRadius: 10 }}>
+        <Grid container spacing={0} sx={{ padding: 30, borderRadius: 10 }}>
             <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <IconButton sx={{ padding: 3, fontSize: 60, bgcolor: colors.oliveGreen, color: '#FFFFFF', '&:hover': { bgcolor: colors.oliveGreen } }}>
                     <FontAwesomeIcon icon={faLock} />
