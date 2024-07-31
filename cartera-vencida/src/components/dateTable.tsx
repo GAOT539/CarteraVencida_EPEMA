@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { TextField, Button, Container, Grid, Box, InputAdornment, Backdrop, CircularProgress, Snackbar, Alert, } from "@mui/material";
+import { TextField, Button, Container, Grid, Box, InputAdornment, Backdrop, CircularProgress, Snackbar, Alert, Menu, MenuItem } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import colors from "../resources/style/colors";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -13,6 +13,7 @@ import { getPDFFile, uploadPDFFile } from "../providers/options/files";
 import { generarPDF } from "./crear_PDF";
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
+import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 
 const columnsHistoricos: GridColDef[] = [
   { field: "id", headerName: "ID", flex: 1 },
@@ -57,10 +58,10 @@ export default function DataTable() {
     if (nuevaData == "Bodegas") {
       setOpcion_Titulo("Bodegas Cargadas");
       fetchBodegasNuevos();
-    } else if  (nuevaData == "Puestos"){
+    } else if (nuevaData == "Puestos") {
       setOpcion_Titulo("Puestos Cargados");
       fetchPuestosNuevos();
-    }else{
+    } else {
 
     }
   }, [nuevaData]);
@@ -74,6 +75,7 @@ export default function DataTable() {
     switch (opcion_Titulo) {
       case 'Bodegas':
         fetchBodegas();
+        
         break;
       case 'Puestos':
         fetchPuestos();
@@ -97,7 +99,7 @@ export default function DataTable() {
         setSnackbarMessage('Carga de datos correcta de Bodegas Cargadas.');
         setSnackbarSeverity('success');
         setOpenSnackbar(true);
-      }else {
+      } else {
         setRows([]);
         setFilteredRows([]);
         setSnackbarMessage('No existen datos cargados en Bodegas Cargadas.');
@@ -124,7 +126,7 @@ export default function DataTable() {
         setSnackbarMessage('Carga de datos correcta de Puestos Cargadas.');
         setSnackbarSeverity('success');
         setOpenSnackbar(true);
-      }else {
+      } else {
         setRows([]);
         setFilteredRows([]);
         setSnackbarMessage('No existen datos cargados en Puestos Cargadas.');
@@ -205,6 +207,16 @@ export default function DataTable() {
           row.numero_reporte?.toString().toLowerCase().includes(search.toLowerCase()) ||
           row.ciu?.toString().toLowerCase().includes(search.toLowerCase()) ||
           row.cantNotificaciones?.toString().toLowerCase().includes(search.toLowerCase())
+      );
+    } setFilteredRows(filtered);
+  };
+
+  const filterDataNave = (search: string, data: any[]) => {
+    let filtered = data;
+    if (search) {
+      filtered = filtered.filter(
+        (row) =>
+          row.nave?.toString().toLowerCase().includes(search.toLowerCase())
       );
     } setFilteredRows(filtered);
   };
@@ -294,11 +306,9 @@ export default function DataTable() {
     setOpenSnackbar(false);
   };
 
-
   const handleRowClick = (params: any) => {
     setSelectedRow(params.row);
   };
-  
 
   useEffect(() => {
     if (opcion_Titulo.includes('Cargados') || opcion_Titulo.includes('Cargadas')) {
@@ -307,6 +317,28 @@ export default function DataTable() {
       setButtonDisabled(false);
     }
   }, [opcion_Titulo]);
+
+  useEffect(() => {
+    if (opcion_Titulo.includes('Bodegas')) {
+      setVarNave(naves_Bodegas_Corto);
+    } else  {
+      setVarNave(naves_Puestos_Corto);
+    }
+  }, [opcion_Titulo]);
+
+  const naves_Bodegas_Corto = ['A', 'B', 'C', 'CF', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'LL', 'M', 'N', 'Ñ', 'P', 'Q', 'Z',];
+  const naves_Bodegas_Largo = ['ENVASE', 'HIERVAS'];
+
+
+  const naves_Puestos_Corto = ['B', 'C', 'D', 'F', 'H', 'K', 'L', 'LL', 'M', 'N', 'O', 'P', 'Q', 'Y', 'Z'];
+  const naves_Puestos_Largo = ['AMBULANTES', 'AUTO-LUJOS', 'BATERIAS', 'ROPA', 'HIERBAS', 'TRICI'];
+
+  const [varNave, setVarNave] = useState<string[]>([]);
+
+  const handleMenuItemClick = (nave: string) => {
+    console.log(`Esta es la nave ${nave}`);
+    filterDataNave(nave, rows);
+  };  
 
   return (
     <Container maxWidth="lg" style={{ padding: 20 }}>
@@ -328,13 +360,34 @@ export default function DataTable() {
             <Button variant="contained" startIcon={<PlagiarismIcon />} sx={{ backgroundColor: colors.purple, "&:hover": { backgroundColor: colors.purpleGradient }, }} onClick={handleShowCharged} disabled={!opcion_Titulo} >
               Ver datos Cargados
             </Button>
-            <Backdrop open={loading} style={{ zIndex: 9999 }}>
+            <PopupState variant="popover" popupId="demo-popup-menu">
+              {(popupState) => (
+                <React.Fragment>
+                  <Button variant="contained" {...bindTrigger(popupState)}
+                    sx={{ backgroundColor: colors.oliveGreen, "&:hover": { backgroundColor: colors.oliveGreenDarker }, }} >
+                    Filtro Naves
+                  </Button>
+                  <Menu {...bindMenu(popupState)} sx={{ width: 'auto' }}>
+                    <Grid container spacing={0.5} sx={{ padding: '10px' }}>
+                      {naves_Puestos_Corto.map((item, index) => (
+                        <Grid item xs={6} sm={3} md={2} key={index}>
+                          <MenuItem onClick={() => { handleMenuItemClick(item); popupState.close(); }}
+                            sx={{ padding: '2px 4px', minWidth: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center', fontSize: '14px', }} >
+                            {varNave}
+                          </MenuItem>
+                        </Grid>
+                      ))}
+                    </Grid>
+                  </Menu>
+                </React.Fragment>
+              )}
+            </PopupState>
+            <Backdrop open={loading} style={{ zIndex: 99999 }}>
               <CircularProgress color="inherit" />
             </Backdrop>
           </Box>
           <UploadDialog open={dialogOpen} onClose={handleCloseDialog} titulo={opcion_Titulo} />
         </Grid>
-
         <Grid item xs={12}>
           <TextField label="Buscar" variant="outlined" value={searchText} onChange={handleSearch} fullWidth InputProps={{
             endAdornment: (
@@ -344,7 +397,6 @@ export default function DataTable() {
             ),
           }} />
         </Grid>
-
         <Grid item xs={12}>
           <Box style={{ width: "100%" }}>
             <DataGrid
@@ -363,9 +415,7 @@ export default function DataTable() {
         </Grid>
       </Grid>
       <Snackbar
-        open={openSnackbar} autoHideDuration={3000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} >
+        open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} >
         <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
           {snackbarMessage}
         </Alert>
