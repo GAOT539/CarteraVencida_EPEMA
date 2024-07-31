@@ -46,6 +46,8 @@ export default function DataTable() {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<SnackbarSeverity>('info');
   const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [varNaveFiltro, setVarNaveFiltro] = useState<string[]>([]);
+  const [varNaveFiltroLargo, setVarNaveFiltroLargo] = useState<string[]>([]);
 
   type SnackbarSeverity = 'info' | 'success' | 'error' | 'warning';
 
@@ -66,16 +68,13 @@ export default function DataTable() {
     }
   }, [nuevaData]);
 
-
   useEffect(() => {
     const textoSeparado = updatedRow.split('-');
     setSearchText(textoSeparado[0])
     filterData(textoSeparado[0], rows);
-
     switch (opcion_Titulo) {
       case 'Bodegas':
         fetchBodegas();
-        
         break;
       case 'Puestos':
         fetchPuestos();
@@ -84,7 +83,6 @@ export default function DataTable() {
         console.warn('Opción no reconocida');
         break;
     }
-
   }, [updatedRow]);
 
   const fetchBodegasNuevos = async () => {
@@ -216,7 +214,7 @@ export default function DataTable() {
     if (search) {
       filtered = filtered.filter(
         (row) =>
-          row.nave?.toString().toLowerCase().includes(search.toLowerCase())
+          row.nave?.toString().toLowerCase() == search.toLowerCase()
       );
     } setFilteredRows(filtered);
   };
@@ -232,9 +230,6 @@ export default function DataTable() {
   };
 
   const handleShowCharged = () => {
-    console.log(opcion_Titulo)
-    console.log(nuevaData)
-
     if (opcion_Titulo == "Bodegas") {
       setOpcion_Titulo("Bodegas Cargadas");
       fetchBodegasNuevos();
@@ -243,18 +238,19 @@ export default function DataTable() {
       fetchPuestosNuevos();
     }
   };
+
   const convertirBlobAFile = (blob: Blob, nombreArchivo: string): File => {
     return new File([blob], nombreArchivo, { type: blob.type, lastModified: new Date().getTime() });
   };
 
   const handleDownloadPDFs = async () => {
-    const batchSize = 5; // Tamaño del lote
-    const zip = new JSZip(); // Crear instancia de JSZip
+    const batchSize = 5;
+    const zip = new JSZip();
 
     if (opcion_Titulo === "Bodegas" || opcion_Titulo === "Puestos") {
       console.log("NO");
     } else {
-      setLoading(true); // Iniciar la carga
+      setLoading(true);
       for (let i = 0; i < rows.length; i += batchSize) {
         const batch = rows.slice(i, i + batchSize);
         await Promise.all(batch.map(async (element) => {
@@ -264,18 +260,16 @@ export default function DataTable() {
             await uploadPDFFile(element.id, convertirBlobAFile(pdfBlob, `notificacion_${element.ciu}-${element.numero_reporte}.pdf`));
             const file = convertirBlobAFile(pdfBlob, `notificacion_${element.ciu}-${element.numero_reporte}.pdf`);
 
-            // Agregar el archivo al ZIP
             zip.file(file.name, pdfBlob);
           } catch (error) {
             console.error('Error al generar o subir el PDF:', error);
           }
         }));
       }
-      setLoading(false); // Finalizar la carga
+      setLoading(false);
 
-      // Generar el archivo ZIP y descargarlo
       zip.generateAsync({ type: 'blob' }).then((content) => {
-        saveAs(content, `Notificaciones-${new Date().toLocaleDateString()}.zip`); // Descargar el archivo ZIP
+        saveAs(content, `Notificaciones-${new Date().toLocaleDateString()}.zip`);
       });
     }
 
@@ -310,35 +304,31 @@ export default function DataTable() {
     setSelectedRow(params.row);
   };
 
+  const navesBodegasCorto = ['A', 'B', 'C', 'CF', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'LL', 'M', 'N', 'Ñ', 'P', 'Q', 'Z',];
+  const navesBodegasLargo = ['ENVASE', 'HIERVAS'];
+
+  const navesPuestosCorto = ['B', 'C', 'D', 'F', 'H', 'K', 'L', 'LL', 'M', 'N', 'O', 'P', 'Q', 'Y', 'Z'];
+  const navesPuestosLargo = ['AMBULANTES', 'AUTO-LUJOS', 'BATERIAS', 'ROPA', 'HIERBAS', 'TRICI'];
+
+  const handleMenuItemClick = (nave: string) => {
+    filterDataNave(nave, rows);
+  };
+
   useEffect(() => {
     if (opcion_Titulo.includes('Cargados') || opcion_Titulo.includes('Cargadas')) {
       setButtonDisabled(true);
     } else {
       setButtonDisabled(false);
     }
-  }, [opcion_Titulo]);
 
-  useEffect(() => {
     if (opcion_Titulo.includes('Bodegas')) {
-      setVarNave(naves_Bodegas_Corto);
-    } else  {
-      setVarNave(naves_Puestos_Corto);
+      setVarNaveFiltro(navesBodegasCorto);
+      setVarNaveFiltroLargo(navesBodegasLargo);
+    } else {
+      setVarNaveFiltro(navesPuestosCorto);
+      setVarNaveFiltroLargo(navesPuestosLargo);
     }
   }, [opcion_Titulo]);
-
-  const naves_Bodegas_Corto = ['A', 'B', 'C', 'CF', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'LL', 'M', 'N', 'Ñ', 'P', 'Q', 'Z',];
-  const naves_Bodegas_Largo = ['ENVASE', 'HIERVAS'];
-
-
-  const naves_Puestos_Corto = ['B', 'C', 'D', 'F', 'H', 'K', 'L', 'LL', 'M', 'N', 'O', 'P', 'Q', 'Y', 'Z'];
-  const naves_Puestos_Largo = ['AMBULANTES', 'AUTO-LUJOS', 'BATERIAS', 'ROPA', 'HIERBAS', 'TRICI'];
-
-  const [varNave, setVarNave] = useState<string[]>([]);
-
-  const handleMenuItemClick = (nave: string) => {
-    console.log(`Esta es la nave ${nave}`);
-    filterDataNave(nave, rows);
-  };  
 
   return (
     <Container maxWidth="lg" style={{ padding: 20 }}>
@@ -355,7 +345,7 @@ export default function DataTable() {
               Cargar datos
             </Button>
             <Button disabled={!buttonDisabled} variant="contained" startIcon={<FileOpenIcon />} sx={{ backgroundColor: colors.orangeSalmon, "&:hover": { backgroundColor: colors.orangeSalmonGradient }, }} onClick={handleDownloadPDFs} >
-              Primera Notificación
+              Notificación
             </Button>
             <Button variant="contained" startIcon={<PlagiarismIcon />} sx={{ backgroundColor: colors.purple, "&:hover": { backgroundColor: colors.purpleGradient }, }} onClick={handleShowCharged} disabled={!opcion_Titulo} >
               Ver datos Cargados
@@ -369,11 +359,22 @@ export default function DataTable() {
                   </Button>
                   <Menu {...bindMenu(popupState)} sx={{ width: 'auto' }}>
                     <Grid container spacing={0.5} sx={{ padding: '10px' }}>
-                      {naves_Puestos_Corto.map((item, index) => (
+                      {varNaveFiltro.map((item, index) => (
                         <Grid item xs={6} sm={3} md={2} key={index}>
                           <MenuItem onClick={() => { handleMenuItemClick(item); popupState.close(); }}
                             sx={{ padding: '2px 4px', minWidth: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center', fontSize: '14px', }} >
-                            {varNave}
+                            {item}
+                          </MenuItem>
+                        </Grid>
+                      ))}
+                    </Grid>
+                    <hr style={{ marginLeft: '5%', marginRight: '5%' }} />
+                    <Grid container spacing={0.5} sx={{ padding: '10px' }}>
+                      {varNaveFiltroLargo.map((item, index) => (
+                        <Grid item xs={12} sm={6} key={index}>
+                          <MenuItem onClick={() => { handleMenuItemClick(item); popupState.close(); }}
+                            sx={{ padding: '4px 8px', minWidth: '40px', display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center', fontSize: '14px', }} >
+                            {item}
                           </MenuItem>
                         </Grid>
                       ))}
@@ -405,12 +406,10 @@ export default function DataTable() {
               columnVisibilityModel={{ id: false, "contribuyente.nombre": false, "contribuyente.cedula": false, }}
               initialState={{ pagination: { paginationModel: { page: 0, pageSize: 11 }, }, }}
               onRowClick={handleRowClick}
-              sx={{
-                boxShadow: 2, border: 2, borderColor: colors.oliveGreen,
+              sx={{ boxShadow: 2, border: 2, borderColor: colors.oliveGreen,
                 "& .MuiDataGrid-cell:hover": { color: colors.orangeSalmon, },
                 "& .MuiDataGrid-columnHeaderTitleContainer": { backgroundColor: colors.background_WhiteSmokeBlack, },
-                "& .MuiDataGrid-columnHeader": { backgroundColor: colors.background_WhiteSmokeBlack, },
-              }} />
+                "& .MuiDataGrid-columnHeader": { backgroundColor: colors.background_WhiteSmokeBlack, }, }} />
           </Box>
         </Grid>
       </Grid>
