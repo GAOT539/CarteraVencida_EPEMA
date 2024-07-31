@@ -20,7 +20,7 @@ const Home: React.FC = () => {
 
     return (
         <Container maxWidth="md">
-            <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} justifyContent="center" alignItems="center" minHeight="70vh" textAlign="center" sx={{ padding: 3, borderRadius: 2 }} >
+            <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} justifyContent="center" alignItems="center" minHeight="72vh" textAlign="center" sx={{ padding: 3, borderRadius: 2 }} >
                 <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" flex={1} sx={{ padding: 2 }} >
                     <Typography variant="h4" component="h1" sx={{ color: colors.black, fontWeight: 'bold' }} >
                         Aplicación para Notificación de Cartera Vencida de EP-EMA
