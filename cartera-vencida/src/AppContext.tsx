@@ -11,6 +11,8 @@ interface AppContextType {
   setNuevaData: (value: any) => void;
   updatedRow: any;
   setupdatedRow: (value: any) => void;
+  varClear: boolean;
+  setVarClear: (value: boolean) => void;
 }
 
 // Crea el contexto con un valor predeterminado
@@ -19,12 +21,13 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 // Proveedor del contexto
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [opcion_Titulo, setOpcion_Titulo] = useState<string>('');
-  const [selectedRow, setSelectedRow] = useState<any>(null); // Estado inicial para la fila seleccionada
+  const [selectedRow, setSelectedRow] = useState<any>(null);
   const [nuevaData, setNuevaData] = useState<any>(null);
   const [updatedRow, setupdatedRow] = useState<String>("");
+  const [varClear, setVarClear] = useState<boolean>(false);
 
   return (
-    <AppContext.Provider value={{ opcion_Titulo, setOpcion_Titulo, selectedRow, setSelectedRow, nuevaData, setNuevaData, updatedRow, setupdatedRow  }}>
+    <AppContext.Provider value={{ opcion_Titulo, setOpcion_Titulo, selectedRow, setSelectedRow, nuevaData, setNuevaData, updatedRow, setupdatedRow, varClear, setVarClear }}>
       {children}
     </AppContext.Provider>
   );

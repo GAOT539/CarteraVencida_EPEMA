@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { TextField, Button, Container, Grid, Box, InputAdornment, Backdrop, CircularProgress, Snackbar, Alert, } from "@mui/material";
+import { TextField, Button, Container, Grid, Box, InputAdornment, Backdrop, CircularProgress, Snackbar, Alert, Menu, MenuItem } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import colors from "../resources/style/colors";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -13,6 +13,7 @@ import { getPDFFile, uploadPDFFile } from "../providers/options/files";
 import { generarPDF } from "./crear_PDF";
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
+import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 
 const columnsHistoricos: GridColDef[] = [
   { field: "id", headerName: "ID", flex: 1 },
@@ -39,12 +40,14 @@ export default function DataTable() {
   const [filteredRows, setFilteredRows] = useState<any[]>([]);
   const [rows, setRows] = useState<any[]>([]);
   const [dialogOpen, setDialogOpen] = React.useState(false);
-  const { setOpcion_Titulo, opcion_Titulo, setSelectedRow, nuevaData, updatedRow } = useAppContext();
+  const { setOpcion_Titulo, opcion_Titulo, setSelectedRow, nuevaData, updatedRow, setVarClear } = useAppContext();
   const [loading, setLoading] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<SnackbarSeverity>('info');
   const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [varNaveFiltro, setVarNaveFiltro] = useState<string[]>([]);
+  const [varNaveFiltroLargo, setVarNaveFiltroLargo] = useState<string[]>([]);
 
   type SnackbarSeverity = 'info' | 'success' | 'error' | 'warning';
 
@@ -57,20 +60,18 @@ export default function DataTable() {
     if (nuevaData == "Bodegas") {
       setOpcion_Titulo("Bodegas Cargadas");
       fetchBodegasNuevos();
-    } else if  (nuevaData == "Puestos"){
+    } else if (nuevaData == "Puestos") {
       setOpcion_Titulo("Puestos Cargados");
       fetchPuestosNuevos();
-    }else{
+    } else {
 
     }
   }, [nuevaData]);
-
 
   useEffect(() => {
     const textoSeparado = updatedRow.split('-');
     setSearchText(textoSeparado[0])
     filterData(textoSeparado[0], rows);
-
     switch (opcion_Titulo) {
       case 'Bodegas':
         fetchBodegas();
@@ -82,7 +83,6 @@ export default function DataTable() {
         console.warn('Opción no reconocida');
         break;
     }
-
   }, [updatedRow]);
 
   const fetchBodegasNuevos = async () => {
@@ -97,7 +97,7 @@ export default function DataTable() {
         setSnackbarMessage('Carga de datos correcta de Bodegas Cargadas.');
         setSnackbarSeverity('success');
         setOpenSnackbar(true);
-      }else {
+      } else {
         setRows([]);
         setFilteredRows([]);
         setSnackbarMessage('No existen datos cargados en Bodegas Cargadas.');
@@ -124,7 +124,7 @@ export default function DataTable() {
         setSnackbarMessage('Carga de datos correcta de Puestos Cargadas.');
         setSnackbarSeverity('success');
         setOpenSnackbar(true);
-      }else {
+      } else {
         setRows([]);
         setFilteredRows([]);
         setSnackbarMessage('No existen datos cargados en Puestos Cargadas.');
@@ -209,6 +209,16 @@ export default function DataTable() {
     } setFilteredRows(filtered);
   };
 
+  const filterDataNave = (search: string, data: any[]) => {
+    let filtered = data;
+    if (search) {
+      filtered = filtered.filter(
+        (row) =>
+          row.nave?.toString().toLowerCase() == search.toLowerCase()
+      );
+    } setFilteredRows(filtered);
+  };
+
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setSearchText(value);
@@ -220,9 +230,6 @@ export default function DataTable() {
   };
 
   const handleShowCharged = () => {
-    console.log(opcion_Titulo)
-    console.log(nuevaData)
-
     if (opcion_Titulo == "Bodegas") {
       setOpcion_Titulo("Bodegas Cargadas");
       fetchBodegasNuevos();
@@ -231,18 +238,19 @@ export default function DataTable() {
       fetchPuestosNuevos();
     }
   };
+
   const convertirBlobAFile = (blob: Blob, nombreArchivo: string): File => {
     return new File([blob], nombreArchivo, { type: blob.type, lastModified: new Date().getTime() });
   };
 
   const handleDownloadPDFs = async () => {
-    const batchSize = 5; // Tamaño del lote
-    const zip = new JSZip(); // Crear instancia de JSZip
+    const batchSize = 5;
+    const zip = new JSZip();
 
     if (opcion_Titulo === "Bodegas" || opcion_Titulo === "Puestos") {
       console.log("NO");
     } else {
-      setLoading(true); // Iniciar la carga
+      setLoading(true);
       for (let i = 0; i < rows.length; i += batchSize) {
         const batch = rows.slice(i, i + batchSize);
         await Promise.all(batch.map(async (element) => {
@@ -252,18 +260,16 @@ export default function DataTable() {
             await uploadPDFFile(element.id, convertirBlobAFile(pdfBlob, `notificacion_${element.ciu}-${element.numero_reporte}.pdf`));
             const file = convertirBlobAFile(pdfBlob, `notificacion_${element.ciu}-${element.numero_reporte}.pdf`);
 
-            // Agregar el archivo al ZIP
             zip.file(file.name, pdfBlob);
           } catch (error) {
             console.error('Error al generar o subir el PDF:', error);
           }
         }));
       }
-      setLoading(false); // Finalizar la carga
+      setLoading(false);
 
-      // Generar el archivo ZIP y descargarlo
       zip.generateAsync({ type: 'blob' }).then((content) => {
-        saveAs(content, `Notificaciones-${new Date().toLocaleDateString()}.zip`); // Descargar el archivo ZIP
+        saveAs(content, `Notificaciones-${new Date().toLocaleDateString()}.zip`);
       });
     }
 
@@ -294,17 +300,34 @@ export default function DataTable() {
     setOpenSnackbar(false);
   };
 
-
   const handleRowClick = (params: any) => {
     setSelectedRow(params.row);
   };
-  
+
+  const navesBodegasCorto = ['A', 'B', 'C', 'CF', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'LL', 'M', 'N', 'Ñ', 'P', 'Q', 'Z',];
+  const navesBodegasLargo = ['ENVASE', 'HIERVAS'];
+
+  const navesPuestosCorto = ['B', 'C', 'D', 'F', 'H', 'K', 'L', 'LL', 'M', 'N', 'O', 'P', 'Q', 'Y', 'Z'];
+  const navesPuestosLargo = ['AMBULANTES', 'AUTO-LUJOS', 'BATERIAS', 'ROPA', 'HIERBAS', 'TRICI'];
+
+  const handleMenuItemClick = (nave: string) => {
+    filterDataNave(nave, rows);
+    setVarClear(true);
+  };
 
   useEffect(() => {
     if (opcion_Titulo.includes('Cargados') || opcion_Titulo.includes('Cargadas')) {
       setButtonDisabled(true);
     } else {
       setButtonDisabled(false);
+    }
+
+    if (opcion_Titulo.includes('Bodegas')) {
+      setVarNaveFiltro(navesBodegasCorto);
+      setVarNaveFiltroLargo(navesBodegasLargo);
+    } else {
+      setVarNaveFiltro(navesPuestosCorto);
+      setVarNaveFiltroLargo(navesPuestosLargo);
     }
   }, [opcion_Titulo]);
 
@@ -323,18 +346,50 @@ export default function DataTable() {
               Cargar datos
             </Button>
             <Button disabled={!buttonDisabled} variant="contained" startIcon={<FileOpenIcon />} sx={{ backgroundColor: colors.orangeSalmon, "&:hover": { backgroundColor: colors.orangeSalmonGradient }, }} onClick={handleDownloadPDFs} >
-              Primera Notificación
+              Notificación
             </Button>
             <Button variant="contained" startIcon={<PlagiarismIcon />} sx={{ backgroundColor: colors.purple, "&:hover": { backgroundColor: colors.purpleGradient }, }} onClick={handleShowCharged} disabled={!opcion_Titulo} >
-              Ver datos Cargados
+              Ver datos Cargados xxxx
             </Button>
-            <Backdrop open={loading} style={{ zIndex: 9999 }}>
+            <PopupState variant="popover" popupId="demo-popup-menu">
+              {(popupState) => (
+                <React.Fragment>
+                  <Button variant="contained" {...bindTrigger(popupState)}
+                    sx={{ backgroundColor: colors.oliveGreen, "&:hover": { backgroundColor: colors.oliveGreenDarker }, }} >
+                    Filtro Naves
+                  </Button>
+                  <Menu {...bindMenu(popupState)} sx={{ width: 'auto' }}>
+                    <Grid container spacing={0.5} sx={{ padding: '10px' }}>
+                      {varNaveFiltro.map((item, index) => (
+                        <Grid item xs={6} sm={3} md={2} key={index}>
+                          <MenuItem onClick={() => { handleMenuItemClick(item); popupState.close(); }}
+                            sx={{ padding: '2px 4px', minWidth: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center', fontSize: '14px', }} >
+                            {item}
+                          </MenuItem>
+                        </Grid>
+                      ))}
+                    </Grid>
+                    <hr style={{ marginLeft: '5%', marginRight: '5%' }} />
+                    <Grid container spacing={0.5} sx={{ padding: '10px' }}>
+                      {varNaveFiltroLargo.map((item, index) => (
+                        <Grid item xs={12} sm={6} key={index}>
+                          <MenuItem onClick={() => { handleMenuItemClick(item); popupState.close(); }}
+                            sx={{ padding: '4px 8px', minWidth: '40px', display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center', fontSize: '14px', }} >
+                            {item}
+                          </MenuItem>
+                        </Grid>
+                      ))}
+                    </Grid>
+                  </Menu>
+                </React.Fragment>
+              )}
+            </PopupState>
+            <Backdrop open={loading} style={{ zIndex: 99999 }}>
               <CircularProgress color="inherit" />
             </Backdrop>
           </Box>
           <UploadDialog open={dialogOpen} onClose={handleCloseDialog} titulo={opcion_Titulo} />
         </Grid>
-
         <Grid item xs={12}>
           <TextField label="Buscar" variant="outlined" value={searchText} onChange={handleSearch} fullWidth InputProps={{
             endAdornment: (
@@ -344,7 +399,6 @@ export default function DataTable() {
             ),
           }} />
         </Grid>
-
         <Grid item xs={12}>
           <Box style={{ width: "100%" }}>
             <DataGrid
@@ -353,19 +407,15 @@ export default function DataTable() {
               columnVisibilityModel={{ id: false, "contribuyente.nombre": false, "contribuyente.cedula": false, }}
               initialState={{ pagination: { paginationModel: { page: 0, pageSize: 11 }, }, }}
               onRowClick={handleRowClick}
-              sx={{
-                boxShadow: 2, border: 2, borderColor: colors.oliveGreen,
+              sx={{ boxShadow: 2, border: 2, borderColor: colors.oliveGreen,
                 "& .MuiDataGrid-cell:hover": { color: colors.orangeSalmon, },
                 "& .MuiDataGrid-columnHeaderTitleContainer": { backgroundColor: colors.background_WhiteSmokeBlack, },
-                "& .MuiDataGrid-columnHeader": { backgroundColor: colors.background_WhiteSmokeBlack, },
-              }} />
+                "& .MuiDataGrid-columnHeader": { backgroundColor: colors.background_WhiteSmokeBlack, }, }} />
           </Box>
         </Grid>
       </Grid>
       <Snackbar
-        open={openSnackbar} autoHideDuration={3000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} >
+        open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar} anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} >
         <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
           {snackbarMessage}
         </Alert>
