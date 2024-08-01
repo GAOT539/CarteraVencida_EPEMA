@@ -349,7 +349,7 @@ export default function DataTable() {
               Notificación
             </Button>
             <Button variant="contained" startIcon={<PlagiarismIcon />} sx={{ backgroundColor: colors.purple, "&:hover": { backgroundColor: colors.purpleGradient }, }} onClick={handleShowCharged} disabled={!opcion_Titulo} >
-              Ver datos Cargados
+              Ver datos Cargados xxxx
             </Button>
             <PopupState variant="popover" popupId="demo-popup-menu">
               {(popupState) => (

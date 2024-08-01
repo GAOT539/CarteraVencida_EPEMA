@@ -4,16 +4,12 @@ import { useAppContext } from "../AppContext";
 import { Button, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import colors from "../resources/style/colors";
 import { generarPDF } from "./crear_PDF";
-import { saveAs } from "file-saver";
 import { addHistorico, obtenerNumeroReporte, updateHistorico } from "../providers/options/historical";
 import { getPDFFile, uploadPDFFile } from "../providers/options/files";
-import { getTodayDate } from "@mui/x-date-pickers/internals";
 import BrowserUpdatedIcon from '@mui/icons-material/BrowserUpdated';
 
 const Taxpayers: React.FC = () => {
   const theme = useTheme();
-  const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
-  const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
   const { opcion_Titulo, selectedRow, setupdatedRow, varClear, setVarClear } = useAppContext();
   const [contributor, setContributor] = React.useState("");
   const [activity, setActivity] = React.useState("");
@@ -35,8 +31,8 @@ const Taxpayers: React.FC = () => {
 
   const formatDate = (date: Date) => {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Meses empiezan en 0
-    const day = String(date.getDate()).padStart(2, '0'); // Asegura dos dígitos  
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
+    const day = String(date.getDate()).padStart(2, '0'); 
     return `${year}-${month}-${day}`;
   };
 
@@ -125,26 +121,15 @@ const Taxpayers: React.FC = () => {
   useEffect(() => {
     if (opcion_Titulo.includes('Cargados') || opcion_Titulo.includes('Cargadas')) {
       setButtonDisabled(false);
-      setCiu("");
-      setContributor("");
-      setActivity("");
-      setWarehouse("");
-      setMonths(0);
-      setAmount(0);      
+      setVarClear(true);    
     } else {
       setButtonDisabled(true);
-      setCiu("");
-      setContributor("");
-      setActivity("");
-      setWarehouse("");
-      setMonths(0);
-      setAmount(0);
+      setVarClear(true);
     }
   }, [opcion_Titulo]);
 
 
   useEffect(() => {
-      setButtonDisabled(true);
       setCiu("");
       setContributor("");
       setActivity("");
