@@ -56,6 +56,10 @@ export const Historicos = connection.define('historicos', {
     type: DataTypes.STRING(2),
     allowNull: false,
   },
+  esHistorico: {
+    type: DataTypes.STRING(2),
+    allowNull: true,
+  },
 }, {
   timestamps: false,
 });

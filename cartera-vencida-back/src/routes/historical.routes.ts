@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { deleteHistorico, getHistoricoById, getHistoricos, getHistoricosBodegas, getHistoricosBodegasCero, getHistoricosBodegasNoPagado, getHistoricosByCIU, getHistoricosPuestos, getHistoricosPuestosCero, getHistoricosPuestosNoPagado, newHistorico, obtenerNumeroReporte, payHistorico, updateHistorico } from '../controllers/historical.controller';
+import { deleteHistorico, getHistoricoById, getHistoricos, getHistoricosBodegas, getHistoricosBodegasCero, getHistoricosBodegasNoPagado, getHistoricosByCIU, getHistoricosPuestos, getHistoricosPuestosCero, getHistoricosPuestosNoPagado, newHistorico, obtenerNumeroReporte, relatedHistoricos, updateHistorico } from '../controllers/historical.controller';
 
 const router = Router();
 router.get('/numeroreporte', obtenerNumeroReporte); // Obtener el siguiente número de reporte
@@ -11,7 +11,7 @@ router.get('/puesto/pagados', getHistoricosPuestosNoPagado); // Obtener todos lo
 //router.get('/:id', getHistoricoById); // Obtener todos los registros históricos por ID
 //router.get('/ciu/:ciu', getHistoricosByCIU); // Obtener todos los registros históricos por CIU
 router.post('/', newHistorico); // Crear un nuevo registro histórico
-router.post('/pagado/:id', payHistorico); // Actualizar el campo Pagado del registro histórico por ID
+router.get('/relacionados/:id', relatedHistoricos); // Actualizar el campo Pagado del registro histórico por ID
 router.put('/:id', updateHistorico); // Actualizar un registro histórico por ID
 router.delete('/:id', deleteHistorico); // Eliminar un registro histórico por ID
 router.get('/bodega/nuevos', getHistoricosBodegasCero); // Obtener registros históricos bodegas con 0 notificaciones

@@ -12,14 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.obtenerNumeroReporte = exports.payHistorico = exports.updateHistorico = exports.deleteHistorico = exports.getHistoricosByCIU = exports.getHistoricoById = exports.getHistoricosPuestosCero = exports.getHistoricosPuestos = exports.getHistoricosPuestosNoPagado = exports.getHistoricosBodegasCero = exports.getHistoricosBodegasNoPagado = exports.getHistoricosBodegas = exports.getHistoricos = exports.newHistorico = void 0;
+exports.obtenerNumeroReporte = exports.relatedHistoricos = exports.updateHistorico = exports.deleteHistorico = exports.getHistoricosByCIU = exports.getHistoricoById = exports.getHistoricosPuestosCero = exports.getHistoricosPuestos = exports.getHistoricosPuestosNoPagado = exports.getHistoricosBodegasCero = exports.getHistoricosBodegasNoPagado = exports.getHistoricosBodegas = exports.getHistoricos = exports.newHistorico = void 0;
 const historical_models_1 = require("../models/historical.models");
 const manage_error_1 = require("../error/manage.error");
 const sequelize_1 = require("sequelize");
 const contributors_models_1 = __importDefault(require("../models/contributors.models"));
 // Crear un nuevo registro histórico
 const newHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { ciu, numero_reporte, bodega, puesto, nave, seccion, fecha, meses, cantNotificaciones, archivo, valor, pagado } = req.body;
+    const { ciu, numero_reporte, bodega, puesto, nave, seccion, fecha, meses, cantNotificaciones, archivo, valor, pagado, esHistorico } = req.body;
     try {
         const nuevoHistorico = yield historical_models_1.Historicos.create({
             ciu,
@@ -33,7 +33,8 @@ const newHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             cantNotificaciones,
             archivo,
             valor,
-            pagado
+            pagado,
+            esHistorico
         });
         res.json({
             msg: nuevoHistorico.dataValues.id
@@ -126,6 +127,7 @@ const getHistoricosBodegasNoPagado = (req, res) => __awaiter(void 0, void 0, voi
                 'archivo',
                 'valor',
                 'pagado',
+                'esHistorico',
                 [(0, sequelize_1.col)('contribuyente.nombre'), 'contribuyente.nombre'],
                 [(0, sequelize_1.col)('contribuyente.cedula'), 'contribuyente.cedula']
             ],
@@ -136,6 +138,7 @@ const getHistoricosBodegasNoPagado = (req, res) => __awaiter(void 0, void 0, voi
                 }],
             where: {
                 pagado: 'NO',
+                esHistorico: 'NO',
                 [sequelize_1.Op.and]: sequelize_1.Sequelize.literal(`(
           historicos.cantNotificaciones = (
             SELECT MAX(h2.cantNotificaciones)
@@ -147,6 +150,7 @@ const getHistoricosBodegasNoPagado = (req, res) => __awaiter(void 0, void 0, voi
               AND h2.meses = historicos.meses
               AND DATE_FORMAT(h2.fecha, '%Y-%m') = DATE_FORMAT(historicos.fecha, '%Y-%m')
               AND h2.pagado = 'NO'
+              AND h2.esHistorico = 'NO'
               AND h2.bodega != ""
           )
         )`)
@@ -219,6 +223,7 @@ const getHistoricosPuestosNoPagado = (req, res) => __awaiter(void 0, void 0, voi
                 'archivo',
                 'valor',
                 'pagado',
+                'esHistorico',
                 [(0, sequelize_1.col)('contribuyente.nombre'), 'contribuyente.nombre'],
                 [(0, sequelize_1.col)('contribuyente.cedula'), 'contribuyente.cedula']
             ],
@@ -229,6 +234,7 @@ const getHistoricosPuestosNoPagado = (req, res) => __awaiter(void 0, void 0, voi
                 }],
             where: {
                 pagado: 'NO',
+                esHistorico: 'NO',
                 [sequelize_1.Op.and]: sequelize_1.Sequelize.literal(`(
           historicos.cantNotificaciones = (
             SELECT MAX(h2.cantNotificaciones)
@@ -240,6 +246,7 @@ const getHistoricosPuestosNoPagado = (req, res) => __awaiter(void 0, void 0, voi
               AND h2.meses = historicos.meses
               AND DATE_FORMAT(h2.fecha, '%Y-%m') = DATE_FORMAT(historicos.fecha, '%Y-%m')
               AND h2.pagado = 'NO'
+              AND h2.esHistorico = 'NO'
               AND h2.puesto != ""
           )
         )`)
@@ -395,7 +402,7 @@ exports.deleteHistorico = deleteHistorico;
 // Actualizar un registro histórico por ID
 const updateHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
-    const { ciu, numero_reporte, bodega, puesto, nave, fecha, seccion, meses, cantNotificaciones, archivo, valor, pagado } = req.body;
+    const { ciu, numero_reporte, bodega, puesto, nave, fecha, seccion, meses, cantNotificaciones, archivo, valor, pagado, esHistorico } = req.body;
     const existHistorico = yield historical_models_1.Historicos.findOne({ where: { id } });
     if (!existHistorico) {
         return res.status(404).json({
@@ -415,7 +422,8 @@ const updateHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function
             cantNotificaciones,
             archivo,
             valor,
-            pagado
+            pagado,
+            esHistorico
         }, { where: { id } });
         res.json({
             msg: `El registro histórico con CIU ${existHistorico.ciu} ha sido editado satisfactoriamente`
@@ -430,33 +438,60 @@ const updateHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function
 });
 exports.updateHistorico = updateHistorico;
 // Marcar un registro histórico como pagado (pagado = "SI")
-const payHistorico = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const relatedHistoricos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
-        const existHistorico = yield historical_models_1.Historicos.findOne({ where: { id } });
-        if (!existHistorico) {
-            return res.status(404).json({
-                msg: 'No se encontró un registro histórico con ese ID'
-            });
-        }
-        if (existHistorico.pagado === 'SI') {
-            return res.json({
-                msg: `El registro histórico con CIU ${existHistorico.ciu} ya está marcado como pagado`
-            });
-        }
-        yield historical_models_1.Historicos.update({ pagado: 'SI' }, { where: { id } });
-        res.json({
-            msg: `El registro histórico con CIU ${existHistorico.ciu} ha sido marcado como pagado`
+        const historicosList = yield historical_models_1.Historicos.findAll({
+            attributes: [
+                'id',
+                'numero_reporte',
+                'ciu',
+                'bodega',
+                'puesto',
+                'nave',
+                'seccion',
+                'fecha',
+                'meses',
+                'cantNotificaciones',
+                'archivo',
+                'valor',
+                'pagado',
+                'esHistorico'
+            ],
+            where: {
+                id: {
+                    [sequelize_1.Op.in]: (0, sequelize_1.literal)(`(
+            SELECT h2.id
+            FROM cartera_vencida.historicos AS h1
+            JOIN cartera_vencida.historicos AS h2 
+            ON h1.ciu = h2.ciu 
+              AND h1.bodega <=> h2.bodega 
+              AND h1.puesto <=> h2.puesto 
+              AND h1.nave = h2.nave 
+              AND h1.seccion = h2.seccion 
+              AND h2.fecha BETWEEN DATE_SUB(h1.fecha, INTERVAL 30 DAY) AND DATE_ADD(h1.fecha, INTERVAL 30 DAY)
+            WHERE h1.id = ${id}
+          )`)
+                }
+            },
+            order: [['fecha', 'ASC']],
+            raw: true,
         });
+        if (historicosList.length === 0) {
+            return res.status(404).json({
+                msg: 'No se encontraron historicos asociados a bodegas que no hayan sido pagados',
+            });
+        }
+        res.json(historicosList);
     }
     catch (error) {
         return res.status(500).json({
             msg: manage_error_1.ErrorMessages.SERVER_ERROR,
-            error
+            error,
         });
     }
 }); // Obtener el siguiente número de reporte
-exports.payHistorico = payHistorico;
+exports.relatedHistoricos = relatedHistoricos;
 const obtenerNumeroReporte = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const maxNumeroReporte = yield historical_models_1.Historicos.max('numero_reporte');

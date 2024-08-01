@@ -61,6 +61,10 @@ exports.Historicos = connection_db_1.default.define('historicos', {
         type: sequelize_1.DataTypes.STRING(2),
         allowNull: false,
     },
+    esHistorico: {
+        type: sequelize_1.DataTypes.STRING(2),
+        allowNull: true,
+    },
 }, {
     timestamps: false,
 });

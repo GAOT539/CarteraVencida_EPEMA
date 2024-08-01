@@ -13,14 +13,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verPDFHistorico = exports.actualizarPDFHistorico = exports.notificarPrimeraPuestos = exports.notificarPrimeraBodegas = exports.carteraVencidaPuestos = exports.carteraVencidaBodegas = exports.leerXMLBodegas = exports.uploadFile = void 0;
-const xml2js_1 = require("xml2js");
 const fs_1 = __importDefault(require("fs"));
 const multer_1 = __importDefault(require("multer"));
-const axios_1 = __importDefault(require("axios"));
 const contributors_models_1 = __importDefault(require("../models/contributors.models"));
 const historical_models_1 = __importDefault(require("../models/historical.models"));
 const sequelize_1 = require("sequelize");
 const path_1 = __importDefault(require("path"));
+const functions_1 = require("./functions");
 // Configuración de multer para manejar archivos
 const storage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
@@ -58,6 +57,7 @@ const leerXMLBodegas = (req, res) => __awaiter(void 0, void 0, void 0, function*
 exports.leerXMLBodegas = leerXMLBodegas;
 // Método para obtener todos los registros con cartera vencida de bodegas
 const carteraVencidaBodegas = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let listaIngresados = [];
     let contador = 0;
     const file = req.file;
     if (!file) {
@@ -66,113 +66,24 @@ const carteraVencidaBodegas = (req, res) => __awaiter(void 0, void 0, void 0, fu
         });
     }
     try {
-        const xmlData = fs_1.default.readFileSync(file.path, 'utf-8');
-        (0, xml2js_1.parseString)(xmlData, { explicitArray: false }, (err, result) => __awaiter(void 0, void 0, void 0, function* () {
-            if (err) {
-                console.error('Error al parsear el archivo XML:', err);
-                return res.status(500).json({
-                    msg: 'Error al parsear el archivo XML',
-                    error: err.message
-                });
-            }
-            const cleanString = (str) => str.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '').replace(/\s+/g, ' ').trim();
-            const getCurrentDateTime = () => new Date().toLocaleDateString();
-            const transformarFecha = (fecha) => {
-                const [day, month, year] = fecha.split('/');
-                return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-            };
-            const transformarContribuyente = (contribuyente, nave) => ({
-                ciu: contribuyente.GEN01CODI,
-                bodega: contribuyente.NUMBODEGA ? contribuyente.NUMBODEGA : 'Cubiculo',
-                nave: cleanString(nave),
-                seccion: contribuyente.ACTIVIDAD ? contribuyente.ACTIVIDAD : 'Cubiculo',
-                fecha: getCurrentDateTime(),
-                valor: contribuyente.VALOR,
-                meses: contribuyente.MESES
-            });
-            const filtrarYTransformarContribuyentes = (obj) => {
-                const contribuyentesTransformados = [];
-                for (const key in obj) {
-                    if (key.startsWith('LIST')) {
-                        const list = obj[key].G_NAVE;
-                        if (Array.isArray(list)) {
-                            for (const gNave of list) {
-                                if (gNave.NAVE && gNave.NAVE.trim() !== '') {
-                                    const nave = gNave.NAVE;
-                                    const contribuyentes = gNave.LIST_G_CONTRIBUYENTE.G_CONTRIBUYENTE;
-                                    if (Array.isArray(contribuyentes)) {
-                                        for (const contribuyente of contribuyentes) {
-                                            if (Number(contribuyente.MESES) > 3) {
-                                                contribuyentesTransformados.push(transformarContribuyente(contribuyente, nave));
-                                            }
-                                        }
-                                    }
-                                    else if (contribuyentes) {
-                                        if (Number(contribuyentes.MESES) > 3) {
-                                            contribuyentesTransformados.push(transformarContribuyente(contribuyentes, nave));
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else if (list && list.NAVE && list.NAVE.trim() !== '') {
-                            const nave = list.NAVE;
-                            const contribuyentes = list.LIST_G_CONTRIBUYENTE.G_CONTRIBUYENTE;
-                            if (Array.isArray(contribuyentes)) {
-                                for (const contribuyente of contribuyentes) {
-                                    if (Number(contribuyente.MESES) > 3) {
-                                        contribuyentesTransformados.push(transformarContribuyente(contribuyente, nave));
-                                    }
-                                }
-                            }
-                            else if (contribuyentes) {
-                                if (Number(contribuyentes.MESES) > 3) {
-                                    contribuyentesTransformados.push(transformarContribuyente(contribuyentes, nave));
-                                }
-                            }
-                        }
-                    }
-                    else if (typeof obj[key] === 'object') {
-                        contribuyentesTransformados.push(...filtrarYTransformarContribuyentes(obj[key]));
-                    }
-                }
-                return contribuyentesTransformados;
-            };
-            const contribuyentesTransformados = filtrarYTransformarContribuyentes(result.CARTERANOMBRESBODE);
-            // Obtener el siguiente número de reporte
-            const numeroReporteResponse = yield axios_1.default.get('http://localhost:3001/api/numeroreporte');
-            const siguienteNumeroReporte = numeroReporteResponse.data.siguienteNumeroReporte;
-            contador = siguienteNumeroReporte;
-            // Recorrer los contribuyentes transformados y hacer la solicitud POST
-            for (const contribuyente of contribuyentesTransformados) {
-                const key = `${contribuyente.ciu}-${contribuyente.puesto}-${contribuyente.nave}`;
-                const actividadTransformada = contribuyente.seccion.includes('�') ? contribuyente.seccion.replace(/�/g, 'Ñ') : contribuyente.seccion;
-                const nuevoHistorico = {
-                    ciu: contribuyente.ciu,
-                    numero_reporte: contador,
-                    bodega: contribuyente.bodega,
-                    puesto: null,
-                    nave: contribuyente.nave,
-                    seccion: actividadTransformada,
-                    fecha: transformarFecha(contribuyente.fecha),
-                    meses: parseInt(contribuyente.meses),
-                    cantNotificaciones: 0,
-                    archivo: null,
-                    valor: parseFloat(contribuyente.valor),
-                    pagado: 'NO'
-                };
-                contador++;
-                yield axios_1.default.post('http://localhost:3001/api/', nuevoHistorico);
-            }
-            res.json({
-                msg: 'Todos los registros se han guardado satisfactoriamente.'
-            });
-        }));
+        const result = yield (0, functions_1.leerYParsearXML)(file.path);
+        let contribuyentesTransformados = (0, functions_1.filtrarYTransformarContribuyentes)(result.CARTERANOMBRESBODE);
+        contribuyentesTransformados = yield (0, functions_1.filtrarContribuyentesTransformados)(contribuyentesTransformados, 'bodegas');
+        // Obtener el siguiente número de reporte
+        contador = yield (0, functions_1.obtenerSiguienteNumeroReporte)();
+        // Recorrer los contribuyentes transformados y hacer la solicitud POST
+        for (const contribuyente of contribuyentesTransformados) {
+            listaIngresados.push(yield (0, functions_1.crearYEnviarHistorico)(contribuyente, contador));
+            contador++;
+        }
+        res.json({
+            listaIngresados
+        });
     }
     catch (error) {
-        console.error('Error al leer el archivo XML:', error);
+        console.error('Error al procesar el archivo:', error);
         return res.status(500).json({
-            msg: 'Error al leer el archivo XML',
+            msg: 'Error al procesar el archivo',
             error: error
         });
     }
@@ -180,6 +91,7 @@ const carteraVencidaBodegas = (req, res) => __awaiter(void 0, void 0, void 0, fu
 exports.carteraVencidaBodegas = carteraVencidaBodegas;
 // Método para obtener todos los registros con cartera vencida de puestos
 const carteraVencidaPuestos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let listaIngresados = [];
     const file = req.file;
     let contador = 0;
     if (!file) {
@@ -188,114 +100,29 @@ const carteraVencidaPuestos = (req, res) => __awaiter(void 0, void 0, void 0, fu
         });
     }
     try {
-        const xmlData = fs_1.default.readFileSync(file.path, 'utf-8');
-        (0, xml2js_1.parseString)(xmlData, { explicitArray: false }, (err, result) => __awaiter(void 0, void 0, void 0, function* () {
-            if (err) {
-                console.error('Error al parsear el archivo XML:', err);
-                return res.status(500).json({
-                    msg: 'Error al parsear el archivo XML',
-                    error: err.message
-                });
-            }
-            const cleanString = (str) => str.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '').replace(/\s+/g, ' ').trim();
-            const transformarFecha = (fecha) => {
-                const [day, month, year] = fecha.split('/');
-                return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-            };
-            const getCurrentDateTime = () => new Date().toLocaleDateString();
-            const transformarContribuyente = (contribuyente, nave) => ({
-                ciu: contribuyente.REN57PCIUINQUILINO,
-                puesto: contribuyente.TITU ? contribuyente.TITU : 'Cubiculo',
-                nave: cleanString(nave),
-                seccion: contribuyente.REN57CARA01 ? contribuyente.REN57CARA01 : 'Cubiculo',
-                fecha: getCurrentDateTime(),
-                valor: contribuyente.TOTAL,
-                meses: contribuyente.MESES
-            });
-            const filtrarYTransformarContribuyentes = (obj) => {
-                const contribuyentesTransformados = [];
-                for (const key in obj) {
-                    if (key.startsWith('LIST')) {
-                        const list = obj[key].G_NAVES;
-                        if (Array.isArray(list)) {
-                            for (const gNaves of list) {
-                                if (gNaves.NAVES && gNaves.NAVES.trim() !== '') {
-                                    const nave = gNaves.NAVES;
-                                    const contribuyentes = gNaves.LIST_G_CONTRIBUYENTE.G_CONTRIBUYENTE;
-                                    if (Array.isArray(contribuyentes)) {
-                                        for (const contribuyente of contribuyentes) {
-                                            if (Number(contribuyente.MESES) > 3) {
-                                                contribuyentesTransformados.push(transformarContribuyente(contribuyente, nave));
-                                            }
-                                        }
-                                    }
-                                    else if (contribuyentes) {
-                                        if (Number(contribuyentes.MESES) > 3) {
-                                            contribuyentesTransformados.push(transformarContribuyente(contribuyentes, nave));
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else if (list && list.NAVES && list.NAVES.trim() !== '') {
-                            const nave = list.NAVES;
-                            const contribuyentes = list.LIST_G_CONTRIBUYENTE.G_CONTRIBUYENTE;
-                            if (Array.isArray(contribuyentes)) {
-                                for (const contribuyente of contribuyentes) {
-                                    if (Number(contribuyente.MESES) > 3) {
-                                        contribuyentesTransformados.push(transformarContribuyente(contribuyente, nave));
-                                    }
-                                }
-                            }
-                            else if (contribuyentes) {
-                                if (Number(contribuyentes.MESES) > 3) {
-                                    contribuyentesTransformados.push(transformarContribuyente(contribuyentes, nave));
-                                }
-                            }
-                        }
-                    }
-                    else if (typeof obj[key] === 'object') {
-                        contribuyentesTransformados.push(...filtrarYTransformarContribuyentes(obj[key]));
-                    }
-                }
-                return contribuyentesTransformados;
-            };
-            // Filtrar y transformar G_CONTRIBUYENTE de todos los G_NAVES
-            const contribuyentesTransformados = filtrarYTransformarContribuyentes(result.CARTERANOMBRESPUESTOS);
-            // Obtener el siguiente número de reporte
-            const numeroReporteResponse = yield axios_1.default.get('http://localhost:3001/api/numeroreporte');
-            const siguienteNumeroReporte = numeroReporteResponse.data.siguienteNumeroReporte;
-            contador = siguienteNumeroReporte;
-            // Recorrer los contribuyentes transformados y hacer la solicitud POST
-            for (const contribuyente of contribuyentesTransformados) {
-                const key = `${contribuyente.ciu}-${contribuyente.puesto}-${contribuyente.nave}`;
-                const actividadTransformada = contribuyente.seccion.includes('�') ? contribuyente.seccion.replace(/�/g, 'Ñ') : contribuyente.seccion;
-                const nuevoHistorico = {
-                    ciu: contribuyente.ciu,
-                    numero_reporte: contador,
-                    bodega: null,
-                    puesto: contribuyente.puesto,
-                    nave: contribuyente.nave,
-                    seccion: actividadTransformada,
-                    fecha: transformarFecha(contribuyente.fecha),
-                    meses: parseInt(contribuyente.meses),
-                    cantNotificaciones: 0,
-                    archivo: null,
-                    valor: parseFloat(contribuyente.valor),
-                    pagado: 'NO'
-                };
-                contador++;
-                yield axios_1.default.post('http://localhost:3001/api/', nuevoHistorico);
-            }
-            res.json({
-                msg: 'Todos los registros se han guardado satisfactoriamente.'
-            });
-        }));
+        const result = yield (0, functions_1.leerYParsearXMLP)(file.path);
+        let contribuyentesTransformados = (0, functions_1.filtrarYTransformarContribuyentesP)(result.CARTERANOMBRESPUESTOS);
+        console.log("Puestos Transformados");
+        console.log(contribuyentesTransformados);
+        contribuyentesTransformados = yield (0, functions_1.filtrarContribuyentesTransformados)(contribuyentesTransformados, 'puestos');
+        console.log("Puestos Filtrados");
+        console.log(contribuyentesTransformados);
+        // Obtener el siguiente número de reporte
+        contador = yield (0, functions_1.obtenerSiguienteNumeroReporte)();
+        // Recorrer los contribuyentes transformados y hacer la solicitud POST
+        for (const contribuyente of contribuyentesTransformados) {
+            console.log("XD");
+            listaIngresados.push(yield (0, functions_1.crearYEnviarHistorico)(contribuyente, contador));
+            contador++;
+        }
+        res.json({
+            listaIngresados
+        });
     }
     catch (error) {
-        console.error('Error al leer el archivo XML:', error);
+        console.error('Error al procesar el archivo:', error);
         return res.status(500).json({
-            msg: 'Error al leer el archivo XML',
+            msg: 'Error al procesar el archivo',
             error: error
         });
     }

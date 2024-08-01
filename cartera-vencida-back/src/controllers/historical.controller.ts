@@ -6,7 +6,7 @@ import Contribuyentes from '../models/contributors.models';
 
 // Crear un nuevo registro histórico
 export const newHistorico = async (req: Request, res: Response) => {
-  const { ciu,numero_reporte, bodega, puesto, nave, seccion, fecha, meses, cantNotificaciones, archivo, valor, pagado } = req.body;
+  const { ciu,numero_reporte, bodega, puesto, nave, seccion, fecha, meses, cantNotificaciones, archivo, valor, pagado, esHistorico } = req.body;
 
   try {
     const nuevoHistorico = await Historicos.create({
@@ -21,7 +21,8 @@ export const newHistorico = async (req: Request, res: Response) => {
       cantNotificaciones,
       archivo,
       valor,
-      pagado
+      pagado, 
+      esHistorico
     });
 
     res.json({
@@ -134,6 +135,7 @@ export const getHistoricosBodegasNoPagado = async (req: Request, res: Response) 
         'archivo',
         'valor',
         'pagado',
+        'esHistorico',
         [col('contribuyente.nombre'), 'contribuyente.nombre'],
         [col('contribuyente.cedula'), 'contribuyente.cedula']
       ],
@@ -144,6 +146,7 @@ export const getHistoricosBodegasNoPagado = async (req: Request, res: Response) 
       }],
       where: {
         pagado: 'NO',
+        esHistorico: 'NO',
         [Op.and]: Sequelize.literal(`(
           historicos.cantNotificaciones = (
             SELECT MAX(h2.cantNotificaciones)
@@ -155,6 +158,7 @@ export const getHistoricosBodegasNoPagado = async (req: Request, res: Response) 
               AND h2.meses = historicos.meses
               AND DATE_FORMAT(h2.fecha, '%Y-%m') = DATE_FORMAT(historicos.fecha, '%Y-%m')
               AND h2.pagado = 'NO'
+              AND h2.esHistorico = 'NO'
               AND h2.bodega != ""
           )
         )`)
@@ -236,6 +240,7 @@ export const getHistoricosPuestosNoPagado = async (req: Request, res: Response) 
         'archivo',
         'valor',
         'pagado',
+        'esHistorico',
         [col('contribuyente.nombre'), 'contribuyente.nombre'],
         [col('contribuyente.cedula'), 'contribuyente.cedula']
       ],
@@ -246,6 +251,7 @@ export const getHistoricosPuestosNoPagado = async (req: Request, res: Response) 
       }],
       where: {
         pagado: 'NO',
+        esHistorico: 'NO',
         [Op.and]: Sequelize.literal(`(
           historicos.cantNotificaciones = (
             SELECT MAX(h2.cantNotificaciones)
@@ -257,6 +263,7 @@ export const getHistoricosPuestosNoPagado = async (req: Request, res: Response) 
               AND h2.meses = historicos.meses
               AND DATE_FORMAT(h2.fecha, '%Y-%m') = DATE_FORMAT(historicos.fecha, '%Y-%m')
               AND h2.pagado = 'NO'
+              AND h2.esHistorico = 'NO'
               AND h2.puesto != ""
           )
         )`)
@@ -438,7 +445,7 @@ export const deleteHistorico = async (req: Request, res: Response) => {
 // Actualizar un registro histórico por ID
 export const updateHistorico = async (req: Request, res: Response) => {
   const id = req.params.id;
-  const { ciu, numero_reporte, bodega, puesto, nave, fecha, seccion,meses, cantNotificaciones, archivo,valor, pagado } = req.body;
+  const { ciu, numero_reporte, bodega, puesto, nave, fecha, seccion,meses, cantNotificaciones, archivo,valor, pagado, esHistorico } = req.body;
 
   const existHistorico: any = await Historicos.findOne({ where: { id } });
 
@@ -462,7 +469,8 @@ export const updateHistorico = async (req: Request, res: Response) => {
         cantNotificaciones,
         archivo,
         valor,
-        pagado
+        pagado,
+        esHistorico
       },
       { where: { id } }
     );
@@ -480,32 +488,57 @@ export const updateHistorico = async (req: Request, res: Response) => {
 }
 
 // Marcar un registro histórico como pagado (pagado = "SI")
-export const payHistorico = async (req: Request, res: Response) => {
+export const relatedHistoricos = async (req: Request, res: Response) => {
   const { id } = req.params;
-
   try {
-    const existHistorico: any = await Historicos.findOne({ where: { id } });
-    if (!existHistorico) {
-      return res.status(404).json({
-        msg: 'No se encontró un registro histórico con ese ID'
-      });
-    }
-    if (existHistorico.pagado === 'SI') {
-      return res.json({
-        msg: `El registro histórico con CIU ${existHistorico.ciu} ya está marcado como pagado`
-      });
-    }
-    await Historicos.update(
-      { pagado: 'SI' },
-      { where: { id } }
-    );
-    res.json({
-      msg: `El registro histórico con CIU ${existHistorico.ciu} ha sido marcado como pagado`
+    const historicosList = await Historicos.findAll({
+      attributes: [
+        'id',
+        'numero_reporte',
+        'ciu',
+        'bodega',
+        'puesto',
+        'nave',
+        'seccion',
+        'fecha',
+        'meses',
+        'cantNotificaciones',
+        'archivo',
+        'valor',
+        'pagado',
+        'esHistorico'
+      ],
+      where: {
+        id: {
+          [Op.in]: literal(`(
+            SELECT h2.id
+            FROM cartera_vencida.historicos AS h1
+            JOIN cartera_vencida.historicos AS h2 
+            ON h1.ciu = h2.ciu 
+              AND h1.bodega <=> h2.bodega 
+              AND h1.puesto <=> h2.puesto 
+              AND h1.nave = h2.nave 
+              AND h1.seccion = h2.seccion 
+              AND h2.fecha BETWEEN DATE_SUB(h1.fecha, INTERVAL 30 DAY) AND DATE_ADD(h1.fecha, INTERVAL 30 DAY)
+            WHERE h1.id = ${id}
+          )`)
+        }
+      },
+      order: [['fecha', 'ASC']],
+      raw: true,
     });
+
+    if (historicosList.length === 0) { 
+      return res.status(404).json({
+        msg: 'No se encontraron historicos asociados a bodegas que no hayan sido pagados',
+      });
+    }
+
+    res.json(historicosList);
   } catch (error) {
     return res.status(500).json({
       msg: ErrorMessages.SERVER_ERROR,
-      error
+      error,
     });
   }
 }// Obtener el siguiente número de reporte
