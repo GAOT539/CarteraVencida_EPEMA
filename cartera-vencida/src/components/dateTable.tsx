@@ -45,7 +45,6 @@ export default function DataTable() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<SnackbarSeverity>('info');
-  const [buttonDisabled, setButtonDisabled] = useState(false);
   const [varNaveFiltro, setVarNaveFiltro] = useState<string[]>([]);
   const [varNaveFiltroLargo, setVarNaveFiltroLargo] = useState<string[]>([]);
 
@@ -59,10 +58,8 @@ export default function DataTable() {
   useEffect(() => {
     if (nuevaData == "Bodegas") {
       setOpcion_Titulo("Bodegas Cargadas");
-      fetchBodegasNuevos();
     } else if (nuevaData == "Puestos") {
       setOpcion_Titulo("Puestos Cargados");
-      fetchPuestosNuevos();
     } else {
 
     }
@@ -84,60 +81,6 @@ export default function DataTable() {
         break;
     }
   }, [updatedRow]);
-
-  const fetchBodegasNuevos = async () => {
-    try {
-      const result = await getHistoricosBodegasNuevos();
-      if (result.success) {
-        const transformedData = transformData(
-          result.historicosWithContribuyentes
-        );
-        setRows(transformedData);
-        filterData(searchText, transformedData);
-        setSnackbarMessage('Carga de datos correcta de Bodegas Cargadas.');
-        setSnackbarSeverity('success');
-        setOpenSnackbar(true);
-      } else {
-        setRows([]);
-        setFilteredRows([]);
-        setSnackbarMessage('No existen datos cargados en Bodegas Cargadas.');
-        setSnackbarSeverity('warning');
-        setOpenSnackbar(true);
-      }
-    } catch (error) {
-      console.error("Error fetching Bodegas Cargadas:", error);
-      setSnackbarMessage('Error al cargar los datos de Bodegas Cargadas.');
-      setSnackbarSeverity('error');
-      setOpenSnackbar(true);
-    }
-  };
-
-  const fetchPuestosNuevos = async () => {
-    try {
-      const result = await getHistoricosPuestosNuevos();
-      if (result.success) {
-        const transformedData = transformData(
-          result.historicosWithContribuyentes
-        );
-        setRows(transformedData);
-        filterData(searchText, transformedData);
-        setSnackbarMessage('Carga de datos correcta de Puestos Cargadas.');
-        setSnackbarSeverity('success');
-        setOpenSnackbar(true);
-      } else {
-        setRows([]);
-        setFilteredRows([]);
-        setSnackbarMessage('No existen datos cargados en Puestos Cargadas.');
-        setSnackbarSeverity('warning');
-        setOpenSnackbar(true);
-      }
-    } catch (error) {
-      console.error("Error fetching Puestos Cargadas:", error);
-      setSnackbarMessage('Error al cargar los datos de Puestos Cargadas.');
-      setSnackbarSeverity('error');
-      setOpenSnackbar(true);
-    }
-  };
 
   const fetchBodegas = async () => {
     try {
@@ -229,16 +172,6 @@ export default function DataTable() {
     setDialogOpen(true);
   };
 
-  const handleShowCharged = () => {
-    if (opcion_Titulo == "Bodegas") {
-      setOpcion_Titulo("Bodegas Cargadas");
-      fetchBodegasNuevos();
-    } else {
-      setOpcion_Titulo("Puestos Cargados");
-      fetchPuestosNuevos();
-    }
-  };
-
   const convertirBlobAFile = (blob: Blob, nombreArchivo: string): File => {
     return new File([blob], nombreArchivo, { type: blob.type, lastModified: new Date().getTime() });
   };
@@ -316,12 +249,6 @@ export default function DataTable() {
   };
 
   useEffect(() => {
-    if (opcion_Titulo.includes('Cargados') || opcion_Titulo.includes('Cargadas')) {
-      setButtonDisabled(true);
-    } else {
-      setButtonDisabled(false);
-    }
-
     if (opcion_Titulo.includes('Bodegas')) {
       setVarNaveFiltro(navesBodegasCorto);
       setVarNaveFiltroLargo(navesBodegasLargo);
@@ -342,14 +269,11 @@ export default function DataTable() {
             <Button variant="contained" sx={{ backgroundColor: colors.oliveGreen, "&:hover": { backgroundColor: colors.oliveGreenGradient }, }} onClick={handleChangePuestos} >
               Puestos
             </Button>
-            <Button disabled={buttonDisabled} variant="contained" startIcon={<CloudUploadIcon />} sx={{ backgroundColor: colors.blue, "&:hover": { backgroundColor: colors.blueGradient }, }} onClick={handleLoadData} >
+            <Button variant="contained" startIcon={<CloudUploadIcon />} sx={{ backgroundColor: colors.blue, "&:hover": { backgroundColor: colors.blueGradient }, }} onClick={handleLoadData} >
               Cargar datos
             </Button>
-            <Button disabled={!buttonDisabled} variant="contained" startIcon={<FileOpenIcon />} sx={{ backgroundColor: colors.orangeSalmon, "&:hover": { backgroundColor: colors.orangeSalmonGradient }, }} onClick={handleDownloadPDFs} >
+            <Button variant="contained" startIcon={<FileOpenIcon />} sx={{ backgroundColor: colors.orangeSalmon, "&:hover": { backgroundColor: colors.orangeSalmonGradient }, }} onClick={handleDownloadPDFs} >
               Notificación
-            </Button>
-            <Button variant="contained" startIcon={<PlagiarismIcon />} sx={{ backgroundColor: colors.purple, "&:hover": { backgroundColor: colors.purpleGradient }, }} onClick={handleShowCharged} disabled={!opcion_Titulo} >
-              Ver datos Cargados xxxx
             </Button>
             <PopupState variant="popover" popupId="demo-popup-menu">
               {(popupState) => (
