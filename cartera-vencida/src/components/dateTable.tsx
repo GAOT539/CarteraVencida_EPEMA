@@ -52,12 +52,12 @@ export default function DataTable() {
 
   useEffect(() => {
     fetchBodegas();
-    setOpcion_Titulo("BODEGAS");
+    setOpcion_Titulo("Bodegas");
   }, []);
 
   useEffect(() => {
-    if (nuevaData == "BODEGAS") {
-      setOpcion_Titulo("BODEGAS Cargadas");
+    if (nuevaData == "Bodegas") {
+      setOpcion_Titulo("Bodegas Cargadas");
     } else if (nuevaData == "Puestos") {
       setOpcion_Titulo("Puestos Cargados");
     } else {
@@ -70,7 +70,7 @@ export default function DataTable() {
     setSearchText(textoSeparado[0])
     filterData(textoSeparado[0], rows);
     switch (opcion_Titulo) {
-      case 'BODEGAS':
+      case 'Bodegas':
         fetchBodegas();
         break;
       case 'Puestos':
@@ -100,7 +100,7 @@ export default function DataTable() {
         setOpenSnackbar(true);
       }
     } catch (error) {
-      console.error("Error fetching bodegas:", error);
+      console.error("Error fetching Bodegas:", error);
       setSnackbarMessage('Error al cargar los datos de Bodegas.');
       setSnackbarSeverity('error');
       setOpenSnackbar(true);
@@ -125,7 +125,7 @@ export default function DataTable() {
         setOpenSnackbar(true);
       }
     } catch (error) {
-      console.error("Error fetching puestos:", error);
+      console.error("Error fetching Puestos:", error);
       setSnackbarMessage('Error al cargar los datos de Puestos.');
       setSnackbarSeverity('error');
       setOpenSnackbar(true);
@@ -180,7 +180,7 @@ export default function DataTable() {
     const batchSize = 5;
     const zip = new JSZip();
 
-    if (opcion_Titulo === "BODEGAS" || opcion_Titulo === "Puestos") {
+    if (opcion_Titulo === "Bodegas" || opcion_Titulo === "Puestos") {
       console.log("NO");
     } else {
       setLoading(true);
@@ -206,8 +206,8 @@ export default function DataTable() {
       });
     }
 
-    if (opcion_Titulo.includes("BODEGAS")) {
-      setOpcion_Titulo("BODEGAS")
+    if (opcion_Titulo.includes("Bodegas")) {
+      setOpcion_Titulo("Bodegas")
       fetchBodegas()
     } else {
       setOpcion_Titulo("Puestos")
@@ -216,14 +216,14 @@ export default function DataTable() {
   };
 
   const handleChangeBodegas = () => {
-    setOpcion_Titulo("BODEGAS");
+    setOpcion_Titulo("Bodegas");
     fetchBodegas();
     setVarClear(true);
     setSearchText('');
   };
 
   const handleChangePuestos = () => {
-    setOpcion_Titulo("PUESTOS");
+    setOpcion_Titulo("Puestos");
     fetchPuestos();
     setVarClear(true);
     setSearchText('');
