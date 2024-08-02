@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.filtrarContribuyentesTransformados = exports.actualizarRegistrosNotificacionesTres = exports.actualizarRegistrosPagadosHistoricos = exports.obtenerRegistrosNoPagadosNoHistoricos = exports.crearYEnviarHistorico = exports.obtenerSiguienteNumeroReporte = exports.filtrarYTransformarContribuyentesP = exports.filtrarYTransformarContribuyentes = exports.transformarContribuyenteP = exports.transformarContribuyente = exports.transformarFecha = exports.getCurrentDateTime = exports.cleanString = exports.leerYParsearXMLP = exports.leerYParsearXML = void 0;
+exports.filtrarContribuyentesTransformados = exports.actualizarRegistrosNotificacionesTres = exports.actualizarRegistrosPagadosHistoricos = exports.obtenerRegistrosNoPagadosNoHistoricos = exports.crearYEnviarHistorico = exports.obtenerSiguienteNumeroReporte = exports.filtrarYTransformarContribuyentesP = exports.filtrarYTransformarContribuyentes = exports.transformarContribuyenteP = exports.transformarContribuyente = exports.cleanString = exports.leerYParsearXMLP = exports.leerYParsearXML = void 0;
 const fs_1 = __importDefault(require("fs"));
 const xml2js_1 = require("xml2js");
 const axios_1 = __importDefault(require("axios"));
@@ -53,22 +53,12 @@ const cleanString = (str) => {
 };
 exports.cleanString = cleanString;
 // Función para obtener la fecha y hora actuales
-const getCurrentDateTime = () => {
-    return new Date().toLocaleDateString();
-};
-exports.getCurrentDateTime = getCurrentDateTime;
 const formatDate = (date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${day}-${month}`;
 };
-// Función para transformar la fecha
-const transformarFecha = (fecha) => {
-    const [month, day, year] = fecha.split('/');
-    return `${year}-${day.padStart(2, '0')}-${month.padStart(2, '0')}`;
-};
-exports.transformarFecha = transformarFecha;
 // Función para transformar contribuyente
 const transformarContribuyente = (contribuyente, nave) => {
     return {

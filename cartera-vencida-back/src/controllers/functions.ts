@@ -36,21 +36,12 @@ export const cleanString = (str: string) => {
 };
 
 // Función para obtener la fecha y hora actuales
-export const getCurrentDateTime = () => {
-    return new Date().toLocaleDateString();
-};
 const formatDate = (date: Date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0'); 
     const day = String(date.getDate()).padStart(2, '0'); 
     return `${year}-${day}-${month}`;
   };
-
-// Función para transformar la fecha
-export const transformarFecha = (fecha: string) => {
-    const [month, day, year] = fecha.split('/');
-    return `${year}-${day.padStart(2, '0')}-${month.padStart(2, '0')}`;
-};
 
 // Función para transformar contribuyente
 export const transformarContribuyente = (contribuyente: any, nave: string) => {
