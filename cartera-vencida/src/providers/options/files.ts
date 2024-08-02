@@ -139,6 +139,26 @@ export const getPDFFile = async (filename: string) => {
     }
 };
 
+export const getPDFFileOpen = async (filename: string) => {
+    try {
+        const response = await axios.post(`${API_FILES}/historicos/ver-pdf`, { filename }, {
+            responseType: 'blob', // Asegúrate de que la respuesta sea tratada como un blob
+        });
+
+        return {
+            success: true,
+            data: response.data,
+        };
+    } catch (error) {
+        return {
+            success: false,
+            error: {
+                message: error || 'Sin respuesta desde el servidor Back-end.',
+            },
+        };
+    }
+};
+
 export const uploadPDFFile = async (id: string, file: File) => {
     try {
       const formData = new FormData();

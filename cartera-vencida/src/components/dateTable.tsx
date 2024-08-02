@@ -8,7 +8,7 @@ import { getHistoricosBodegasNoPagado, getHistoricosPuestosNoPagado, getHistoric
 import UploadDialog from "./upload_Dialog";
 import { useAppContext } from "../AppContext";
 import FileOpenIcon from '@mui/icons-material/FileOpen';
-import { getPDFFile, uploadPDFFile } from "../providers/options/files";
+import { getPDFFile, uploadPDFFile, getPDFFileOpen } from "../providers/options/files";
 import { generarPDF } from "./trigger_PDF";
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
@@ -119,6 +119,7 @@ export default function DataTable() {
     } setFilteredRows(filtered);
   };
 
+  //AGREGAR LOS FITROS SECCION
   const filterDataNave = (search: string, data: any[]) => {
     let filtered = data;
     if (search) {
@@ -184,17 +185,16 @@ export default function DataTable() {
     }
   };
 
-  //arreglaresto sebastian
   const handleGeneration = async () => {
     const batchSize = 5;
     const zip = new JSZip();
 
       setLoading(true);
-      for (let i = 0; i < rows.length; i += batchSize) {
-        const batch = rows.slice(i, i + batchSize);
+      for (let i = 0; i < filteredRows.length; i += batchSize) {
+        const batch = filteredRows.slice(i, i + batchSize);
         await Promise.all(batch.map(async (element) => {
           try {
-            const pdfBlob = (await getPDFFile(`notificacion_${element.ciu}-${element.numero_reporte}.pdf`)).data;
+            const pdfBlob = (await getPDFFileOpen(`notificacion_${element.ciu}-${element.numero_reporte}.pdf`)).data;
             const file = convertirBlobAFile(pdfBlob, `notificacion_${element.ciu}-${element.numero_reporte}.pdf`);
             zip.file(file.name, pdfBlob);
           } catch (error) {
@@ -208,13 +208,7 @@ export default function DataTable() {
         saveAs(content, `Notificaciones-${new Date().toLocaleDateString()}.zip`);
       });
 
-    if (opcion_Titulo.includes("Bodegas")) {
-      fetchBodegas();
       setVarClear(true);
-    } else {
-      fetchPuestos();
-      setVarClear(true);
-    }
   };
 
   const handleChangeBodegas = () => {
@@ -244,9 +238,7 @@ export default function DataTable() {
   };
 
   const handleMenuItemClick = (nave: string) => {
-    setVarClear(true);
     filterDataNave(nave, rows);
-    setVarClear(true);
   };
 
   useEffect(() => {
