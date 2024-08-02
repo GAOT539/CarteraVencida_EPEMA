@@ -3,7 +3,7 @@ import { Alert, Box, SelectChangeEvent, Snackbar, TextField, Typography, useThem
 import { useAppContext } from "../AppContext";
 import { Button, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import colors from "../resources/style/colors";
-import { generarPDF } from "./crear_PDF";
+import { generarPDF } from "./modify_PDF";
 import { addHistorico, obtenerNumeroReporte, updateHistorico } from "../providers/options/historical";
 import { getPDFFile, uploadPDFFile } from "../providers/options/files";
 import BrowserUpdatedIcon from '@mui/icons-material/BrowserUpdated';

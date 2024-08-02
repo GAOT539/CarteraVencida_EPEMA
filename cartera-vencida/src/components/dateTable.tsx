@@ -4,13 +4,12 @@ import { TextField, Button, Container, Grid, Box, InputAdornment, Backdrop, Circ
 import SearchIcon from "@mui/icons-material/Search";
 import colors from "../resources/style/colors";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { getHistoricosBodegasNoPagado, getHistoricosBodegasNuevos, getHistoricosPuestosNoPagado, getHistoricosPuestosNuevos, updateHistorico, } from "../providers/options/historical";
+import { getHistoricosBodegasNoPagado, getHistoricosPuestosNoPagado, getHistoricosPuestosNuevos } from "../providers/options/historical";
 import UploadDialog from "./upload_Dialog";
 import { useAppContext } from "../AppContext";
 import FileOpenIcon from '@mui/icons-material/FileOpen';
-import PlagiarismIcon from '@mui/icons-material/Plagiarism';
 import { getPDFFile, uploadPDFFile } from "../providers/options/files";
-import { generarPDF } from "./crear_PDF";
+import { generarPDF } from "./trigger_PDF";
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
@@ -25,12 +24,10 @@ const columnsHistoricos: GridColDef[] = [
   { field: "fecha", headerName: "Fecha", flex: 1 },
   { field: "meses", headerName: "Meses", flex: 1 },
   { field: "cantNotificaciones", headerName: "Cantidad de Notificaciones", flex: 1, },
-  {
-    field: 'archivo', headerName: 'Archivo', flex: 1,
+  { field: 'archivo', headerName: 'Archivo', flex: 1,
     renderCell: (params) => (<Button variant="outlined" color="secondary" onClick={() => getPDFFile(params.value)} disabled={!params.value} >
       Ver
-    </Button>),
-  },
+    </Button>), },
   { field: "valor", headerName: "Valor", flex: 1 },
   { field: "pagado", headerName: "Pagado", flex: 1 },
 ];
@@ -47,40 +44,11 @@ export default function DataTable() {
   const [snackbarSeverity, setSnackbarSeverity] = useState<SnackbarSeverity>('info');
   const [varNaveFiltro, setVarNaveFiltro] = useState<string[]>([]);
   const [varNaveFiltroLargo, setVarNaveFiltroLargo] = useState<string[]>([]);
-
+  const navesBodegasCorto = ['A', 'B', 'C', 'CF', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'LL', 'M', 'N', 'Ñ', 'P', 'Q', 'Z',];
+  const navesBodegasLargo = ['ENVASE', 'HIERVAS'];
+  const navesPuestosCorto = ['B', 'C', 'D', 'F', 'H', 'K', 'L', 'LL', 'M', 'N', 'O', 'P', 'Q', 'Y', 'Z'];
+  const navesPuestosLargo = ['AMBULANTES', 'AUTO-LUJOS', 'BATERIAS', 'ROPA', 'HIERBAS', 'TRICI'];
   type SnackbarSeverity = 'info' | 'success' | 'error' | 'warning';
-
-  useEffect(() => {
-    fetchBodegas();
-    setOpcion_Titulo("Bodegas");
-  }, []);
-
-  useEffect(() => {
-    if (nuevaData == "Bodegas") {
-      setOpcion_Titulo("Bodegas Cargadas");
-    } else if (nuevaData == "Puestos") {
-      setOpcion_Titulo("Puestos Cargados");
-    } else {
-
-    }
-  }, [nuevaData]);
-
-  useEffect(() => {
-    const textoSeparado = updatedRow.split('-');
-    setSearchText(textoSeparado[0])
-    filterData(textoSeparado[0], rows);
-    switch (opcion_Titulo) {
-      case 'Bodegas':
-        fetchBodegas();
-        break;
-      case 'Puestos':
-        fetchPuestos();
-        break;
-      default:
-        console.warn('Opción no reconocida');
-        break;
-    }
-  }, [updatedRow]);
 
   const fetchBodegas = async () => {
     try {
@@ -138,7 +106,6 @@ export default function DataTable() {
       ubicacion: `${(row.bodega || "").replace(/^NAVE\s*/, "")} ${(row.puesto || "").replace(/^NAVE\s*/, "")} ${(row.seccion || "").replace(/^NAVE\s*/, "")}`.trim(),
     }));
   };
-  
 
   const filterData = (search: string, data: any[]) => {
     let filtered = data;
@@ -170,29 +137,30 @@ export default function DataTable() {
 
   const handleLoadData = () => {
     setDialogOpen(true);
+    setVarClear(true);
+    if(opcion_Titulo.includes('Bodegas')){
+      fetchBodegas();
+    }else{
+      fetchPuestos();
+    }
   };
 
   const convertirBlobAFile = (blob: Blob, nombreArchivo: string): File => {
     return new File([blob], nombreArchivo, { type: blob.type, lastModified: new Date().getTime() });
   };
 
-  const handleDownloadPDFs = async () => {
+  const handlePDFGeneration = async () => {
     const batchSize = 5;
     const zip = new JSZip();
 
-    if (opcion_Titulo === "Bodegas" || opcion_Titulo === "Puestos") {
-      console.log("NO");
-    } else {
       setLoading(true);
       for (let i = 0; i < rows.length; i += batchSize) {
         const batch = rows.slice(i, i + batchSize);
         await Promise.all(batch.map(async (element) => {
           try {
-            const response = await updateHistorico(element.id, { cantNotificaciones: 1, pagado: "NO" });
-            const pdfBlob = await generarPDF(element, 1);
+            const pdfBlob = await generarPDF(element);
             await uploadPDFFile(element.id, convertirBlobAFile(pdfBlob, `notificacion_${element.ciu}-${element.numero_reporte}.pdf`));
             const file = convertirBlobAFile(pdfBlob, `notificacion_${element.ciu}-${element.numero_reporte}.pdf`);
-
             zip.file(file.name, pdfBlob);
           } catch (error) {
             console.error('Error al generar o subir el PDF:', error);
@@ -204,14 +172,48 @@ export default function DataTable() {
       zip.generateAsync({ type: 'blob' }).then((content) => {
         saveAs(content, `Notificaciones-${new Date().toLocaleDateString()}.zip`);
       });
-    }
 
     if (opcion_Titulo.includes("Bodegas")) {
-      setOpcion_Titulo("Bodegas")
-      fetchBodegas()
+      setOpcion_Titulo("Bodegas");
+      fetchBodegas();
+      setVarClear(true);
     } else {
-      setOpcion_Titulo("Puestos")
-      fetchPuestos()
+      setOpcion_Titulo("Puestos");
+      fetchPuestos();
+      setVarClear(true);
+    }
+  };
+
+  //arreglaresto sebastian
+  const handleGeneration = async () => {
+    const batchSize = 5;
+    const zip = new JSZip();
+
+      setLoading(true);
+      for (let i = 0; i < rows.length; i += batchSize) {
+        const batch = rows.slice(i, i + batchSize);
+        await Promise.all(batch.map(async (element) => {
+          try {
+            const pdfBlob = (await getPDFFile(`notificacion_${element.ciu}-${element.numero_reporte}.pdf`)).data;
+            const file = convertirBlobAFile(pdfBlob, `notificacion_${element.ciu}-${element.numero_reporte}.pdf`);
+            zip.file(file.name, pdfBlob);
+          } catch (error) {
+            console.error('Error al generar o subir el PDF:', error);
+          }
+        }));
+      }
+      setLoading(false);
+
+      zip.generateAsync({ type: 'blob' }).then((content) => {
+        saveAs(content, `Notificaciones-${new Date().toLocaleDateString()}.zip`);
+      });
+
+    if (opcion_Titulo.includes("Bodegas")) {
+      fetchBodegas();
+      setVarClear(true);
+    } else {
+      fetchPuestos();
+      setVarClear(true);
     }
   };
 
@@ -241,13 +243,8 @@ export default function DataTable() {
     setSelectedRow(params.row);
   };
 
-  const navesBodegasCorto = ['A', 'B', 'C', 'CF', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'LL', 'M', 'N', 'Ñ', 'P', 'Q', 'Z',];
-  const navesBodegasLargo = ['ENVASE', 'HIERVAS'];
-
-  const navesPuestosCorto = ['B', 'C', 'D', 'F', 'H', 'K', 'L', 'LL', 'M', 'N', 'O', 'P', 'Q', 'Y', 'Z'];
-  const navesPuestosLargo = ['AMBULANTES', 'AUTO-LUJOS', 'BATERIAS', 'ROPA', 'HIERBAS', 'TRICI'];
-
   const handleMenuItemClick = (nave: string) => {
+    setVarClear(true);
     filterDataNave(nave, rows);
     setVarClear(true);
   };
@@ -261,6 +258,38 @@ export default function DataTable() {
       setVarNaveFiltroLargo(navesPuestosLargo);
     }
   }, [opcion_Titulo]);
+
+  useEffect(() => {
+    fetchBodegas();
+    setOpcion_Titulo("Bodegas");
+  }, []);
+
+  useEffect(() => {
+    if (nuevaData == "Bodegas") {
+      setOpcion_Titulo("Bodegas");
+      fetchBodegas();
+    } else {
+      setOpcion_Titulo("Puestos");
+      fetchPuestos();
+    }
+  }, [nuevaData]);
+
+  useEffect(() => {
+    const textoSeparado = updatedRow.split('-');
+    setSearchText(textoSeparado[0])
+    filterData(textoSeparado[0], rows);
+    switch (opcion_Titulo) {
+      case 'Bodegas':
+        fetchBodegas();
+        break;
+      case 'Puestos':
+        fetchPuestos();
+        break;
+      default:
+        console.warn('Opción no reconocida');
+        break;
+    }
+  }, [updatedRow]);
 
   return (
     <Container maxWidth="lg" style={{ padding: 20 }}>
@@ -276,8 +305,8 @@ export default function DataTable() {
             <Button variant="contained" startIcon={<CloudUploadIcon />} sx={{ backgroundColor: colors.blue, "&:hover": { backgroundColor: colors.blueGradient }, }} onClick={handleLoadData} >
               Cargar datos
             </Button>
-            <Button variant="contained" startIcon={<FileOpenIcon />} sx={{ backgroundColor: colors.orangeSalmon, "&:hover": { backgroundColor: colors.orangeSalmonGradient }, }} onClick={handleDownloadPDFs} >
-              Notificación
+            <Button variant="contained" startIcon={<FileOpenIcon />} sx={{ backgroundColor: colors.orangeSalmon, "&:hover": { backgroundColor: colors.orangeSalmonGradient }, }} onClick={handlePDFGeneration} >
+              Generar PDF
             </Button>
             <PopupState variant="popover" popupId="demo-popup-menu">
               {(popupState) => (
@@ -312,6 +341,9 @@ export default function DataTable() {
                 </React.Fragment>
               )}
             </PopupState>
+            <Button variant="contained" startIcon={<FileOpenIcon />} sx={{ backgroundColor: colors.purple, "&:hover": { backgroundColor: colors.purpleGradient }, }} onClick={handleGeneration} >
+              Descargar PDFs
+            </Button>
             <Backdrop open={loading} style={{ zIndex: 99999 }}>
               <CircularProgress color="inherit" />
             </Backdrop>

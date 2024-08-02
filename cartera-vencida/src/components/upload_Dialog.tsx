@@ -18,6 +18,7 @@ export default function UploadDialog({ open, onClose, titulo }: BodegasDialogPro
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState('');
+  const [disableButton, setDisableButton] = React.useState(false);
 
   const handleUploadClick = () => {
     if (fileInputRef.current) {
@@ -38,6 +39,7 @@ export default function UploadDialog({ open, onClose, titulo }: BodegasDialogPro
   };
 
   const handleProcessClick = async () => {
+    setDisableButton(true);
     if (selectedFile) {
       let result;
       if (titulo === 'Bodegas') {
@@ -59,6 +61,7 @@ export default function UploadDialog({ open, onClose, titulo }: BodegasDialogPro
         onClose();
       }
     }
+    setDisableButton(false);
   };
 
   const handleRemoveFile = () => {
@@ -106,7 +109,7 @@ export default function UploadDialog({ open, onClose, titulo }: BodegasDialogPro
         </DialogContent>
         <DialogActions>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-            <Button onClick={handleProcessClick} variant="contained" color="primary" sx={{ width: '120px', margin: '0 10px' }} disabled={!selectedFile} >
+            <Button onClick={handleProcessClick} variant="contained" color="primary" sx={{ width: '120px', margin: '0 10px' }} disabled={!selectedFile||disableButton} >
               Procesar
             </Button>
 
