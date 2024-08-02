@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.filtrarContribuyentesTransformados = exports.actualizarRegistrosNotificacionesTres = exports.actualizarRegistrosPagadosHistoricos = exports.obtenerRegistrosNoPagadosNoHistoricos = exports.crearYEnviarHistorico = exports.obtenerSiguienteNumeroReporte = exports.filtrarYTransformarContribuyentesP = exports.filtrarYTransformarContribuyentes = exports.transformarContribuyenteP = exports.transformarContribuyente = exports.transformarFecha = exports.getCurrentDateTime = exports.cleanString = exports.leerYParsearXMLP = exports.leerYParsearXML = void 0;
+exports.filtrarContribuyentesTransformados = exports.actualizarRegistrosNotificacionesTres = exports.actualizarRegistrosPagadosHistoricos = exports.obtenerRegistrosNoPagadosNoHistoricos = exports.crearYEnviarHistorico = exports.obtenerSiguienteNumeroReporte = exports.filtrarYTransformarContribuyentesP = exports.filtrarYTransformarContribuyentes = exports.transformarContribuyenteP = exports.transformarContribuyente = exports.getCurrentDateTime = exports.cleanString = exports.leerYParsearXMLP = exports.leerYParsearXML = void 0;
 const fs_1 = __importDefault(require("fs"));
 const xml2js_1 = require("xml2js");
 const axios_1 = __importDefault(require("axios"));
@@ -57,12 +57,12 @@ const getCurrentDateTime = () => {
     return new Date().toLocaleDateString();
 };
 exports.getCurrentDateTime = getCurrentDateTime;
-// Función para transformar la fecha
-const transformarFecha = (fecha) => {
-    const [month, day, year] = fecha.split('/');
-    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${day}-${month}`;
 };
-exports.transformarFecha = transformarFecha;
 // Función para transformar contribuyente
 const transformarContribuyente = (contribuyente, nave) => {
     return {
@@ -70,7 +70,7 @@ const transformarContribuyente = (contribuyente, nave) => {
         bodega: contribuyente.NUMBODEGA ? contribuyente.NUMBODEGA : 'Cubiculo',
         nave: (0, exports.cleanString)(nave),
         seccion: contribuyente.ACTIVIDAD ? contribuyente.ACTIVIDAD : 'Cubiculo',
-        fecha: (0, exports.transformarFecha)((0, exports.getCurrentDateTime)()),
+        fecha: formatDate(new Date()),
         valor: contribuyente.VALOR,
         meses: contribuyente.MESES
     };
@@ -85,7 +85,7 @@ const transformarContribuyenteP = (contribuyente, nave) => {
         puesto: puesto,
         nave: (0, exports.cleanString)(nave),
         seccion: contribuyente.REN57CARA01 ? contribuyente.REN57CARA01 : 'Cubiculo',
-        fecha: (0, exports.transformarFecha)((0, exports.getCurrentDateTime)()),
+        fecha: formatDate(new Date()),
         valor: contribuyente.TOTAL,
         meses: contribuyente.MESES
     };
@@ -222,7 +222,7 @@ const crearYEnviarHistorico = (contribuyente, contador) => __awaiter(void 0, voi
             puesto: contribuyente.puesto ? contribuyente.puesto : null,
             nave: contribuyente.nave,
             seccion: actividadTransformada,
-            fecha: (0, exports.transformarFecha)((0, exports.getCurrentDateTime)()),
+            fecha: formatDate(new Date()),
             meses: parseInt(contribuyente.meses),
             cantNotificaciones: cantNotificaciones,
             archivo: null,

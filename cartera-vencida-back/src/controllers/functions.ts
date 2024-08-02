@@ -39,12 +39,12 @@ export const cleanString = (str: string) => {
 export const getCurrentDateTime = () => {
     return new Date().toLocaleDateString();
 };
-
-// Función para transformar la fecha
-export const transformarFecha = (fecha: string) => {
-    const [month, day, year] = fecha.split('/');
-    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-};
+const formatDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
+    const day = String(date.getDate()).padStart(2, '0'); 
+    return `${year}-${day}-${month}`;
+  };
 
 // Función para transformar contribuyente
 export const transformarContribuyente = (contribuyente: any, nave: string) => {
@@ -53,7 +53,7 @@ export const transformarContribuyente = (contribuyente: any, nave: string) => {
         bodega: contribuyente.NUMBODEGA ? contribuyente.NUMBODEGA : 'Cubiculo',
         nave: cleanString(nave),
         seccion: contribuyente.ACTIVIDAD ? contribuyente.ACTIVIDAD : 'Cubiculo',
-        fecha: transformarFecha(getCurrentDateTime()),
+        fecha: formatDate(new Date()),
         valor: contribuyente.VALOR,
         meses: contribuyente.MESES
     };
@@ -67,7 +67,7 @@ export const transformarContribuyenteP = (contribuyente: ContribuyenteP, nave: s
         puesto: puesto,
         nave: cleanString(nave),
         seccion: contribuyente.REN57CARA01 ? contribuyente.REN57CARA01 : 'Cubiculo',
-        fecha: transformarFecha(getCurrentDateTime()),
+        fecha: formatDate(new Date()),
         valor: contribuyente.TOTAL,
         meses: contribuyente.MESES
     };
@@ -201,7 +201,7 @@ export const crearYEnviarHistorico = async (contribuyente: any, contador: number
             puesto: contribuyente.puesto ?contribuyente.puesto : null,
             nave: contribuyente.nave,
             seccion: actividadTransformada,
-            fecha: transformarFecha(getCurrentDateTime()),
+            fecha: formatDate(new Date()),
             meses: parseInt(contribuyente.meses),
             cantNotificaciones: cantNotificaciones,
             archivo: null,
