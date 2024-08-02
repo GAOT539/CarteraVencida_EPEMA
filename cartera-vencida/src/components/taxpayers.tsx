@@ -9,7 +9,6 @@ import { getPDFFile, uploadPDFFile } from "../providers/options/files";
 import BrowserUpdatedIcon from '@mui/icons-material/BrowserUpdated';
 
 const Taxpayers: React.FC = () => {
-  const theme = useTheme();
   const { opcion_Titulo, selectedRow, setupdatedRow, varClear, setVarClear } = useAppContext();
   const [contributor, setContributor] = React.useState("");
   const [activity, setActivity] = React.useState("");
@@ -21,10 +20,11 @@ const Taxpayers: React.FC = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
-
-  const [buttonDisabled, setButtonDisabled] = useState(false);
-
+  const cantNotificaciones = selectedRow?.cantNotificaciones || 0;
+  const pagado = selectedRow?.pagado || 'NO';
   const handleNotificationChange = (event: SelectChangeEvent) => { setNotificationType(event.target.value as string); };
+  let naves = selectedRow?.nave ? selectedRow.nave.toUpperCase().replace("NAVE ", "") : "NAVE";
+
   const convertirBlobAFile = (blob: Blob, nombreArchivo: string): File => {
     return new File([blob], nombreArchivo, { type: blob.type, lastModified: new Date().getTime() });
   };
@@ -49,6 +49,8 @@ const Taxpayers: React.FC = () => {
     let numero_reporte = (await obtenerNumeroReporte()).siguienteNumeroReporte;
     let archivo = null;
     let fecha = formatDate(new Date());
+    let response;
+
     switch (notificationType) {
       case "Primera":
         cantNotificaciones = 1;
@@ -67,7 +69,7 @@ const Taxpayers: React.FC = () => {
         pagado = 'NO';
         break;
     }
-    let response;
+    
     if (pagado == "SI") {
       response = await updateHistorico(selectedRow.id, { cantNotificaciones, pagado });
       setupdatedRow(`${selectedRow.ciu}-${selectedRow.numero_reporte}`)
@@ -80,7 +82,7 @@ const Taxpayers: React.FC = () => {
         setupdatedRow(`${selectedRow.ciu}-${selectedRow.numero_reporte}`)
       } else {
         const updatedRow = { ...selectedRow, cantNotificaciones, numero_reporte, archivo, fecha };
-        console.log(fecha)
+        console.log(naves)
         response = await addHistorico(updatedRow)
         const newId = response.historico.msg
         const pdfBlob = await generarPDF(updatedRow, cantNotificaciones);
@@ -100,35 +102,18 @@ const Taxpayers: React.FC = () => {
     setSnackbarOpen(true);
   };
 
-  const naves = selectedRow?.nave ? selectedRow.nave : "NAVE";
-  const cantNotificaciones = selectedRow?.cantNotificaciones || 0;
-  const pagado = selectedRow?.pagado || 'NO';
-
   useEffect(() => {
    if (selectedRow) {
       setContributor(selectedRow["contribuyente.nombre"] || "");
       setActivity(selectedRow.seccion || "");
-      setWarehouse(selectedRow.ubicacion || "");
+      setWarehouse(selectedRow.ubicacion ? selectedRow.ubicacion.replace(/^NAVE\s*/, '') : "");
       setMonths(selectedRow.meses || 0);
       setCiu(selectedRow.ciu || "");
       setAmount(selectedRow.valor || 0);
 
       setNotificationType("");
-    }else{
-      setButtonDisabled(false);
     }
   }, [selectedRow]);
-
-  useEffect(() => {
-    if (opcion_Titulo.includes('Cargados') || opcion_Titulo.includes('Cargadas')) {
-      setButtonDisabled(false);
-      setVarClear(true);    
-    } else {
-      setButtonDisabled(true);
-      setVarClear(true);
-    }
-  }, [opcion_Titulo]);
-
 
   useEffect(() => {
       setCiu("");
@@ -138,6 +123,7 @@ const Taxpayers: React.FC = () => {
       setMonths(0);
       setAmount(0);
       setVarClear(false);
+      naves = '';      
   }, [varClear]);
 
   return (
@@ -191,7 +177,7 @@ const Taxpayers: React.FC = () => {
       </Box>
 
       <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 2, }} >
-        <Button disabled={!buttonDisabled} startIcon={<BrowserUpdatedIcon />} variant="contained" sx={{
+        <Button startIcon={<BrowserUpdatedIcon />} variant="contained" sx={{
           marginRight: { xs: 0, sm: 2 }, marginBottom: { xs: 2, sm: 0 }, width: { xs: "100%", sm: "auto" }, backgroundColor: colors.oliveGreen, "&:hover": { backgroundColor: colors.oliveGreenGradient },
         }} onClick={handleConfirmClick} >
           Actualizar Cartera
