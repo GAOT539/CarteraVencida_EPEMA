@@ -192,10 +192,10 @@ export default function DataTable() {
   const transformData = (data: any[]) => {
     return data.map((row) => ({
       ...row,
-      ubicacion: `${row.bodega || ""} ${row.puesto || ""} ${row.nave || ""} ${row.seccion || ""
-        }`.trim(),
+      ubicacion: `${(row.bodega || "").replace(/^NAVE\s*/, "")} ${(row.puesto || "").replace(/^NAVE\s*/, "")} ${(row.nave || "")} ${(row.seccion || "")}`.trim(),
     }));
   };
+  
 
   const filterData = (search: string, data: any[]) => {
     let filtered = data;
