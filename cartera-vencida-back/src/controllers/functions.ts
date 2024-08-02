@@ -46,6 +46,12 @@ const formatDate = (date: Date) => {
     return `${year}-${day}-${month}`;
   };
 
+// Función para transformar la fecha
+export const transformarFecha = (fecha: string) => {
+    const [month, day, year] = fecha.split('/');
+    return `${year}-${day.padStart(2, '0')}-${month.padStart(2, '0')}`;
+};
+
 // Función para transformar contribuyente
 export const transformarContribuyente = (contribuyente: any, nave: string) => {
     return {
