@@ -52,12 +52,12 @@ export default function DataTable() {
 
   useEffect(() => {
     fetchBodegas();
-    setOpcion_Titulo("Bodegas");
+    setOpcion_Titulo("BODEGAS");
   }, []);
 
   useEffect(() => {
-    if (nuevaData == "Bodegas") {
-      setOpcion_Titulo("Bodegas Cargadas");
+    if (nuevaData == "BODEGAS") {
+      setOpcion_Titulo("BODEGAS Cargadas");
     } else if (nuevaData == "Puestos") {
       setOpcion_Titulo("Puestos Cargados");
     } else {
@@ -70,7 +70,7 @@ export default function DataTable() {
     setSearchText(textoSeparado[0])
     filterData(textoSeparado[0], rows);
     switch (opcion_Titulo) {
-      case 'Bodegas':
+      case 'BODEGAS':
         fetchBodegas();
         break;
       case 'Puestos':
@@ -135,7 +135,7 @@ export default function DataTable() {
   const transformData = (data: any[]) => {
     return data.map((row) => ({
       ...row,
-      ubicacion: `${(row.bodega || "").replace(/^NAVE\s*/, "")} ${(row.puesto || "").replace(/^NAVE\s*/, "")} ${(row.nave || "")} ${(row.seccion || "")}`.trim(),
+      ubicacion: `${(row.bodega || "").replace(/^NAVE\s*/, "")} ${(row.puesto || "").replace(/^NAVE\s*/, "")} ${(row.seccion || "").replace(/^NAVE\s*/, "")}`.trim(),
     }));
   };
   
@@ -180,7 +180,7 @@ export default function DataTable() {
     const batchSize = 5;
     const zip = new JSZip();
 
-    if (opcion_Titulo === "Bodegas" || opcion_Titulo === "Puestos") {
+    if (opcion_Titulo === "BODEGAS" || opcion_Titulo === "Puestos") {
       console.log("NO");
     } else {
       setLoading(true);
@@ -206,8 +206,8 @@ export default function DataTable() {
       });
     }
 
-    if (opcion_Titulo.includes("Bodegas")) {
-      setOpcion_Titulo("Bodegas")
+    if (opcion_Titulo.includes("BODEGAS")) {
+      setOpcion_Titulo("BODEGAS")
       fetchBodegas()
     } else {
       setOpcion_Titulo("Puestos")
@@ -216,13 +216,17 @@ export default function DataTable() {
   };
 
   const handleChangeBodegas = () => {
-    setOpcion_Titulo("Bodegas");
+    setOpcion_Titulo("BODEGAS");
     fetchBodegas();
+    setVarClear(true);
+    setSearchText('');
   };
 
   const handleChangePuestos = () => {
-    setOpcion_Titulo("Puestos");
+    setOpcion_Titulo("PUESTOS");
     fetchPuestos();
+    setVarClear(true);
+    setSearchText('');
   };
 
   const handleCloseDialog = () => {
