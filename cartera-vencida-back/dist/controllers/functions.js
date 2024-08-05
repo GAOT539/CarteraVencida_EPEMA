@@ -363,11 +363,19 @@ const filtrarContribuyentesTransformados = (contribuyentesTransformados, tipo) =
     });
     // Agregar registros que existen en la base de datos pero no en contribuyentesTransformados
     registrosNoPagadosNoHistoricos.forEach((registro) => {
-        const existeEnTransformados = contribuyentesTransformados.find((contribuyente) => registro.ciu == contribuyente.ciu &&
-            registro.nave == contribuyente.nave &&
-            registro.seccion == (contribuyente.seccion.includes('�') ? contribuyente.seccion.replace(/�/g, 'Ñ') : contribuyente.seccion) &&
-            ((registro.puesto == contribuyente.puesto) ||
-                (registro.bodega == contribuyente.bodega)));
+        let existeEnTransformados;
+        if (registro.puesto === undefined) {
+            existeEnTransformados = contribuyentesTransformados.find((contribuyente) => registro.ciu == contribuyente.ciu &&
+                registro.nave == contribuyente.nave &&
+                registro.seccion == (contribuyente.seccion.includes('�') ? contribuyente.seccion.replace(/�/g, 'Ñ') : contribuyente.seccion) &&
+                registro.bodega == contribuyente.bodega);
+        }
+        else {
+            existeEnTransformados = contribuyentesTransformados.find((contribuyente) => registro.ciu == contribuyente.ciu &&
+                registro.nave == contribuyente.nave &&
+                registro.seccion == (contribuyente.seccion.includes('�') ? contribuyente.seccion.replace(/�/g, 'Ñ') : contribuyente.seccion) &&
+                registro.puesto == contribuyente.puesto);
+        }
         if (!existeEnTransformados) {
             registrosPagados.push(registro);
         }
