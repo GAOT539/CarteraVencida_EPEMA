@@ -24,10 +24,12 @@ const columnsHistoricos: GridColDef[] = [
   { field: "fecha", headerName: "Fecha", flex: 1 },
   { field: "meses", headerName: "Meses", flex: 1 },
   { field: "cantNotificaciones", headerName: "Cantidad de Notificaciones", flex: 1, },
-  { field: 'archivo', headerName: 'Archivo', flex: 1,
+  {
+    field: 'archivo', headerName: 'Archivo', flex: 1,
     renderCell: (params) => (<Button variant="outlined" color="secondary" onClick={() => getPDFFile(params.value)} disabled={!params.value} >
       Ver
-    </Button>), },
+    </Button>),
+  },
   { field: "valor", headerName: "Valor", flex: 1 },
   { field: "pagado", headerName: "Pagado", flex: 1 },
 ];
@@ -118,15 +120,17 @@ export default function DataTable() {
       );
     } setFilteredRows(filtered);
   };
-
-  //AGREGAR LOS FITROS SECCION
+ 
   const filterDataNave = (search: string, data: any[]) => {
     let filtered = data;
     if (search) {
-      filtered = filtered.filter(
-        (row) =>
-          row.nave?.toString().toLowerCase() == search.toLowerCase()
-      );
+      if (search == ('AUTO-LUJOS') || search == ('ROPA') || search == ('A') || search == ('CF') || search == ('D') || search == ('E') || search == ('G') || search == ('H')
+        || search == ('I') || search == ('J') || search == ('K') || search == ('N') || search == ('Ñ') || search == ('P') || search == ('Q') || search == ('Z')) {
+        console.log('NAVE ' + search)
+        filtered = filtered.filter((row) => row.nave?.toUpperCase().toString() == ("NAVE " + search).toUpperCase());
+      } else {
+        filtered = filtered.filter((row) => row.nave?.toUpperCase().toString() == search.toUpperCase());
+      }
     } setFilteredRows(filtered);
   };
 
@@ -139,9 +143,9 @@ export default function DataTable() {
   const handleLoadData = () => {
     setDialogOpen(true);
     setVarClear(true);
-    if(opcion_Titulo.includes('Bodegas')){
+    if (opcion_Titulo.includes('Bodegas')) {
       fetchBodegas();
-    }else{
+    } else {
       fetchPuestos();
     }
   };
@@ -154,25 +158,25 @@ export default function DataTable() {
     const batchSize = 5;
     const zip = new JSZip();
 
-      setLoading(true);
-      for (let i = 0; i < rows.length; i += batchSize) {
-        const batch = rows.slice(i, i + batchSize);
-        await Promise.all(batch.map(async (element) => {
-          try {
-            const pdfBlob = await generarPDF(element);
-            await uploadPDFFile(element.id, convertirBlobAFile(pdfBlob, `notificacion_${element.ciu}-${element.numero_reporte}.pdf`));
-            const file = convertirBlobAFile(pdfBlob, `notificacion_${element.ciu}-${element.numero_reporte}.pdf`);
-            zip.file(file.name, pdfBlob);
-          } catch (error) {
-            console.error('Error al generar o subir el PDF:', error);
-          }
-        }));
-      }
-      setLoading(false);
+    setLoading(true);
+    for (let i = 0; i < rows.length; i += batchSize) {
+      const batch = rows.slice(i, i + batchSize);
+      await Promise.all(batch.map(async (element) => {
+        try {
+          const pdfBlob = await generarPDF(element);
+          await uploadPDFFile(element.id, convertirBlobAFile(pdfBlob, `notificacion_${element.ciu}-${element.numero_reporte}.pdf`));
+          const file = convertirBlobAFile(pdfBlob, `notificacion_${element.ciu}-${element.numero_reporte}.pdf`);
+          zip.file(file.name, pdfBlob);
+        } catch (error) {
+          console.error('Error al generar o subir el PDF:', error);
+        }
+      }));
+    }
+    setLoading(false);
 
-      zip.generateAsync({ type: 'blob' }).then((content) => {
-        saveAs(content, `Notificaciones-${new Date().toLocaleDateString()}.zip`);
-      });
+    zip.generateAsync({ type: 'blob' }).then((content) => {
+      saveAs(content, `Notificaciones-${new Date().toLocaleDateString()}.zip`);
+    });
 
     if (opcion_Titulo.includes("Bodegas")) {
       setOpcion_Titulo("Bodegas");
@@ -189,26 +193,26 @@ export default function DataTable() {
     const batchSize = 5;
     const zip = new JSZip();
 
-      setLoading(true);
-      for (let i = 0; i < filteredRows.length; i += batchSize) {
-        const batch = filteredRows.slice(i, i + batchSize);
-        await Promise.all(batch.map(async (element) => {
-          try {
-            const pdfBlob = (await getPDFFileOpen(`notificacion_${element.ciu}-${element.numero_reporte}.pdf`)).data;
-            const file = convertirBlobAFile(pdfBlob, `notificacion_${element.ciu}-${element.numero_reporte}.pdf`);
-            zip.file(file.name, pdfBlob);
-          } catch (error) {
-            console.error('Error al generar o subir el PDF:', error);
-          }
-        }));
-      }
-      setLoading(false);
+    setLoading(true);
+    for (let i = 0; i < filteredRows.length; i += batchSize) {
+      const batch = filteredRows.slice(i, i + batchSize);
+      await Promise.all(batch.map(async (element) => {
+        try {
+          const pdfBlob = (await getPDFFileOpen(`notificacion_${element.ciu}-${element.numero_reporte}.pdf`)).data;
+          const file = convertirBlobAFile(pdfBlob, `notificacion_${element.ciu}-${element.numero_reporte}.pdf`);
+          zip.file(file.name, pdfBlob);
+        } catch (error) {
+          console.error('Error al generar o subir el PDF:', error);
+        }
+      }));
+    }
+    setLoading(false);
 
-      zip.generateAsync({ type: 'blob' }).then((content) => {
-        saveAs(content, `Notificaciones-${new Date().toLocaleDateString()}.zip`);
-      });
+    zip.generateAsync({ type: 'blob' }).then((content) => {
+      saveAs(content, `NAVES-Notificaciones-${new Date().toLocaleDateString()}.zip`);
+    });
 
-      setVarClear(true);
+    setVarClear(true);
   };
 
   const handleChangeBodegas = () => {
@@ -359,10 +363,12 @@ export default function DataTable() {
               columnVisibilityModel={{ id: false, "contribuyente.nombre": false, "contribuyente.cedula": false, }}
               initialState={{ pagination: { paginationModel: { page: 0, pageSize: 11 }, }, }}
               onRowClick={handleRowClick}
-              sx={{ boxShadow: 2, border: 2, borderColor: colors.oliveGreen,
+              sx={{
+                boxShadow: 2, border: 2, borderColor: colors.oliveGreen,
                 "& .MuiDataGrid-cell:hover": { color: colors.orangeSalmon, },
                 "& .MuiDataGrid-columnHeaderTitleContainer": { backgroundColor: colors.background_WhiteSmokeBlack, },
-                "& .MuiDataGrid-columnHeader": { backgroundColor: colors.background_WhiteSmokeBlack, }, }} />
+                "& .MuiDataGrid-columnHeader": { backgroundColor: colors.background_WhiteSmokeBlack, },
+              }} />
           </Box>
         </Grid>
       </Grid>
