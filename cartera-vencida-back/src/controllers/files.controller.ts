@@ -108,16 +108,11 @@ export const carteraVencidaPuestos = async (req: Request, res: Response) => {
   try {
     const result: ParsedXMLP = await leerYParsearXMLP(file.path);
     let contribuyentesTransformados = filtrarYTransformarContribuyentesP(result.CARTERANOMBRESPUESTOS);
-    console.log("Puestos Transformados")
-    console.log(contribuyentesTransformados)
     contribuyentesTransformados = await filtrarContribuyentesTransformados(contribuyentesTransformados, 'puestos');
-    console.log("Puestos Filtrados")
-    console.log(contribuyentesTransformados)
     // Obtener el siguiente número de reporte
     contador = await obtenerSiguienteNumeroReporte();
     // Recorrer los contribuyentes transformados y hacer la solicitud POST
     for (const contribuyente of contribuyentesTransformados) {
-      console.log("XD")
       listaIngresados.push(await crearYEnviarHistorico(contribuyente, contador))
       contador++;
     }

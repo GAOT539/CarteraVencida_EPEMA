@@ -75,7 +75,6 @@ exports.transformarContribuyente = transformarContribuyente;
 //Funcion para transformar contribuente Puestos
 const transformarContribuyenteP = (contribuyente, nave) => {
     const puesto = contribuyente.TITU && contribuyente.TITU.trim() ? contribuyente.TITU : 'Cubiculo';
-    console.log('Puesto:', puesto); // Verifica el valor de puesto
     return {
         ciu: contribuyente.REN57PCIUINQUILINO,
         puesto: puesto,
@@ -253,49 +252,78 @@ const obtenerRegistrosNoPagadosNoHistoricos = (tipo) => __awaiter(void 0, void 0
     }
 });
 exports.obtenerRegistrosNoPagadosNoHistoricos = obtenerRegistrosNoPagadosNoHistoricos;
-// Función para actualizar registros a pagado SI y esHistorico SI
+// Función para actualizar registros a pagado SI y esHistorico SI en lotes de 5
 const actualizarRegistrosPagadosHistoricos = (registros) => __awaiter(void 0, void 0, void 0, function* () {
     if (registros.length === 0) {
         console.warn('No hay registros para actualizar.');
         return;
     }
-    try {
-        for (const registro of registros) {
-            yield axios_1.default.put(`http://localhost:3001/api/${registro.id}`, {
-                pagado: 'SI',
-                esHistorico: 'SI'
-            });
+    const batchSize = 5; // Tamaño del lote
+    for (let i = 0; i < registros.length; i += batchSize) {
+        const batch = registros.slice(i, i + batchSize);
+        const updatePromises = batch.map((registro) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                yield axios_1.default.put(`http://localhost:3001/api/${registro.id}`, {
+                    pagado: 'SI',
+                    esHistorico: 'SI'
+                });
+            }
+            catch (error) {
+                console.error(`Error al actualizar registro con id ${registro.id}:`, error);
+                throw error; // Lanza el error para manejarlo en el lugar donde se llama a esta función
+            }
+        }));
+        try {
+            yield Promise.all(updatePromises);
         }
-    }
-    catch (error) {
-        console.error('Error al actualizar registros:', error);
-        throw error; // Lanza el error para manejarlo en el lugar donde se llama a esta función
+        catch (error) {
+            console.error('Error al actualizar registros del lote:', error);
+            // Decide si deseas continuar con los siguientes lotes o detener la ejecución
+        }
     }
 });
 exports.actualizarRegistrosPagadosHistoricos = actualizarRegistrosPagadosHistoricos;
-// Función para actualizar registros a esHistorico SI cuando cantNotificaciones es 3
+// Función para actualizar registros a esHistorico SI cuando cantNotificaciones es 3 en lotes de 5
 const actualizarRegistrosNotificacionesTres = (registros) => __awaiter(void 0, void 0, void 0, function* () {
     if (registros.length === 0) {
         console.warn('No hay registros con cantNotificaciones igual a 3 para actualizar.');
         return;
     }
-    for (const registro of registros) {
-        try {
-            const response = yield axios_1.default.get(`http://localhost:3001/api/relacionados/${registro.id}`);
-            if (Array.isArray(response.data) && response.data.length > 0) {
-                for (const respuesta of response.data) {
-                    yield axios_1.default.put(`http://localhost:3001/api/${respuesta.id}`, {
-                        pagado: 'NO',
-                        esHistorico: 'SI'
-                    });
+    const batchSize = 5; // Tamaño del lote
+    for (let i = 0; i < registros.length; i += batchSize) {
+        const batch = registros.slice(i, i + batchSize);
+        const updatePromises = batch.map((registro) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                const response = yield axios_1.default.get(`http://localhost:3001/api/relacionados/${registro.id}`);
+                if (Array.isArray(response.data) && response.data.length > 0) {
+                    const relatedUpdatePromises = response.data.map((respuesta) => __awaiter(void 0, void 0, void 0, function* () {
+                        try {
+                            yield axios_1.default.put(`http://localhost:3001/api/${respuesta.id}`, {
+                                pagado: 'NO',
+                                esHistorico: 'SI'
+                            });
+                        }
+                        catch (error) {
+                            console.error(`Error al actualizar el registro relacionado con id ${respuesta.id}:`, error);
+                            throw error;
+                        }
+                    }));
+                    yield Promise.all(relatedUpdatePromises);
+                }
+                else {
+                    console.warn(`No se encontraron historicos asociados para el registro con id ${registro.id}`);
                 }
             }
-            else {
-                console.warn(`No se encontraron historicos asociados para el registro con id ${registro.id}`);
+            catch (error) {
+                console.error(`Error al obtener los datos relacionados para el registro con id ${registro.id}:`, error);
+                throw error;
             }
+        }));
+        try {
+            yield Promise.all(updatePromises);
         }
         catch (error) {
-            console.error(`Error al obtener los datos relacionados para el registro con id ${registro.id}:`, error);
+            console.error('Error al actualizar registros del lote:', error);
             throw error;
         }
     }
@@ -310,11 +338,19 @@ const filtrarContribuyentesTransformados = (contribuyentesTransformados, tipo) =
     let contribuyentesRestantes = [...contribuyentesTransformados];
     // Filtra los contribuyentes transformados
     const contribuyentesFiltrados = contribuyentesTransformados.filter((contribuyente) => {
-        const existeEnBaseDatos = registrosNoPagadosNoHistoricos.find((registro) => registro.ciu == contribuyente.ciu &&
-            registro.nave == contribuyente.nave &&
-            registro.seccion == contribuyente.seccion &&
-            ((registro.puesto == contribuyente.puesto) ||
-                (registro.bodega == contribuyente.bodega)));
+        let existeEnBaseDatos;
+        if (contribuyente.puesto === undefined) {
+            existeEnBaseDatos = registrosNoPagadosNoHistoricos.find((registro) => registro.bodega == contribuyente.bodega &&
+                registro.ciu == contribuyente.ciu &&
+                registro.nave == contribuyente.nave &&
+                registro.seccion == (contribuyente.seccion.includes('�') ? contribuyente.seccion.replace(/�/g, 'Ñ') : contribuyente.seccion));
+        }
+        else {
+            existeEnBaseDatos = registrosNoPagadosNoHistoricos.find((registro) => registro.puesto == contribuyente.puesto &&
+                registro.ciu == contribuyente.ciu &&
+                registro.nave == contribuyente.nave &&
+                registro.seccion == (contribuyente.seccion.includes('�') ? contribuyente.seccion.replace(/�/g, 'Ñ') : contribuyente.seccion));
+        }
         if (!existeEnBaseDatos) {
             return true;
         }
@@ -329,7 +365,7 @@ const filtrarContribuyentesTransformados = (contribuyentesTransformados, tipo) =
     registrosNoPagadosNoHistoricos.forEach((registro) => {
         const existeEnTransformados = contribuyentesTransformados.find((contribuyente) => registro.ciu == contribuyente.ciu &&
             registro.nave == contribuyente.nave &&
-            registro.seccion == contribuyente.seccion &&
+            registro.seccion == (contribuyente.seccion.includes('�') ? contribuyente.seccion.replace(/�/g, 'Ñ') : contribuyente.seccion) &&
             ((registro.puesto == contribuyente.puesto) ||
                 (registro.bodega == contribuyente.bodega)));
         if (!existeEnTransformados) {
@@ -340,12 +376,12 @@ const filtrarContribuyentesTransformados = (contribuyentesTransformados, tipo) =
     contribuyentesRestantes = contribuyentesRestantes.filter((contribuyente) => {
         const noEnPagados = !registrosPagados.find((registro) => registro.ciu == contribuyente.ciu &&
             registro.nave == contribuyente.nave &&
-            registro.seccion == contribuyente.seccion &&
+            registro.seccion == (contribuyente.seccion.includes('�') ? contribuyente.seccion.replace(/�/g, 'Ñ') : contribuyente.seccion) &&
             ((registro.puesto == contribuyente.puesto) ||
                 (registro.bodega == contribuyente.bodega)));
         const noEnNotificacionesTres = !registrosNotificacionesTres.find((registro) => registro.ciu == contribuyente.ciu &&
             registro.nave == contribuyente.nave &&
-            registro.seccion == contribuyente.seccion &&
+            registro.seccion == (contribuyente.seccion.includes('�') ? contribuyente.seccion.replace(/�/g, 'Ñ') : contribuyente.seccion) &&
             ((registro.puesto == contribuyente.puesto) ||
                 (registro.bodega == contribuyente.bodega)));
         return noEnPagados && noEnNotificacionesTres;

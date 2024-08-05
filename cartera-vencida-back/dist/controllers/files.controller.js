@@ -102,16 +102,11 @@ const carteraVencidaPuestos = (req, res) => __awaiter(void 0, void 0, void 0, fu
     try {
         const result = yield (0, functions_1.leerYParsearXMLP)(file.path);
         let contribuyentesTransformados = (0, functions_1.filtrarYTransformarContribuyentesP)(result.CARTERANOMBRESPUESTOS);
-        console.log("Puestos Transformados");
-        console.log(contribuyentesTransformados);
         contribuyentesTransformados = yield (0, functions_1.filtrarContribuyentesTransformados)(contribuyentesTransformados, 'puestos');
-        console.log("Puestos Filtrados");
-        console.log(contribuyentesTransformados);
         // Obtener el siguiente número de reporte
         contador = yield (0, functions_1.obtenerSiguienteNumeroReporte)();
         // Recorrer los contribuyentes transformados y hacer la solicitud POST
         for (const contribuyente of contribuyentesTransformados) {
-            console.log("XD");
             listaIngresados.push(yield (0, functions_1.crearYEnviarHistorico)(contribuyente, contador));
             contador++;
         }

@@ -112,7 +112,8 @@ const Body_Historical: React.FC = () => {
 
     const filterData = (search: string, start: dayjs.Dayjs | null, end: dayjs.Dayjs | null, data: any[]) => {
         let filtered = data;
-
+        console.log(start)
+        console.log(end)
         if (search) {
             filtered = filtered.filter(row =>
                 row.ciu?.toString().toLowerCase().includes(search.toLowerCase()) ||
@@ -121,9 +122,15 @@ const Body_Historical: React.FC = () => {
         }
 
         if (start && end) {
+            const startDate = dayjs(start, 'YYYY-MM-DD');
+            const endDate = dayjs(end, 'YYYY-MM-DD');
+        
             filtered = filtered.filter(row => {
-                const date = dayjs(row.fecha);
-                return (date.isAfter(start)||date.isSame(start))  && (date.isBefore(end)||date.isSame(end));
+                // Convertir la fecha del row a un objeto dayjs
+                const rowDate = dayjs(row.fecha, 'YYYY-DD-MM');
+                // Verificar si la fecha del row está dentro del rango especificado
+                return (rowDate.isAfter(startDate) || rowDate.isSame(startDate)) &&
+                       (rowDate.isBefore(endDate) || rowDate.isSame(endDate));
             });
         }
 

@@ -9,7 +9,8 @@ class Connection {
             // Config DBConnection only once
             Connection.instance = new sequelize_1.Sequelize('cartera_vencida', 'root', '12345', {
                 host: 'localhost',
-                dialect: 'mysql'
+                dialect: 'mysql',
+                logging: false
             });
         }
         return Connection.instance;
