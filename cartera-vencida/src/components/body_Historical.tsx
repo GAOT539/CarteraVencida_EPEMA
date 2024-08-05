@@ -58,6 +58,7 @@ const Body_Historical: React.FC = () => {
     const transformData = (data: any[]) => {
         return data.map(row => ({
             ...row,
+            fecha: dayjs(row.fecha, 'YYYY-MM-DD').format('YYYY-MM-DD'),
             ubicacion: `${(row.bodega || "").replace(/^NAVE\s*/, "")} ${(row.puesto || "").replace(/^NAVE\s*/, "")} ${(row.seccion || "").replace(/^NAVE\s*/, "")}`.trim(),
         }));
     };
