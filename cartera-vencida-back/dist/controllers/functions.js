@@ -57,7 +57,7 @@ const formatDate = (date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${day}-${month}`;
+    return `${year}-${month}-${day}`;
 };
 // Función para transformar contribuyente
 const transformarContribuyente = (contribuyente, nave) => {
@@ -66,7 +66,7 @@ const transformarContribuyente = (contribuyente, nave) => {
         bodega: contribuyente.NUMBODEGA ? contribuyente.NUMBODEGA : 'Cubiculo',
         nave: (0, exports.cleanString)(nave),
         seccion: contribuyente.ACTIVIDAD ? contribuyente.ACTIVIDAD : 'Cubiculo',
-        fecha: formatDate(new Date()),
+        fecha: formatDate(new Date()).toString(),
         valor: contribuyente.VALOR,
         meses: contribuyente.MESES
     };
@@ -80,7 +80,7 @@ const transformarContribuyenteP = (contribuyente, nave) => {
         puesto: puesto,
         nave: (0, exports.cleanString)(nave),
         seccion: contribuyente.REN57CARA01 ? contribuyente.REN57CARA01 : 'Cubiculo',
-        fecha: formatDate(new Date()),
+        fecha: formatDate(new Date()).toString(),
         valor: contribuyente.TOTAL,
         meses: contribuyente.MESES
     };
@@ -217,7 +217,7 @@ const crearYEnviarHistorico = (contribuyente, contador) => __awaiter(void 0, voi
             puesto: contribuyente.puesto ? contribuyente.puesto : null,
             nave: contribuyente.nave,
             seccion: actividadTransformada,
-            fecha: formatDate(new Date()),
+            fecha: formatDate(new Date()).toString(),
             meses: parseInt(contribuyente.meses),
             cantNotificaciones: cantNotificaciones,
             archivo: null,
