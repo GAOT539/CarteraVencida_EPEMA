@@ -127,7 +127,7 @@ const Body_Historical: React.FC = () => {
         
             filtered = filtered.filter(row => {
                 // Convertir la fecha del row a un objeto dayjs
-                const rowDate = dayjs(row.fecha, 'YYYY-DD-MM');
+                const rowDate = dayjs(row.fecha, 'YYYY-MM-DD');
                 // Verificar si la fecha del row está dentro del rango especificado
                 return (rowDate.isAfter(startDate) || rowDate.isSame(startDate)) &&
                        (rowDate.isBefore(endDate) || rowDate.isSame(endDate));
